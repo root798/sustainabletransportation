@@ -1,0 +1,19 @@
+{
+    "initial_data": {
+        "total_cars": 32060000,
+        "total_ev": 1771806,
+        "total_cav": 1603,
+        "total_intersections": 380400,
+        "total_sti": 0,
+        "f_clean": 0.63
+    },
+    "growth_rates": {
+        "cav": 0.1,
+        "sti": 0.01,
+        "ev": 0.12,
+        "clean_energy": 0.12,
+        "efficiency_doubling": 3.8,
+        "total_car_increase": 0.02,
+        "retire_year": 12
+    }
+}
