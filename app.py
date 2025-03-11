@@ -194,19 +194,23 @@ def simulate_model():
         }
         
         # Add each selected column as a dataset
-        colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#8AC249']
+        # Use more vibrant colors for simulated data to distinguish from original
+        sim_colors = ['#FF0000', '#0000FF', '#FFD700', '#00FFFF', '#8A2BE2', '#FF4500', '#32CD32']
         for i, column in enumerate(columns):
             if column in df.columns:
-                color_index = i % len(colors)
+                color_index = i % len(sim_colors)
                 chart_data['datasets'].append({
                     'label': f"{column} (Simulated - {state.capitalize()})",
                     'data': df[column].tolist(),
-                    'borderColor': colors[color_index],
-                    'backgroundColor': colors[color_index] + '20',  # Add transparency
+                    'borderColor': sim_colors[color_index],
+                    'backgroundColor': sim_colors[color_index] + '20',  # Add transparency
                     'fill': False,
                     'tension': 0.1,
                     'borderDash': [5, 5],  # Add dashed line to distinguish from original data
-                    'borderWidth': 3  # Make the line thicker for better visibility
+                    'borderWidth': 3,  # Make the line thicker for better visibility
+                    'pointStyle': 'triangle',  # Use triangles instead of circles
+                    'pointRadius': 5,  # Make points larger
+                    'pointHoverRadius': 7  # Make hover points larger
                 })
         
         return jsonify(chart_data)

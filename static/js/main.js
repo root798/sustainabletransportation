@@ -72,11 +72,20 @@ document.addEventListener('DOMContentLoaded', function() {
         loadStateParameters(currentState);
     }
 
-    // Ensure we have at least one variable selected (ATS Total Power)
-    const atsCheckbox = document.querySelector('.variable-checkbox[value="ATS Total Power (kWh)"]');
-    if (atsCheckbox) {
-        atsCheckbox.checked = true;
-    }
+    // Ensure we have default variables selected
+    const defaultVariables = [
+        "ATS Total Power (kWh)",
+        "ATS Emissions (kg CO2)",
+        "Total CAV",
+        "Total STI"
+    ];
+
+    defaultVariables.forEach(variable => {
+        const checkbox = document.querySelector(`.variable-checkbox[value="${variable}"]`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
 
     // Update chart with default selections
     updateChart();

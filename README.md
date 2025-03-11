@@ -1,4 +1,198 @@
-# CLEAR-ATS Model Breakdown
+# CLEAR-ATS: Automated Transport System Modeling and Visualization
+
+## Research Objective
+
+The CLEAR-ATS (Clean Energy Automated Road Transport System) model simulates the evolution of transportation systems from 2024 to 2100, focusing on the adoption of Connected and Autonomous Vehicles (CAVs) and Smart Traffic Infrastructure (STI). The model calculates power consumption, emissions, and vehicle quantities to assess the environmental impact of transportation automation.
+
+The primary research objectives are:
+
+1. **Quantify Energy Consumption**: Calculate the energy requirements of CAVs and STI over time
+2. **Estimate Emissions**: Determine CO₂ emissions based on energy sources (clean vs. fossil)
+3. **Model Technology Adoption**: Simulate realistic adoption curves for CAVs and STI
+4. **Analyze Policy Scenarios**: Compare different regions and policy approaches
+5. **Assess Environmental Impact**: Evaluate the long-term environmental effects of transportation automation
+
+## Model Overview
+
+The CLEAR-ATS model is based on the following key principles:
+
+- **CAVs come only from new cars**: Existing vehicles cannot be upgraded to CAVs
+- **CAVs cannot exceed total vehicles**: The model strictly enforces that CAV count ≤ total vehicles
+- **CAVs cannot exceed cumulative new cars**: Since only new cars can be CAVs, the model enforces CAV count ≤ cumulative new cars
+- **STI upgrades existing infrastructure**: Smart traffic infrastructure replaces conventional systems
+- **Vehicle retirement**: Cars are retired after their lifespan (typically 12 years)
+- **Energy efficiency improves over time**: Computing efficiency follows Moore's Law pattern
+- **Clean energy adoption increases**: The fraction of clean energy grows over time
+
+## Key Equations and Calculations
+
+### Vehicle Population Dynamics
+
+The model tracks several vehicle populations:
+- Total vehicles
+- Electric vehicles (EVs)
+- Internal combustion engine vehicles (ICEVs)
+- Connected and autonomous vehicles (CAVs)
+- Electric CAVs (ECAVs)
+- Internal combustion engine CAVs (ICECAVs)
+
+The vehicle population is updated each year according to:
+
+```
+total_cars(t) = total_cars(t-1) - retired_cars(t) + new_cars(t)
+```
+
+Where:
+- `retired_cars(t)` = cars added `retire_year` years ago
+- `new_cars(t)` = cars needed to reach the desired total based on growth rate
+
+### CAV Adoption
+
+CAV adoption follows an S-curve pattern typical of technology adoption, with strict constraints:
+
+```
+new_cavs(t) = new_cars(t) * cav_growth_rate * s_curve_factor
+total_cav(t) = total_cav(t-1) - retired_cavs(t) + new_cavs(t)
+total_cav(t) = min(total_cav(t), cumulative_new_cars(t), total_cars(t))
+```
+
+Where:
+- `s_curve_factor` = 4 * adoption_progress * (1 - adoption_progress)
+- `adoption_progress` = total_cav(t-1) / cumulative_new_cars(t)
+- `cumulative_new_cars(t)` = sum of all new cars manufactured from year 0 to year t, minus retirements
+
+The model strictly enforces two critical constraints:
+1. CAVs can only come from new cars (total_cav ≤ cumulative_new_cars)
+2. CAVs cannot exceed the total vehicle population (total_cav ≤ total_cars)
+
+### Energy Efficiency
+
+Energy efficiency improves over time based on the efficiency doubling years parameter:
+
+```
+efficiency_factor(t) = 0.5 ^ (t / efficiency_doubling_years)
+```
+
+A smaller efficiency factor means better efficiency (less power needed per operation).
+
+### Power Consumption
+
+Power consumption is calculated for each component:
+
+```
+e_power = sum(n_ecav * level * power * efficiency_factor)
+i_power = sum(n_icecav * level * power * icecav_power_factor * efficiency_factor)
+s_power = sum(n_sti * level * power * efficiency_factor)
+```
+
+Where:
+- `level` represents the automation level distribution
+- `power` is the base power consumption per vehicle/infrastructure unit
+- `efficiency_factor` accounts for improving energy efficiency over time
+
+### Emissions Calculation
+
+Emissions are calculated based on power consumption and energy sources:
+
+```
+e_emission = e_power * (f_clean * e_clean + (1 - f_clean) * e_fossil)
+i_emission = i_power * e_gasoline
+s_emission = s_power * (f_clean * e_clean + (1 - f_clean) * e_fossil)
+```
+
+Where:
+- `f_clean` is the fraction of electricity from clean sources
+- `e_clean` is the emission factor for clean electricity (kg CO₂/kWh)
+- `e_fossil` is the emission factor for fossil electricity (kg CO₂/kWh)
+- `e_gasoline` is the emission factor for gasoline (kg CO₂/kWh)
+
+## Model Parameters
+
+The model uses several parameter sets that can be adjusted:
+
+### Initial Data
+- `total_cars`: Initial number of vehicles
+- `total_ev`: Initial number of electric vehicles
+- `total_cav`: Initial number of connected and autonomous vehicles
+- `total_intersections`: Total number of traffic intersections
+- `total_sti`: Initial number of smart traffic infrastructure units
+- `f_clean`: Initial fraction of electricity from clean sources
+
+### Growth Rates
+- `cav`: Growth rate for CAV adoption
+- `sti`: Growth rate for STI deployment
+- `ev`: Growth rate for EV adoption
+- `clean_energy`: Growth rate for clean energy adoption
+- `efficiency_doubling`: Years for computing efficiency to double
+- `total_car_increase`: Annual growth rate for total vehicle population
+- `retire_year`: Vehicle lifespan in years
+
+### Consumption Rates
+- `ecav_power`: Power consumption for electric CAVs by automation level
+- `icecav_power_factor`: Power factor for internal combustion CAVs
+- `sti_power`: Power consumption for STI by intelligence level
+- `cav_levels`: Distribution of CAVs by automation level
+- `sti_levels`: Distribution of STI by intelligence level
+
+### Emission Factors
+- `e_clean`: Emission factor for clean electricity (kg CO₂/kWh)
+- `e_fossil`: Emission factor for fossil electricity (kg CO₂/kWh)
+- `e_gasoline`: Emission factor for gasoline (kg CO₂/kWh)
+
+## Regional Scenarios
+
+The model includes parameters for different regions:
+- **California**: High EV adoption, strong clean energy policies
+- **Ohio**: Moderate EV adoption, mixed energy sources
+- **US Average**: National average values
+
+## Visualization Tool
+
+The visualization tool allows users to:
+1. Select multiple states/regions for comparison
+2. Choose variables to display (power, emissions, vehicle counts)
+3. Adjust model parameters to create custom scenarios
+4. Compare original and simulated data
+5. Switch between linear and logarithmic scales
+6. View data in appropriate units (TWh, kiloton CO₂)
+
+## Default Display
+
+By default, the visualization shows:
+- ATS Total Power (kWh)
+- ATS Emissions (kg CO2)
+- Total CAV (number of connected and autonomous vehicles)
+- Total STI (number of smart traffic infrastructure units)
+
+Simulated data is displayed with:
+- Dashed lines (vs. solid lines for original data)
+- Triangle markers (vs. circle markers for original data)
+- More vibrant colors to distinguish from original data
+
+## Data Units
+
+- Power: Terawatt-hours (TWh)
+- Emissions: Kiloton CO₂
+- Vehicles and infrastructure: Count
+
+## Technical Implementation
+
+The model is implemented in Python with the following components:
+- `footprint_model.py`: Core simulation model
+- `app.py`: Web application backend
+- `static/js/main.js`: Visualization frontend
+- Configuration files in JSON format
+
+## Running the Application
+
+1. Ensure Python 3.6+ is installed
+2. Install required packages: `pip install -r requirements.txt`
+3. Run the application: `python run.py`
+4. Access the visualization at: http://localhost:8000
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.# CLEAR-ATS Model Breakdown
 
 The framework, CLEAR-ATS provides a simulation of an Automated Transport System (ATS) from 2024 to 2124. The model tracks vehicle populations, infrastructure upgrades, power consumption, and CO₂ emissions, with specific rules for CAVs (Connected Autonomous Vehicles) and STI (Smart Traffic Infrastructure).
 
