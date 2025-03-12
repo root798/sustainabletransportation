@@ -1,19 +1,19 @@
 {
     "initial_data": {
-        "total_cars": 10500000,
-        "total_ev": 420000,
-        "total_cav": 500,
-        "total_intersections": 150000,
+        "total_cars": 9420000,
+        "total_ev": 58000,
+        "total_cav": 471,
+        "total_intersections": 278450,
         "total_sti": 0,
-        "f_clean": 0.35
+        "f_clean": 0.02
     },
     "growth_rates": {
-        "cav": 0.1,
-        "sti": 0.005,
-        "ev": 0.08,
-        "clean_energy": 0.05,
-        "efficiency_doubling": 3.5,
-        "total_car_increase": 0.01,
-        "retire_year": 14
+        "cav": 0.2,
+        "sti": 0.03,
+        "ev": 0.005,
+        "clean_energy": 0.03,
+        "efficiency_doubling": 3.8,
+        "total_car_increase": 0.002,
+        "retire_year": 12
     }
 }

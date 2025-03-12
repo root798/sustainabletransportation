@@ -1,19 +1,130 @@
 // Global variables
 let charts = {};
 let currentScaleType = 'linear';
-let originalChartData = {};
+let originalChartData = null;
 let simulatedChartData = null;
 let currentState = '';
 let currentParameters = {};
 const MAX_STATES = 3;
+let simulationResults = {};  // Store simulation results by simulation ID
+let latestSimulationByState = {};  // Track the latest simulation ID for each state
+
+// Function to show status message
+function showStatusMessage(message, type = 'info') {
+    // Create or get status container
+    let statusContainer = document.getElementById('status-message');
+    if (!statusContainer) {
+        statusContainer = document.createElement('div');
+        statusContainer.id = 'status-message';
+        statusContainer.className = 'alert alert-dismissible fade show mt-2';
+        statusContainer.style.display = 'none';
+        
+        // Add close button
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.className = 'btn-close';
+        closeButton.setAttribute('data-bs-dismiss', 'alert');
+        closeButton.setAttribute('aria-label', 'Close');
+        statusContainer.appendChild(closeButton);
+        
+        // Insert after the charts container
+        const chartsContainer = document.getElementById('charts-container');
+        chartsContainer.parentNode.insertBefore(statusContainer, chartsContainer.nextSibling);
+    }
+
+    // Update message and type
+    statusContainer.className = `alert alert-${type} alert-dismissible fade show mt-2`;
+    statusContainer.innerHTML = message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    statusContainer.style.display = 'block';
+
+    // Auto-hide after 5 seconds for success messages
+    if (type === 'success') {
+        setTimeout(() => {
+            statusContainer.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// Function to clean up all simulations on page load
+function cleanupAllSimulations() {
+    // Get all states
+    const states = Array.from(document.querySelectorAll('.state-checkbox')).map(cb => cb.value);
+
+    // Clean up simulations for each state
+    states.forEach(state => {
+        fetch(window.location.origin + '/cleanup_simulation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                state: state
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.latest_simulation_id) {
+                // If there's a latest simulation, track it
+                latestSimulationByState[state] = data.latest_simulation_id;
+                console.log(`Latest simulation for ${state}: ${data.latest_simulation_id}`);
+            }
+        })
+        .catch(error => {
+            console.warn(`Error cleaning up simulations for ${state}:`, error);
+        });
+    });
+}
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
+    // Clean up simulations on page load
+    cleanupAllSimulations();
+
     // Set up visualization form submission
     const visualizationForm = document.getElementById('visualization-form');
     visualizationForm.addEventListener('submit', function(e) {
         e.preventDefault();
         updateChart();
+    });
+
+    // Set up toggle buttons for collapsible sections
+    const toggleButtons = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            if (icon) {
+                if (icon.classList.contains('bi-chevron-up')) {
+                    icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
+                } else {
+                    icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                }
+            }
+        });
+    });
+
+    // Initialize Bootstrap tabs
+    const variableTabs = document.querySelectorAll('#variableTabs .nav-link');
+    variableTabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Remove active class from all tabs
+            variableTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+
+            // Hide all tab panes
+            const tabPanes = document.querySelectorAll('#variableTabsContent .tab-pane');
+            tabPanes.forEach(pane => {
+                pane.classList.remove('show', 'active');
+            });
+
+            // Show the target tab pane
+            const targetId = this.getAttribute('data-bs-target');
+            const targetPane = document.querySelector(targetId);
+            if (targetPane) {
+                targetPane.classList.add('show', 'active');
+            }
+        });
     });
 
     // Set up scale type buttons
@@ -179,9 +290,8 @@ function resetParameters() {
     const paramStateSelect = document.getElementById('parameter-state-select');
     const paramState = paramStateSelect ? paramStateSelect.value : currentState;
 
-    // Show loading indicator
-    const simulationStatus = document.getElementById('simulation-status');
-    simulationStatus.innerHTML = '<p class="text-info">Resetting parameters to default values...</p>';
+    // Show loading message
+    showStatusMessage('Resetting parameters to default values...', 'info');
 
     // Fetch default parameters from server
     fetch(window.location.origin + '/reset_parameters', {
@@ -205,14 +315,12 @@ function resetParameters() {
         updateParameterForm(data);
         currentParameters = data;
 
-        // Update status
-        simulationStatus.innerHTML =
-            `<p class="text-success">Parameters for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} have been reset to default values.</p>`;
+        // Show success message
+        showStatusMessage(`Parameters for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} have been reset to default values.`, 'success');
     })
     .catch(error => {
         console.error('Error resetting parameters:', error);
-        simulationStatus.innerHTML =
-            `<p class="text-danger">Error resetting parameters: ${error.message}</p>`;
+        showStatusMessage(`Error resetting parameters: ${error.message}`, 'danger');
     });
 }
 
@@ -222,39 +330,12 @@ function updateChart() {
     const stateCheckboxes = document.querySelectorAll('.state-checkbox:checked');
     const selectedStates = Array.from(stateCheckboxes).map(cb => cb.value);
 
-    // Enforce maximum of 3 states
-    if (selectedStates.length > MAX_STATES) {
-        document.getElementById('state-selection-warning').textContent =
-            `Maximum ${MAX_STATES} states can be selected. Please deselect some states.`;
-        return;
-    } else {
-        document.getElementById('state-selection-warning').textContent = '';
-    }
-
-    // If no states selected, show message
-    if (selectedStates.length === 0) {
-        document.getElementById('charts-container').innerHTML =
-            '<div class="col-md-12 text-center py-5 text-muted"><p>Please select at least one state to display data.</p></div>';
-        return;
-    }
-
-    // Set current state for parameter tweaking (use the first selected state)
-    currentState = selectedStates[0];
-
     // Get all checked variables
-    const checkboxes = document.querySelectorAll('.variable-checkbox:checked');
-    const selectedColumns = Array.from(checkboxes).map(cb => cb.value);
-
-    // If no variables selected, show message
-    if (selectedColumns.length === 0) {
-        document.getElementById('charts-container').innerHTML =
-            '<div class="col-md-12 text-center py-5 text-muted"><p>Please select at least one variable to display.</p></div>';
-        return;
-    }
+    const variableCheckboxes = document.querySelectorAll('.variable-checkbox:checked');
+    const selectedColumns = Array.from(variableCheckboxes).map(cb => cb.value);
 
     // Show loading message
-    document.getElementById('charts-container').innerHTML =
-        '<div class="col-md-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading data...</p></div>';
+    showStatusMessage('Loading data...', 'info');
 
     // Fetch data from server
     fetch(window.location.origin + '/data', {
@@ -270,63 +351,59 @@ function updateChart() {
     .then(response => response.json())
     .then(data => {
         originalChartData = data;
-        renderCharts(data, selectedStates);
-
-        // Reset simulation status
-        document.getElementById('simulation-status').innerHTML =
-            '<p class="text-muted">Run a simulation with modified parameters to see results.</p>';
-        simulatedChartData = null;
+        
+        // Prepare display data with any active simulations
+        const displayData = { ...data };
+        
+        // Add any active simulation results for selected states
+        for (const simId in simulationResults) {
+            const sim = simulationResults[simId];
+            if (selectedStates.includes(sim.state)) {
+                displayData[sim.state] = {
+                    labels: data[sim.state].labels,
+                    datasets: [
+                        ...data[sim.state].datasets,
+                        ...sim.chart_data.datasets
+                    ]
+                };
+            }
+        }
+        
+        renderCharts(displayData, selectedStates);
+        showStatusMessage('Charts updated successfully.', 'success');
     })
     .catch(error => {
         console.error('Error fetching data:', error);
+        showStatusMessage(`Error loading data: ${error.message || 'Unknown error'}`, 'danger');
         document.getElementById('charts-container').innerHTML =
             `<div class="col-md-12 text-center py-5 text-danger"><p>Error loading data: ${error.message || 'Unknown error'}</p></div>`;
     });
 }
 
-// Function to run a simulation with modified parameters
+// Function to run simulation
 function runSimulation() {
-    // Show loading message
-    document.getElementById('simulation-status').innerHTML =
-        '<p class="text-primary">Running simulation... This may take a moment.</p>';
-
-    // Get all checked variables
-    const checkboxes = document.querySelectorAll('.variable-checkbox:checked');
-    const selectedColumns = Array.from(checkboxes).map(cb => cb.value);
-
-    // If no variables selected, show message
-    if (selectedColumns.length === 0) {
-        document.getElementById('simulation-status').innerHTML =
-            '<p class="text-danger">Please select at least one variable to display in the chart.</p>';
-        return;
-    }
+    // Get the state selected for parameter modification
+    const paramStateSelect = document.getElementById('parameter-state-select');
+    const paramState = paramStateSelect ? paramStateSelect.value : currentState;
 
     // Get all checked states
     const stateCheckboxes = document.querySelectorAll('.state-checkbox:checked');
     const selectedStates = Array.from(stateCheckboxes).map(cb => cb.value);
 
-    // If no states selected, show message
-    if (selectedStates.length === 0) {
-        document.getElementById('simulation-status').innerHTML =
-            '<p class="text-danger">Please select at least one state to display data.</p>';
-        return;
-    }
-
-    // Get the state selected for parameter modification
-    const paramStateSelect = document.getElementById('parameter-state-select');
-    const paramState = paramStateSelect ? paramStateSelect.value : currentState;
-
     // Check if the parameter state is among the selected states for display
     if (!selectedStates.includes(paramState)) {
-        document.getElementById('simulation-status').innerHTML =
-            `<p class="text-warning">The state selected for parameter modification (${paramState.charAt(0).toUpperCase() + paramState.slice(1)}) is not selected for display. Please select it in the chart settings.</p>`;
+        showStatusMessage(`Please select ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} in the chart settings to view simulation results.`, 'warning');
         return;
     }
 
-    // Collect parameters from form
+    // Collect current parameters
     const parameters = collectParameters();
+    const selectedColumns = getSelectedVariables();
 
-    // Run simulation for the selected parameter state
+    // Show loading message
+    showStatusMessage('Running simulation...', 'info');
+
+    // Send simulation request
     fetch(window.location.origin + '/simulate', {
         method: 'POST',
         headers: {
@@ -334,89 +411,65 @@ function runSimulation() {
         },
         body: JSON.stringify({
             state: paramState,
-            columns: selectedColumns,
             parameters: parameters,
-            years: 76 // Simulation from 2024 to 2100
+            columns: selectedColumns,
+            years: 76  // Simulation period (2024 to 2100)
         }),
     })
     .then(response => {
         if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.error || 'Error running simulation');
-            });
+            console.error('Server response not OK:', response.status, response.statusText);
+            throw new Error(`Failed to run simulation: ${response.status} ${response.statusText}`);
         }
         return response.json();
     })
     .then(data => {
-        // Check if there's an error message in the response
-        if (data.error) {
-            throw new Error(data.error);
+        const { simulation_id, chart_data } = data;
+
+        // Clean up previous simulation for this state
+        cleanupPreviousSimulation(paramState);
+
+        // Store simulation results
+        simulationResults[simulation_id] = {
+            state: paramState,
+            chart_data: chart_data,
+            timestamp: Date.now()
+        };
+
+        // Track this as the latest simulation for this state
+        latestSimulationByState[paramState] = simulation_id;
+
+        // Log the simulation tracking
+        console.log(`New simulation for ${paramState}: ${simulation_id}`);
+        console.log('Latest simulations by state:', latestSimulationByState);
+        
+        // Prepare data for rendering
+        const displayData = {};
+        for (const state in originalChartData) {
+            if (state === paramState) {
+                // For the simulated state, show both original and simulated data
+                displayData[state] = {
+                    labels: originalChartData[state].labels,
+                    datasets: [
+                        ...originalChartData[state].datasets,
+                        ...chart_data.datasets
+                    ]
+                };
+            } else {
+                // For other states, show only original data
+                displayData[state] = originalChartData[state];
+            }
         }
-
-        simulatedChartData = data;
-
-        // Get the state selected for parameter modification
-        const paramStateSelect = document.getElementById('parameter-state-select');
-        const paramState = paramStateSelect ? paramStateSelect.value : currentState;
-
-        // Group simulated datasets by unit type
-        const simulatedDatasetGroups = groupDatasetsByUnit(simulatedChartData.datasets);
-
-        // Update the energy & emissions chart
-        const energyEmissionsChartId = `chart-${paramState}-energy_emissions`;
-        if (charts[energyEmissionsChartId]) {
-            // Get power and emissions datasets from simulated data
-            const powerDatasets = simulatedDatasetGroups['power']?.datasets || [];
-            const emissionsDatasets = simulatedDatasetGroups['emissions']?.datasets || [];
-
-            // Assign each dataset to its appropriate y-axis
-            powerDatasets.forEach(dataset => {
-                dataset.yAxisID = 'y';
-            });
-
-            emissionsDatasets.forEach(dataset => {
-                dataset.yAxisID = 'y1';
-            });
-
-            // Get only the original datasets (not previous simulations)
-            // Filter out any datasets that have "Simulated" in their label
-            const originalDatasets = charts[energyEmissionsChartId].data.datasets.filter(
-                dataset => !dataset.label.includes('Simulated')
-            );
-
-            // Merge with simulated datasets
-            const mergedDatasets = [...originalDatasets, ...powerDatasets, ...emissionsDatasets];
-
-            // Update the chart
-            charts[energyEmissionsChartId].data.datasets = mergedDatasets;
-            charts[energyEmissionsChartId].update();
-        }
-
-        // Update the quantities chart
-        const quantitiesChartId = `chart-${paramState}-quantities`;
-        if (charts[quantitiesChartId] && simulatedDatasetGroups['vehicles'] && simulatedDatasetGroups['vehicles'].datasets.length > 0) {
-            // Get only the original datasets (not previous simulations)
-            // Filter out any datasets that have "Simulated" in their label
-            const originalDatasets = charts[quantitiesChartId].data.datasets.filter(
-                dataset => !dataset.label.includes('Simulated')
-            );
-
-            // Merge with simulated datasets
-            const mergedDatasets = [...originalDatasets, ...simulatedDatasetGroups['vehicles'].datasets];
-
-            // Update the chart
-            charts[quantitiesChartId].data.datasets = mergedDatasets;
-            charts[quantitiesChartId].update();
-        }
-
-        // Update simulation status
-        document.getElementById('simulation-status').innerHTML =
-            `<p class="text-success">Simulation complete for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} (2024-2100)! Dashed lines show simulated data with modified parameters.</p>`;
+        
+        // Render charts
+        renderCharts(displayData, selectedStates);
+        
+        // Show success message
+        showStatusMessage(`Simulation completed successfully for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)}. Dashed lines show simulated results.`, 'success');
     })
     .catch(error => {
         console.error('Error running simulation:', error);
-        document.getElementById('simulation-status').innerHTML =
-            `<p class="text-danger">Error running simulation: ${error.message || 'Please try again with different parameters.'}</p>`;
+        showStatusMessage(`Error running simulation: ${error.message}`, 'danger');
     });
 }
 
@@ -497,7 +550,19 @@ function renderCharts(data, states) {
 
         // Group datasets by unit type
         const datasets = data[state].datasets;
+
+        // Debug: Log the datasets before grouping
+        console.log(`Datasets for ${state} before grouping:`, datasets.map(d => d.label));
+
         const datasetGroups = groupDatasetsByUnit(datasets);
+
+        // Debug: Log the grouped datasets
+        console.log(`Dataset groups for ${state}:`, {
+            power: datasetGroups['power']?.datasets?.map(d => d.label) || [],
+            emissions: datasetGroups['emissions']?.datasets?.map(d => d.label) || [],
+            vehicles: datasetGroups['vehicles']?.datasets?.map(d => d.label) || [],
+            other: datasetGroups['other']?.datasets?.map(d => d.label) || []
+        });
 
         // Create two charts for each state: one for energy/emissions, one for quantities
         chartTypes.forEach(chartType => {
@@ -639,7 +704,7 @@ function renderCharts(data, states) {
                 return;
             }
 
-            // Create chart
+            // Create chart with updated options
             const ctx = canvas.getContext('2d');
             charts[chartId] = new Chart(ctx, {
                 type: 'line',
@@ -719,7 +784,20 @@ function groupDatasetsByUnit(datasets) {
         } else if (label.includes('emission') || label.includes('co2')) {
             group = 'emissions';
         } else if (label.includes('vehicle') || label.includes('car') || label.includes('cav') || label.includes('ecav') ||
-                  label.includes('icecav') || label.includes('sti') || label.includes('infra')) {
+                  label.includes('icecav') || label.includes('sti') || label.includes('infra') ||
+                  label.includes(' ev') || label.includes('total ev') || label.includes('icev') ||
+                  label.includes('fraction') || label.includes('cumulative')) {
+            group = 'vehicles';
+        }
+
+        // Special case handling for specific variables
+        if (label === 'total ev' || label === 'total icev' || label.includes('incremented car')) {
+            group = 'vehicles';
+        }
+
+        // Fallback: If it contains "Total" and isn't already categorized as power or emissions,
+        // it's likely a count/quantity
+        if (label.includes('total') && group !== 'power' && group !== 'emissions') {
             group = 'vehicles';
         }
 
@@ -1076,4 +1154,44 @@ function setScaleType(type) {
             charts[chartId].update();
         }
     }
+}
+
+// Function to get selected variables
+function getSelectedVariables() {
+    const checkboxes = document.querySelectorAll('.variable-checkbox:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// Function to clean up previous simulation for a state
+function cleanupPreviousSimulation(state) {
+    // If there's a previous simulation for this state
+    if (latestSimulationByState[state]) {
+        const previousSimId = latestSimulationByState[state];
+
+        // Remove it from the client-side simulation results
+        delete simulationResults[previousSimId];
+    }
+
+    // Send a request to the server to clean up all old simulations for this state
+    // The server will keep only the latest simulation
+    fetch(window.location.origin + '/cleanup_simulation', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            state: state
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(`Cleaned up old simulations for ${state}: ${data.message}`);
+        } else {
+            console.warn(`Failed to clean up simulations: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.warn('Error cleaning up simulations on server:', error);
+    });
 }

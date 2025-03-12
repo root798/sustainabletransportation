@@ -6,19 +6,19 @@
     <title>CLEAR-ATS Visualization</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container-fluid">
-        <header class="my-4">
-            <h1 class="text-center">CLEAR-ATS Model Visualization</h1>
-            <p class="text-center lead">Automated Transport System (ATS) Simulation from 2024 to 2100</p>
+        <header class="my-2">
+            <h3 class="text-center">CLEAR-ATS Model Visualization</h33>
         </header>
 
         <!-- Charts Section -->
-        <div class="row mb-4">
+        <div class="row mb-2">
             <div class="col-12">
-                <div class="d-flex justify-content-end mb-2">
+                <div class="d-flex justify-content-end mb-1">
                     <div class="btn-group">
                         <button class="btn btn-sm btn-outline-secondary" id="btn-linear">Linear</button>
                         <button class="btn btn-sm btn-outline-secondary" id="btn-logarithmic">Logarithmic</button>
@@ -27,7 +27,7 @@
 
                 <div class="row charts-row" id="charts-container">
                     <!-- Charts will be dynamically inserted here -->
-                    <div class="col-md-12 text-center py-5 text-muted">
+                    <div class="col-md-12 text-center py-3 text-muted">
                         <p>Select states and variables, then click "Update Charts" to view data.</p>
                     </div>
                 </div>
@@ -36,72 +36,11 @@
 
         <!-- Controls Section -->
         <div class="row">
-            <!-- Chart Settings -->
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5>Chart Settings</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="visualization-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Select States/Regions (up to 3):</label>
-                                    <div class="states-container">
-                                        {% for state in states %}
-                                        <div class="form-check">
-                                            <input class="form-check-input state-checkbox" type="checkbox" value="{{ state }}" id="state-{{ loop.index }}" {% if loop.index == 1 %}checked{% endif %}>
-                                            <label class="form-check-label" for="state-{{ loop.index }}">
-                                                {{ state|capitalize }}
-                                            </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                    <div class="mt-2 text-muted small" id="state-selection-warning"></div>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Select Variables to Display:</label>
-                                    <div class="variables-container">
-                                        {% for column in columns %}
-                                        <div class="form-check">
-                                            <input class="form-check-input variable-checkbox" type="checkbox" value="{{ column }}" id="check-{{ loop.index }}" {% if column == 'ATS Total Power (kWh)' %}checked{% endif %}>
-                                            <label class="form-check-label" for="check-{{ loop.index }}">
-                                                {{ column }}
-                                            </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Update Charts</button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5>About</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>The CLEAR-ATS model simulates an Automated Transport System from 2024 to 2080, tracking:</p>
-                        <ul>
-                            <li>Vehicle populations</li>
-                            <li>Infrastructure upgrades</li>
-                            <li>Power consumption</li>
-                            <li>CO₂ emissions</li>
-                        </ul>
-                        <p>All power values are in kWh and emissions in kg CO₂.</p>
-                    </div>
-                </div>
-            </div>
-
             <!-- Model Parameters -->
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>Model Parameters</h5>
+            <div class="col-12 mb-2">
+                <div class="card">
+                    <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Model Parameters</h6>
                         <div class="d-flex align-items-center">
                             <div class="me-2">
                                 <select id="parameter-state-select" class="form-select form-select-sm">
@@ -111,12 +50,12 @@
                                 </select>
                             </div>
                             <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#parametersCollapse" aria-expanded="false" aria-controls="parametersCollapse">
-                                Toggle
+                                <i class="bi bi-chevron-up"></i>
                             </button>
                         </div>
                     </div>
                     <div class="collapse show" id="parametersCollapse">
-                        <div class="card-body">
+                        <div class="card-body py-2">
                             <form id="parameters-form">
                                 <div class="accordion" id="parametersAccordion">
                                     <!-- Growth Rates Section -->
@@ -210,53 +149,158 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Emission Factors Section -->
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#emissionFactorsCollapse" aria-expanded="false" aria-controls="emissionFactorsCollapse">
-                                                Emission Factors
-                                            </button>
-                                        </h2>
-                                        <div id="emissionFactorsCollapse" class="accordion-collapse collapse" data-bs-parent="#parametersAccordion">
-                                            <div class="accordion-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="e-clean" class="form-label">Clean Energy Emission (kg CO₂/kWh)</label>
-                                                        <input type="number" class="form-control param-input" id="e-clean" name="emission_factors.e_clean" step="0.01" min="0" value="{{ parameters.emission_factors.e_clean }}">
-                                                    </div>
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="e-fossil" class="form-label">Fossil Energy Emission (kg CO₂/kWh)</label>
-                                                        <input type="number" class="form-control param-input" id="e-fossil" name="emission_factors.e_fossil" step="0.01" min="0" value="{{ parameters.emission_factors.e_fossil }}">
-                                                    </div>
+                                <div class="mt-2 d-flex justify-content-between">
+                                    <button type="button" id="reset-params-btn" class="btn btn-sm btn-outline-secondary">Reset to Default</button>
+                                    <button type="button" id="simulate-btn" class="btn btn-sm btn-success">Simulate with New Parameters</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Settings -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Chart Settings</h6>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#chartSettingsCollapse" aria-expanded="true">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="collapse show" id="chartSettingsCollapse">
+                        <div class="card-body py-2">
+                            <form id="visualization-form">
+                                <div class="row g-2">
+                                    <!-- States/Regions Selection -->
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold">States/Regions (max 3):</label>
+                                        <div class="states-container">
+                                            {% for state in states %}
+                                            <div class="form-check">
+                                                <input class="form-check-input state-checkbox" type="checkbox" value="{{ state }}" id="state-{{ loop.index }}" {% if loop.index == 1 %}checked{% endif %}>
+                                                <label class="form-check-label small" for="state-{{ loop.index }}">
+                                                    {{ state|capitalize }}
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="mt-1 text-muted small" id="state-selection-warning"></div>
+                                    </div>
+
+                                    <!-- Variables Selection -->
+                                    <div class="col-md-8">
+                                        <label class="form-label small fw-bold">Variables to Display:</label>
+
+                                        <!-- Variable Categories Tabs -->
+                                        <ul class="nav nav-tabs nav-tabs-sm" id="variableTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="emissions-tab" data-bs-toggle="tab" data-bs-target="#emissions-content" type="button" role="tab">
+                                                    <span class="badge bg-danger">Emissions</span>
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="consumption-tab" data-bs-toggle="tab" data-bs-target="#consumption-content" type="button" role="tab">
+                                                    <span class="badge bg-primary">Consumption</span>
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="quantities-tab" data-bs-toggle="tab" data-bs-target="#quantities-content" type="button" role="tab">
+                                                    <span class="badge bg-success">Quantities</span>
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="other-tab" data-bs-toggle="tab" data-bs-target="#other-content" type="button" role="tab">
+                                                    <span class="badge bg-secondary">Other</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+
+                                        <!-- Tab Content -->
+                                        <div class="tab-content variables-container" id="variableTabsContent">
+                                            <!-- Emissions Tab -->
+                                            <div class="tab-pane fade show active" id="emissions-content" role="tabpanel">
+                                                <div class="row g-1 py-2">
+                                                    {% for column in columns %}
+                                                        {% if 'Emission' in column or 'CO2' in column %}
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input variable-checkbox" type="checkbox" value="{{ column }}" id="check-{{ loop.index }}" {% if column == 'ATS Emissions (kg CO2)' %}checked{% endif %}>
+                                                                <label class="form-check-label small" for="check-{{ loop.index }}">
+                                                                    {{ column }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="e-gasoline" class="form-label">Gasoline Emission (kg CO₂/kWh)</label>
-                                                        <input type="number" class="form-control param-input" id="e-gasoline" name="emission_factors.e_gasoline" step="0.01" min="0" value="{{ parameters.emission_factors.e_gasoline }}">
-                                                    </div>
+                                            </div>
+
+                                            <!-- Consumption Tab -->
+                                            <div class="tab-pane fade" id="consumption-content" role="tabpanel">
+                                                <div class="row g-1 py-2">
+                                                    {% for column in columns %}
+                                                        {% if 'Power' in column or 'kWh' in column or 'Electricity' in column or 'Consumption' in column or 'Gasoline' in column %}
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input variable-checkbox" type="checkbox" value="{{ column }}" id="check-{{ loop.index }}" {% if column == 'ATS Total Power (kWh)' %}checked{% endif %}>
+                                                                <label class="form-check-label small" for="check-{{ loop.index }}">
+                                                                    {{ column }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <!-- Quantities Tab -->
+                                            <div class="tab-pane fade" id="quantities-content" role="tabpanel">
+                                                <div class="row g-1 py-2">
+                                                    {% for column in columns %}
+                                                        {% if ('Total' in column or 'Vehicle' in column or 'Car' in column or 'CAV' in column or 'ECAV' in column or 'ICECAV' in column or 'STI' in column or 'Infra' in column or 'EV' in column or 'ICEV' in column or 'Count' in column or 'Fraction' in column) and not ('Power' in column or 'kWh' in column or 'Electricity' in column or 'Consumption' in column or 'Emission' in column or 'CO2' in column) %}
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input variable-checkbox" type="checkbox" value="{{ column }}" id="check-{{ loop.index }}" {% if column == 'Total CAV' or column == 'Total STI' %}checked{% endif %}>
+                                                                <label class="form-check-label small" for="check-{{ loop.index }}">
+                                                                    {{ column }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <!-- Other Tab -->
+                                            <div class="tab-pane fade" id="other-content" role="tabpanel">
+                                                <div class="row g-1 py-2">
+                                                    {% for column in columns %}
+                                                        {% if not (('Emission' in column or 'CO2' in column) or ('Power' in column or 'kWh' in column or 'Electricity' in column or 'Consumption' in column or 'Gasoline' in column) or (('Total' in column or 'Vehicle' in column or 'Car' in column or 'CAV' in column or 'ECAV' in column or 'ICECAV' in column or 'STI' in column or 'Infra' in column or 'EV' in column or 'ICEV' in column or 'Count' in column or 'Fraction' in column) and not ('Power' in column or 'kWh' in column or 'Electricity' in column or 'Consumption' in column or 'Emission' in column or 'CO2' in column))) %}
+                                                        <div class="col-md-6">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input variable-checkbox" type="checkbox" value="{{ column }}" id="check-{{ loop.index }}">
+                                                                <label class="form-check-label small" for="check-{{ loop.index }}">
+                                                                    {{ column }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="mt-3 d-flex justify-content-between">
-                                    <button type="button" id="reset-params-btn" class="btn btn-outline-secondary">Reset to Default</button>
-                                    <button type="button" id="simulate-btn" class="btn btn-success">Simulate with New Parameters</button>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button type="submit" class="btn btn-sm btn-primary">Update Charts</button>
                                 </div>
                             </form>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Simulation Results</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="simulation-status">
-                            <p class="text-muted">Run a simulation with modified parameters to see results.</p>
                         </div>
                     </div>
                 </div>

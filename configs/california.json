@@ -8,12 +8,12 @@
         "f_clean": 0.63
     },
     "growth_rates": {
-        "cav": 0.1,
-        "sti": 0.01,
-        "ev": 0.12,
-        "clean_energy": 0.12,
+        "cav": 0.2,
+        "sti": 0.03,
+        "ev": 0.07,
+        "clean_energy": 0.1,
         "efficiency_doubling": 3.8,
-        "total_car_increase": 0.02,
+        "total_car_increase": 0.005,
         "retire_year": 12
     }
 }
