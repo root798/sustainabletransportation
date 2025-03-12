@@ -85,6 +85,17 @@ header.my-2 {
     margin-top: 0.2rem;
 }
 
+/* Compact form switch */
+.form-switch .form-check-input {
+    width: 2em;
+    margin-left: -2.5em;
+    height: 1em;
+}
+
+.form-switch .form-check-label {
+    padding-left: 0.5em;
+}
+
 /* Tab content padding */
 .tab-pane {
     padding: 0 8px;
@@ -139,18 +150,88 @@ header.my-2 {
 
 /* Parameter Form Styles */
 .param-input {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    width: 50px !important;
+    flex: none;
+    text-align: center;
+    padding: 0.15rem 0.25rem;
+    height: auto;
+    /* Remove increment/decrement arrows */
+    -moz-appearance: textfield; /* Firefox */
+}
+
+/* Remove increment/decrement arrows in other browsers */
+.param-input::-webkit-outer-spin-button,
+.param-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.param-control-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 0;
+}
+
+.slider-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 4px;
+}
+
+.param-slider {
+    flex: 1;
+    height: 3px;
+    cursor: pointer;
+    max-width: 80px;
+}
+
+.slider-value {
+    font-size: 0.75rem;
+    min-width: 30px;
+    text-align: right;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Make parameter rows more compact */
+.accordion-body {
+    padding: 0.5rem;
+}
+
+.form-label {
+    margin-bottom: 0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mb-2 {
+    margin-bottom: 0.25rem !important;
+}
+
+/* Compact growth rates section */
+#growthRatesCollapse .row {
+    margin-bottom: 0;
+}
+
+#growthRatesCollapse .col-md-3 {
+    padding-left: 3px;
+    padding-right: 3px;
 }
 
 .accordion-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
     font-weight: 500;
 }
 
 .accordion-body {
-    padding: 1rem;
-    font-size: 0.9rem;
+    padding: 0.5rem;
+    font-size: 0.85rem;
 }
 
 .form-label {

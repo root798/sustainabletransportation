@@ -5,9 +5,12 @@ let originalChartData = null;
 let simulatedChartData = null;
 let currentState = '';
 let currentParameters = {};
+let originalParameters = {};  // Store original parameters for each state
 const MAX_STATES = 3;
 let simulationResults = {};  // Store simulation results by simulation ID
 let latestSimulationByState = {};  // Track the latest simulation ID for each state
+let isRealtimeEnabled = false;  // Flag for real-time simulation mode
+let realtimeSimulationTimeout = null;  // Timeout for debouncing real-time simulations
 
 // Function to show status message
 function showStatusMessage(message, type = 'info') {
@@ -176,6 +179,24 @@ document.addEventListener('DOMContentLoaded', function() {
         resetParameters();
     });
 
+    // Set up real-time toggle
+    const realtimeToggle = document.getElementById('realtime-toggle');
+    realtimeToggle.addEventListener('change', function() {
+        isRealtimeEnabled = this.checked;
+
+        // Show/hide simulate button based on real-time mode
+        document.getElementById('simulate-btn').style.display = isRealtimeEnabled ? 'none' : 'block';
+
+        if (isRealtimeEnabled) {
+            showStatusMessage('Real-time simulation mode enabled. Adjust sliders to see immediate results.', 'info');
+        } else {
+            showStatusMessage('Real-time simulation mode disabled. Use "Simulate with New Parameters" button to run simulations.', 'info');
+        }
+    });
+
+    // Set up parameter sliders
+    setupParameterSliders();
+
     // Initial chart load - use the first state as default
     const firstStateCheckbox = document.querySelector('.state-checkbox');
     if (firstStateCheckbox) {
@@ -202,6 +223,113 @@ document.addEventListener('DOMContentLoaded', function() {
     updateChart();
 });
 
+// Function to set up parameter sliders
+function setupParameterSliders() {
+    // Get all sliders
+    const sliders = document.querySelectorAll('.param-slider');
+
+    // For each slider, set up event listeners
+    sliders.forEach(slider => {
+        const inputId = slider.id.replace('-slider', '');
+        const input = document.getElementById(inputId);
+        const valueDisplay = document.getElementById(`${inputId}-value`);
+
+        if (input) {
+            // Update input and value display when slider changes
+            slider.addEventListener('input', function() {
+                const value = this.value;
+                input.value = value;
+
+                // Update value display
+                if (valueDisplay) {
+                    // Format the value for display (show fewer decimal places for small numbers)
+                    valueDisplay.textContent = formatParameterValue(value);
+                }
+
+                // If real-time mode is enabled, run simulation after a short delay
+                if (isRealtimeEnabled) {
+                    // Clear any existing timeout
+                    if (realtimeSimulationTimeout) {
+                        clearTimeout(realtimeSimulationTimeout);
+                    }
+
+                    // Set a new timeout to run simulation after 300ms of no slider movement
+                    realtimeSimulationTimeout = setTimeout(() => {
+                        runRealtimeSimulation();
+                    }, 300);
+                }
+            });
+
+            // Update slider and value display when input changes
+            input.addEventListener('input', function() {
+                const value = this.value;
+                slider.value = value;
+
+                // Update value display
+                if (valueDisplay) {
+                    // Format the value for display
+                    valueDisplay.textContent = formatParameterValue(value);
+                }
+
+                // If real-time mode is enabled, run simulation after a short delay
+                if (isRealtimeEnabled) {
+                    // Clear any existing timeout
+                    if (realtimeSimulationTimeout) {
+                        clearTimeout(realtimeSimulationTimeout);
+                    }
+
+                    // Set a new timeout to run simulation after 300ms of no input changes
+                    realtimeSimulationTimeout = setTimeout(() => {
+                        runRealtimeSimulation();
+                    }, 300);
+                }
+            });
+        }
+    });
+}
+
+// Helper function to format parameter values for display
+function formatParameterValue(value) {
+    // Convert to number to ensure proper formatting
+    const numValue = parseFloat(value);
+
+    // Format based on the value's magnitude
+    if (numValue >= 1) {
+        // For values >= 1, show up to 1 decimal place
+        return numValue.toFixed(1).replace(/\.0$/, '');
+    } else if (numValue >= 0.1) {
+        // For values between 0.1 and 1, show up to 2 decimal places
+        return numValue.toFixed(2);
+    } else {
+        // For very small values, show up to 3 decimal places
+        return numValue.toFixed(3);
+    }
+}
+
+// Function to run real-time simulation
+function runRealtimeSimulation() {
+    // Get the state selected for parameter modification
+    const paramStateSelect = document.getElementById('parameter-state-select');
+    const paramState = paramStateSelect ? paramStateSelect.value : currentState;
+
+    // Get all checked states
+    const stateCheckboxes = document.querySelectorAll('.state-checkbox:checked');
+    const selectedStates = Array.from(stateCheckboxes).map(cb => cb.value);
+
+    // Check if the parameter state is among the selected states for display
+    if (!selectedStates.includes(paramState)) {
+        showStatusMessage(`Please select ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} in the chart settings to view simulation results.`, 'warning');
+        return;
+    }
+
+    // Collect current parameters
+    const parameters = collectParameters();
+    const selectedColumns = getSelectedVariables();
+
+    // Run simulation without showing loading message
+    runSimulation(true);
+}
+
 // Function to load parameters for a selected state
 function loadStateParameters(state) {
     fetch(window.location.origin + '/parameters', {
@@ -216,6 +344,7 @@ function loadStateParameters(state) {
     .then(response => response.json())
     .then(data => {
         currentParameters = data;
+        originalParameters[state] = JSON.parse(JSON.stringify(data)); // Deep copy for reference
         updateParameterForm(data);
 
         // Update the parameter state select dropdown
@@ -233,9 +362,22 @@ function loadStateParameters(state) {
 function updateParameterForm(parameters) {
     // Update growth rates
     for (const [key, value] of Object.entries(parameters.growth_rates)) {
+        // Update input field
         const input = document.querySelector(`[name="growth_rates.${key}"]`);
         if (input) {
             input.value = value;
+        }
+
+        // Update slider
+        const slider = document.getElementById(`${input?.id}-slider`);
+        if (slider) {
+            slider.value = value;
+        }
+
+        // Update value display
+        const valueDisplay = document.getElementById(`${input?.id}-value`);
+        if (valueDisplay) {
+            valueDisplay.textContent = formatParameterValue(value);
         }
     }
 
@@ -314,6 +456,12 @@ function resetParameters() {
         // Update form with default values
         updateParameterForm(data);
         currentParameters = data;
+        originalParameters[paramState] = JSON.parse(JSON.stringify(data)); // Update original parameters
+
+        // If in real-time mode, run a simulation with the reset parameters
+        if (isRealtimeEnabled) {
+            runRealtimeSimulation();
+        }
 
         // Show success message
         showStatusMessage(`Parameters for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)} have been reset to default values.`, 'success');
@@ -381,7 +529,7 @@ function updateChart() {
 }
 
 // Function to run simulation
-function runSimulation() {
+function runSimulation(isRealtime = false) {
     // Get the state selected for parameter modification
     const paramStateSelect = document.getElementById('parameter-state-select');
     const paramState = paramStateSelect ? paramStateSelect.value : currentState;
@@ -400,8 +548,10 @@ function runSimulation() {
     const parameters = collectParameters();
     const selectedColumns = getSelectedVariables();
 
-    // Show loading message
-    showStatusMessage('Running simulation...', 'info');
+    // Show loading message if not in real-time mode
+    if (!isRealtime) {
+        showStatusMessage('Running simulation...', 'info');
+    }
 
     // Send simulation request
     fetch(window.location.origin + '/simulate', {
@@ -442,7 +592,7 @@ function runSimulation() {
         // Log the simulation tracking
         console.log(`New simulation for ${paramState}: ${simulation_id}`);
         console.log('Latest simulations by state:', latestSimulationByState);
-        
+
         // Prepare data for rendering
         const displayData = {};
         for (const state in originalChartData) {
@@ -460,16 +610,20 @@ function runSimulation() {
                 displayData[state] = originalChartData[state];
             }
         }
-        
+
         // Render charts
         renderCharts(displayData, selectedStates);
-        
-        // Show success message
-        showStatusMessage(`Simulation completed successfully for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)}. Dashed lines show simulated results.`, 'success');
+
+        // Show success message if not in real-time mode
+        if (!isRealtime) {
+            showStatusMessage(`Simulation completed successfully for ${paramState.charAt(0).toUpperCase() + paramState.slice(1)}. Dashed lines show simulated results.`, 'success');
+        }
     })
     .catch(error => {
         console.error('Error running simulation:', error);
-        showStatusMessage(`Error running simulation: ${error.message}`, 'danger');
+        if (!isRealtime) {
+            showStatusMessage(`Error running simulation: ${error.message}`, 'danger');
+        }
     });
 }
 

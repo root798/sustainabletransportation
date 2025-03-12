@@ -61,46 +61,84 @@
                                     <!-- Growth Rates Section -->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#growthRatesCollapse" aria-expanded="true" aria-controls="growthRatesCollapse">
+                                            <button class="accordion-button py-2" type="button" data-bs-toggle="collapse" data-bs-target="#growthRatesCollapse" aria-expanded="true" aria-controls="growthRatesCollapse">
                                                 Growth Rates
                                             </button>
                                         </h2>
                                         <div id="growthRatesCollapse" class="accordion-collapse collapse show" data-bs-parent="#parametersAccordion">
-                                            <div class="accordion-body">
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="cav-growth" class="form-label">CAV Growth Rate</label>
-                                                        <input type="number" class="form-control param-input" id="cav-growth" name="growth_rates.cav" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.cav }}">
+                                            <div class="accordion-body p-2">
+                                                <div class="row g-0">
+                                                    <div class="col-md-3 mb-1 pe-1">
+                                                        <label for="cav-growth" class="form-label">CAV Growth</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="cav-growth" name="growth_rates.cav" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.cav }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="cav-growth-slider" min="0" max="1" step="0.01" value="{{ parameters.growth_rates.cav }}">
+                                                                <span class="slider-value" id="cav-growth-value">{{ parameters.growth_rates.cav }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="sti-growth" class="form-label">STI Growth Rate</label>
-                                                        <input type="number" class="form-control param-input" id="sti-growth" name="growth_rates.sti" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.sti }}">
+                                                    <div class="col-md-3 mb-1 px-1">
+                                                        <label for="sti-growth" class="form-label">STI Growth</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="sti-growth" name="growth_rates.sti" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.sti }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="sti-growth-slider" min="0" max="1" step="0.01" value="{{ parameters.growth_rates.sti }}">
+                                                                <span class="slider-value" id="sti-growth-value">{{ parameters.growth_rates.sti }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-1 px-1">
+                                                        <label for="ev-growth" class="form-label">EV Growth</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="ev-growth" name="growth_rates.ev" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.ev }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="ev-growth-slider" min="0" max="1" step="0.01" value="{{ parameters.growth_rates.ev }}">
+                                                                <span class="slider-value" id="ev-growth-value">{{ parameters.growth_rates.ev }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3 mb-1 ps-1">
+                                                        <label for="clean-growth" class="form-label">Clean Energy</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="clean-growth" name="growth_rates.clean_energy" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.clean_energy }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="clean-growth-slider" min="0" max="1" step="0.01" value="{{ parameters.growth_rates.clean_energy }}">
+                                                                <span class="slider-value" id="clean-growth-value">{{ parameters.growth_rates.clean_energy }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="ev-growth" class="form-label">EV Growth Rate</label>
-                                                        <input type="number" class="form-control param-input" id="ev-growth" name="growth_rates.ev" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.ev }}">
+                                                <div class="row g-0">
+                                                    <div class="col-md-3 mb-1 pe-1">
+                                                        <label for="car-increase" class="form-label">Car Increase</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="car-increase" name="growth_rates.total_car_increase" step="0.001" min="0" max="0.1" value="{{ parameters.growth_rates.total_car_increase }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="car-increase-slider" min="0" max="0.1" step="0.001" value="{{ parameters.growth_rates.total_car_increase }}">
+                                                                <span class="slider-value" id="car-increase-value">{{ parameters.growth_rates.total_car_increase }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="clean-growth" class="form-label">Clean Energy Growth Rate</label>
-                                                        <input type="number" class="form-control param-input" id="clean-growth" name="growth_rates.clean_energy" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.clean_energy }}">
+                                                    <div class="col-md-3 mb-1 px-1">
+                                                        <label for="efficiency-doubling" class="form-label">Eff. Doubling</label>
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="efficiency-doubling" name="growth_rates.efficiency_doubling" step="0.1" min="1" max="20" value="{{ parameters.growth_rates.efficiency_doubling }}">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="efficiency-doubling-slider" min="1" max="20" step="0.1" value="{{ parameters.growth_rates.efficiency_doubling }}">
+                                                                <span class="slider-value" id="efficiency-doubling-value">{{ parameters.growth_rates.efficiency_doubling }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="efficiency-doubling" class="form-label">Efficiency Doubling Years</label>
-                                                        <input type="number" class="form-control param-input" id="efficiency-doubling" name="growth_rates.efficiency_doubling" step="0.1" min="1" value="{{ parameters.growth_rates.efficiency_doubling }}">
-                                                    </div>
-                                                    <div class="col-md-6 mb-2">
-                                                        <label for="car-increase" class="form-label">Total Car Increase Rate</label>
-                                                        <input type="number" class="form-control param-input" id="car-increase" name="growth_rates.total_car_increase" step="0.01" min="0" max="1" value="{{ parameters.growth_rates.total_car_increase }}">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-2">
+                                                    <div class="col-md-3 mb-1 px-1">
                                                         <label for="retire-year" class="form-label">Retire Year</label>
-                                                        <input type="number" class="form-control param-input" id="retire-year" name="growth_rates.retire_year" step="1" min="1" value="{{ parameters.growth_rates.retire_year|int }}" onchange="this.value=Math.round(this.value)">
+                                                        <div class="param-control-group">
+                                                            <input type="number" class="form-control param-input" id="retire-year" name="growth_rates.retire_year" step="1" min="1" max="30" value="{{ parameters.growth_rates.retire_year|int }}" onchange="this.value=Math.round(this.value)">
+                                                            <div class="slider-wrapper">
+                                                                <input type="range" class="param-slider" id="retire-year-slider" min="1" max="30" step="1" value="{{ parameters.growth_rates.retire_year|int }}">
+                                                                <span class="slider-value" id="retire-year-value">{{ parameters.growth_rates.retire_year|int }}</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -151,9 +189,15 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-2 d-flex justify-content-between">
-                                    <button type="button" id="reset-params-btn" class="btn btn-sm btn-outline-secondary">Reset to Default</button>
-                                    <button type="button" id="simulate-btn" class="btn btn-sm btn-success">Simulate with New Parameters</button>
+                                <div class="mt-1 d-flex justify-content-between align-items-center">
+                                    <button type="button" id="reset-params-btn" class="btn btn-sm btn-outline-secondary py-1 px-2">Reset</button>
+                                    <div class="d-flex align-items-center">
+                                        <div class="form-check form-switch me-2">
+                                            <input class="form-check-input" type="checkbox" id="realtime-toggle">
+                                            <label class="form-check-label small" for="realtime-toggle">Real-time</label>
+                                        </div>
+                                        <button type="button" id="simulate-btn" class="btn btn-sm btn-success py-1 px-2">Simulate</button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
