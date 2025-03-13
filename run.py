@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def check_configs_exist():
     """Check if required configuration files exist in the configs directory."""
     config_dir = Path("configs")
-    required_configs = ["common.json", "california.json", "ohio.json", "us_average.json"]
+    required_configs = ["california.json", "ohio.json", "us_average.json"]
     
     if not config_dir.exists():
         logger.error(f"Config directory '{config_dir}' does not exist.")
@@ -72,7 +72,7 @@ def get_network_ip():
 
 def run_app():
     """Run the Flask web application."""
-    app_script = Path("app_updated.py")
+    app_script = Path("app.py")
 
     if not app_script.exists():
         logger.error(f"Web app script '{app_script}' not found.")
@@ -124,14 +124,20 @@ def main():
         logger.error("Aborting due to missing configuration files.")
         sys.exit(1)
 
+    # Create results directory if it doesn't exist
+    results_dir = Path("results")
+    if not results_dir.exists():
+        results_dir.mkdir(parents=True)
+
     # Run the model
     if not run_model():
         logger.error("Aborting due to model execution failure.")
         sys.exit(1)
 
-    # Verify results
+    # Verify results - this is now required
     if not check_results_exist():
-        logger.warning("Model ran but no results were generated. Proceeding anyway.")
+        logger.error("Model ran but no results were generated. Cannot proceed without results files.")
+        sys.exit(1)
 
     # Run the Flask app
     if not run_app():

@@ -86,7 +86,7 @@ These are the key output metrics computed by the model:
   STI upgrades occur on existing intersections rather than through new construction.
 
 - **Vehicle Retirement:**  
-  Vehicles retire after a fixed lifespan (e.g., 12 years). For the cold-start phase (pre-2024), the initial fleet’s age distribution is modeled with an **exponential decay** function (e.g., \( \text{age\_dist} = \text{total} \times \text{decay\_rate} \times (1 - \text{decay\_rate})^i \)), where newer vehicles are more numerous, smoothing early retirements. Post-2024, new cohorts follow standard growth dynamics without exponential interference.
+  Vehicles retire after a fixed lifespan (e.g., 12 years). For the cold-start phase (pre-2024), the initial fleet's age distribution is modeled with an **exponential decay** function (e.g., \( \text{age\_dist} = \text{total} \times \text{decay\_rate} \times (1 - \text{decay\_rate})^i \)), where newer vehicles are more numerous, smoothing early retirements. Post-2024, new cohorts follow standard growth dynamics without exponential interference.
 
 - **Efficiency Improvement:**  
   New cohorts of CAVs and STI benefit from technological improvements that halve their power consumption every specified number of years (e.g., every 20 years).
@@ -231,13 +231,12 @@ These parameters govern the system's evolution over time.
 - **Core Logic:**  
   - `footprint_model.py`: Contains the simulation logic with an updated exponential age distribution for the initial fleet.
 - **Web Backend:**  
-  - `app_updated.py`: Implements the Flask web application.
+  - `app.py`: Implements the Flask web application.
 - **Orchestration:**  
   - `run.py`: Orchestrates model execution and launches the web app.
 - **Frontend:**  
   - `static/js/main.js`: Provides visualization functionality.
 - **Configuration Files:**  
-  - `configs/common.json`  
   - `configs/california.json`  
   - `configs/ohio.json`  
   - `configs/us_average.json`

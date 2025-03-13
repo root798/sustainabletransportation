@@ -53,21 +53,52 @@ class TransportModel:
 
     def _initialize_cohorts(self):
         """Initialize the age distribution of the initial fleet at t=0."""
-        cars_per_age = self.total_cars / self.retire_year
-        ev_per_age = self.ev_history[0] / self.retire_year
-        icev_per_age = self.icev_history[0] / self.retire_year
-        cav_per_age = self.n_cav / self.retire_year
+        total_ev = self.ev_history[0]
+        total_icev = self.icev_history[0]
+        ev_cavs = min(self.n_cav, total_ev)
+        icev_cavs = self.n_cav - ev_cavs
 
-        # Populate initial cohorts (years -retire_year+1 to 0 relative to 2024)
+        cav_distribution = []
+        decay_factor = 0.7
+        total_weight = 0
+
         for age in range(self.retire_year):
-            year_added = -age  # e.g., -11 to 0 for retire_year=12
+            weight = decay_factor ** age
+            cav_distribution.append(weight)
+            total_weight += weight
+
+        cav_distribution = [w / total_weight for w in cav_distribution]
+        ev_cav_per_age = []
+        icev_cav_per_age = []
+
+        for age in range(self.retire_year):
+            cav_fraction = cav_distribution[age]
+            cohort_cavs = self.n_cav * cav_fraction
+            cohort_ev_cavs = cohort_cavs * (ev_cavs / (ev_cavs + icev_cavs)) if (ev_cavs + icev_cavs) > 0 else 0
+            cohort_icev_cavs = cohort_cavs * (icev_cavs / (ev_cavs + icev_cavs)) if (ev_cavs + icev_cavs) > 0 else 0
+            ev_cav_per_age.append(cohort_ev_cavs)
+            icev_cav_per_age.append(cohort_icev_cavs)
+
+        remaining_ev = total_ev - ev_cavs
+        remaining_icev = total_icev - icev_cavs
+        ev_non_cav_per_age = remaining_ev / self.retire_year
+        icev_non_cav_per_age = remaining_icev / self.retire_year
+
+        for age in range(self.retire_year):
+            year_added = -age
+            cohort_ev_cavs = ev_cav_per_age[age]
+            cohort_icev_cavs = icev_cav_per_age[age]
+            cohort_cavs = cohort_ev_cavs + cohort_icev_cavs
+            cohort_ev = ev_non_cav_per_age + cohort_ev_cavs
+            cohort_icev = icev_non_cav_per_age + cohort_icev_cavs
+            cohort_total = cohort_ev + cohort_icev
+
             self.yearly_additions[year_added] = {
-                'total': cars_per_age,
-                'ev': ev_per_age,
-                'icev': icev_per_age,
-                'cav': self.n_cav if age == 0 else 0  # CAVs only in newest cohort at t=0
+                'total': cohort_total,
+                'ev': cohort_ev,
+                'icev': cohort_icev,
+                'cav': cohort_cavs
             }
-            # Efficiency improves over time, so older cohorts are less efficient
             self.cohort_efficiencies[year_added] = self._calculate_efficiency_factor(year_added, t_base=-self.retire_year + 1)
 
     def _calculate_efficiency_factor(self, t_add: int, t_base: int = 0) -> float:
@@ -83,13 +114,12 @@ class TransportModel:
     def _update_car_population(self, t: int) -> tuple:
         if t == 0:
             total_cars_t = self.total_cars
-            incremented_car_number = 0  # No additional new cars beyond initial cohort at t=0
+            incremented_car_number = 0
             ev_frac_t = self.ev_frac
             n_ev_t = self.ev_history[0]
             n_icev_t = self.icev_history[0]
-            cumulative_new_cars_t = self.n_cav  # Only CAVs are "new" at t=0
+            cumulative_new_cars_t = self.n_cav
         else:
-            # Desired fleet size based on growth rate
             desired_total = self.total_cars * (1 + self.total_car_increase_rate) ** t
             prev_total = self.car_history[-1]
             prev_ev = self.ev_history[-1]
@@ -97,7 +127,6 @@ class TransportModel:
             prev_new_cars = self.cumulative_new_cars[-1]
             ev_frac_t = min(self.ev_frac * (1 + self.ev_growth_rate) ** t, 1.0)
 
-            # Retire cars from cohort added retire_year years ago
             year_to_retire = t - self.retire_year
             if year_to_retire in self.yearly_additions:
                 retired = self.yearly_additions[year_to_retire]
@@ -108,33 +137,28 @@ class TransportModel:
             else:
                 retired_cars = retired_ev = retired_icev = retired_new_cars = 0
 
-            # Remaining cars after retirement
             remaining_cars = max(prev_total - retired_cars, 0)
             remaining_ev = max(prev_ev - retired_ev, 0)
             remaining_icev = max(prev_icev - retired_icev, 0)
             remaining_new_cars = max(prev_new_cars - retired_new_cars, 0)
 
-            # New cars needed to meet desired total
             incremented_car_number = max(desired_total - remaining_cars, 0)
             incr_ev = incremented_car_number * ev_frac_t
             incr_icev = incremented_car_number * (1 - ev_frac_t)
 
-            # Update totals
             total_cars_t = remaining_cars + incremented_car_number
             n_ev_t = remaining_ev + incr_ev
             n_icev_t = remaining_icev + incr_icev
             cumulative_new_cars_t = remaining_new_cars + incremented_car_number
 
-            # Record new cohort
             self.yearly_additions[t] = {
                 'total': incremented_car_number,
                 'ev': incr_ev,
                 'icev': incr_icev,
-                'cav': 0  # Will be updated in _update_quantities
+                'cav': 0
             }
             self.cohort_efficiencies[t] = self._calculate_efficiency_factor(t)
 
-            # Update histories
             self.car_history.append(total_cars_t)
             self.ev_history.append(n_ev_t)
             self.icev_history.append(n_icev_t)
@@ -147,26 +171,24 @@ class TransportModel:
             n_cav = self.n_cav
             n_sti = self.n_sti
         else:
-            # CAV adoption using S-curve dynamics
             prev_n_cav = self.results[-1]['Total CAV'] if t > 1 else self.n_cav
-            adoption_progress = prev_n_cav / cumulative_new_cars_t if cumulative_new_cars_t > 0 else 0
-            s_curve_factor = 4 * adoption_progress * (1 - adoption_progress)
-            if adoption_progress < 0.01:
-                s_curve_factor = max(s_curve_factor, 0.1)
-            base_growth = self.cav_growth_rate * (1 + 0.1 * t)
-            cav_growth_factor = min(base_growth * s_curve_factor, 0.5)
-            new_car_cavs = self.yearly_additions[t]['total'] * cav_growth_factor
-            n_cav = min(prev_n_cav + new_car_cavs, cumulative_new_cars_t, total_cars_t)
+            prev_n_sti = self.results[-1]['Total STI'] if t > 1 else self.n_sti
+
+            # CAV: Reach 95% by 2075 (t=51)
+            initial_cav_frac = self.n_cav / self.total_cars  # Starting fraction
+            target_cav_frac = self.cav_growth_rate  # Target fraction (0.95 from config)
+            cav_time_factor = min(t / 51, 1.0)  # Reach target by t=51, then hold
+            current_cav_frac = initial_cav_frac + (target_cav_frac - initial_cav_frac) * cav_time_factor
+            new_car_cavs = self.yearly_additions[t]['total'] * current_cav_frac
+            n_cav = min(prev_n_cav + new_car_cavs, total_cars_t)  # Cap by total cars
             self.yearly_additions[t]['cav'] = new_car_cavs
 
-            # STI conversion using S-curve dynamics
-            prev_n_sti = self.results[-1]['Total STI'] if t > 1 else self.n_sti
-            sti_progress = prev_n_sti / self.total_intersections if self.total_intersections > 0 else 0
-            sti_s_curve = 4 * sti_progress * (1 - sti_progress)
-            if sti_progress < 0.01:
-                sti_s_curve = max(sti_s_curve, 0.1)
-            sti_growth_factor = self.sti_growth_rate * sti_s_curve
-            new_sti = (self.total_intersections - prev_n_sti) * sti_growth_factor
+            # STI: Reach 50% by 2075 (t=51)
+            initial_sti_frac = self.n_sti / self.total_intersections  # Starting fraction
+            target_sti_frac = self.sti_growth_rate  # Target fraction (0.5 from config)
+            sti_time_factor = min(t / 51, 1.0)  # Reach target by t=51, then hold
+            current_sti_frac = initial_sti_frac + (target_sti_frac - initial_sti_frac) * sti_time_factor
+            new_sti = (self.total_intersections - prev_n_sti) * (current_sti_frac - (prev_n_sti / self.total_intersections if self.total_intersections > 0 else 0))
             n_sti = min(prev_n_sti + new_sti, self.total_intersections)
             self.yearly_sti_additions[t] = new_sti
 
@@ -177,12 +199,13 @@ class TransportModel:
         return n_cav, n_sti, n_ecav, n_icecav, f_clean_t
 
     def _calculate_power(self, n_ecav: int, n_icecav: int, n_sti: int, t: int) -> Dict:
-        e_power = 0
-        i_power = 0
-        s_power = 0
         n_cav = n_ecav + n_icecav
+        power = {
+            'e_sensing': 0, 'e_computing': 0, 'e_communication': 0,
+            'i_sensing': 0, 'i_computing': 0, 'i_communication': 0,
+            's_sensing': 0, 's_computing': 0, 's_communication': 0
+        }
 
-        # CAV power calculation over active cohorts
         for t_add in range(max(t - self.retire_year + 1, -self.retire_year + 1), t + 1):
             if t_add in self.yearly_additions:
                 cav_this_year = self.yearly_additions[t_add]['cav']
@@ -191,40 +214,61 @@ class TransportModel:
                     cav_fraction = cav_this_year / n_cav if n_cav > 0 else 0
                     e_cav = n_ecav * cav_fraction
                     i_cav = n_icecav * cav_fraction
-                    e_power += sum(e_cav * lvl * power * eff_factor
-                                  for lvl, power in zip(self.cav_levels, self.ecav_power.values()))
-                    i_power += sum(i_cav * lvl * power * self.icecav_power_factor * eff_factor
-                                  for lvl, power in zip(self.cav_levels, self.ecav_power.values()))
 
-        # STI power calculation
+                    for lvl_idx, (lvl, power_dict) in enumerate(self.ecav_power.items()):
+                        lvl_fraction = self.cav_levels[lvl_idx]
+                        power['e_sensing'] += e_cav * lvl_fraction * power_dict['sensing']
+                        power['e_communication'] += e_cav * lvl_fraction * power_dict['communication']
+                        power['e_computing'] += e_cav * lvl_fraction * power_dict['computing'] * eff_factor
+                        power['i_sensing'] += i_cav * lvl_fraction * power_dict['sensing'] * self.icecav_power_factor
+                        power['i_communication'] += i_cav * lvl_fraction * power_dict['communication'] * self.icecav_power_factor
+                        power['i_computing'] += i_cav * lvl_fraction * power_dict['computing'] * self.icecav_power_factor * eff_factor
+
         for t_add in range(t + 1):
             if t_add in self.yearly_sti_additions:
                 sti_this_year = self.yearly_sti_additions[t_add]
                 eff_factor = self.cohort_efficiencies.get(t_add, 1.0)
                 sti_fraction = sti_this_year / n_sti if n_sti > 0 else 0
-                s_power += sum(n_sti * sti_fraction * lvl * power * eff_factor
-                              for lvl, power in zip(self.sti_levels, self.sti_power.values()))
+
+                for lvl_idx, (lvl, power_dict) in enumerate(self.sti_power.items()):
+                    lvl_fraction = self.sti_levels[lvl_idx]
+                    power['s_sensing'] += n_sti * sti_fraction * lvl_fraction * power_dict['sensing']
+                    power['s_communication'] += n_sti * sti_fraction * lvl_fraction * power_dict['communication']
+                    power['s_computing'] += n_sti * sti_fraction * lvl_fraction * power_dict['computing'] * eff_factor
 
         MAX_REASONABLE_POWER = 1e15
-        return {
-            'e_power': min(e_power, MAX_REASONABLE_POWER),
-            'i_power': min(i_power, MAX_REASONABLE_POWER),
-            's_power': min(s_power, MAX_REASONABLE_POWER)
-        }
+        for key in power:
+            power[key] = min(power[key], MAX_REASONABLE_POWER)
+
+        return power
 
     def _calculate_emissions(self, power: Dict, f_clean_t: float) -> Dict:
-        elec_consumption = power['e_power'] + power['s_power']
-        e_emission = power['e_power'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil)
-        i_emission = power['i_power'] * self.e_gasoline
-        s_emission = power['s_power'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil)
-        
-        return {
+        e_power = power['e_sensing'] + power['e_computing'] + power['e_communication']
+        i_power = power['i_sensing'] + power['i_computing'] + power['i_communication']
+        s_power = power['s_sensing'] + power['s_computing'] + power['s_communication']
+
+        elec_consumption = e_power + s_power
+        e_emission = e_power * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil)
+        i_emission = i_power * self.e_gasoline
+        s_emission = s_power * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil)
+
+        emissions = {
+            'e_sensing': power['e_sensing'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
+            'e_computing': power['e_computing'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
+            'e_communication': power['e_communication'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
+            'i_sensing': power['i_sensing'] * self.e_gasoline,
+            'i_computing': power['i_computing'] * self.e_gasoline,
+            'i_communication': power['i_communication'] * self.e_gasoline,
+            's_sensing': power['s_sensing'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
+            's_computing': power['s_computing'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
+            's_communication': power['s_communication'] * (f_clean_t * self.e_clean + (1 - f_clean_t) * self.e_fossil),
             'e_emission': e_emission,
             'i_emission': i_emission,
             's_emission': s_emission,
             'cav_emission': e_emission + i_emission,
             'ats_emission': e_emission + i_emission + s_emission
         }
+        return emissions
 
     def run_simulation(self, years: int) -> None:
         self.results = []
@@ -233,20 +277,31 @@ class TransportModel:
             total_cars_t, incremented_car_number, ev_frac_t, n_ev_t, n_icev_t, cumulative_new_cars_t = self._update_car_population(t)
             n_cav, n_sti, n_ecav, n_icecav, f_clean_t = self._update_quantities(t, total_cars_t, ev_frac_t, cumulative_new_cars_t)
             power = self._calculate_power(n_ecav, n_icecav, n_sti, t)
-            elec_consumption = power['e_power'] + power['s_power']
+            elec_consumption = (power['e_sensing'] + power['e_computing'] + power['e_communication'] +
+                               power['s_sensing'] + power['s_computing'] + power['s_communication'])
             clean_elec = elec_consumption * f_clean_t
             fossil_elec = elec_consumption * (1 - f_clean_t)
             emissions = self._calculate_emissions(power, f_clean_t)
 
             self.results.append({
                 'Year': year,
-                'ATS Total Power (kWh)': power['e_power'] + power['i_power'] + power['s_power'],
-                'CAV Total Power (kWh)': power['e_power'] + power['i_power'],
-                'ECAV Power (kWh)': power['e_power'],
-                'ICECAV Power (kWh)': power['i_power'],
-                'STI Power (kWh)': power['s_power'],
+                'ATS Total Power (kWh)': sum(power.values()),
+                'CAV Total Power (kWh)': sum(power[k] for k in ['e_sensing', 'e_computing', 'e_communication',
+                                                               'i_sensing', 'i_computing', 'i_communication']),
+                'ECAV Power (kWh)': power['e_sensing'] + power['e_computing'] + power['e_communication'],
+                'ICECAV Power (kWh)': power['i_sensing'] + power['i_computing'] + power['i_communication'],
+                'STI Power (kWh)': power['s_sensing'] + power['s_computing'] + power['s_communication'],
+                'ECAV Sensing Power (kWh)': power['e_sensing'],
+                'ECAV Computing Power (kWh)': power['e_computing'],
+                'ECAV Communication Power (kWh)': power['e_communication'],
+                'ICECAV Sensing Power (kWh)': power['i_sensing'],
+                'ICECAV Computing Power (kWh)': power['i_computing'],
+                'ICECAV Communication Power (kWh)': power['i_communication'],
+                'STI Sensing Power (kWh)': power['s_sensing'],
+                'STI Computing Power (kWh)': power['s_computing'],
+                'STI Communication Power (kWh)': power['s_communication'],
                 'Electricity Consumption (kWh)': elec_consumption,
-                'Gasoline Consumption (kWh)': power['i_power'],
+                'Gasoline Consumption (kWh)': power['i_sensing'] + power['i_computing'] + power['i_communication'],
                 'Clean Electricity (kWh)': clean_elec,
                 'Fossil Electricity (kWh)': fossil_elec,
                 'ATS Emissions (kg CO2)': emissions['ats_emission'],
@@ -254,6 +309,15 @@ class TransportModel:
                 'ECAV Emissions (kg CO2)': emissions['e_emission'],
                 'ICECAV Emissions (kg CO2)': emissions['i_emission'],
                 'STI Emissions (kg CO2)': emissions['s_emission'],
+                'ECAV Sensing Emissions (kg CO2)': emissions['e_sensing'],
+                'ECAV Computing Emissions (kg CO2)': emissions['e_computing'],
+                'ECAV Communication Emissions (kg CO2)': emissions['e_communication'],
+                'ICECAV Sensing Emissions (kg CO2)': emissions['i_sensing'],
+                'ICECAV Computing Emissions (kg CO2)': emissions['i_computing'],
+                'ICECAV Communication Emissions (kg CO2)': emissions['i_communication'],
+                'STI Sensing Emissions (kg CO2)': emissions['s_sensing'],
+                'STI Computing Emissions (kg CO2)': emissions['s_computing'],
+                'STI Communication Emissions (kg CO2)': emissions['s_communication'],
                 'Total Vehicles': total_cars_t,
                 'Total EV': n_ev_t,
                 'Total ICEV': n_icev_t,
@@ -268,7 +332,7 @@ class TransportModel:
                 'Cumulative New Cars': cumulative_new_cars_t
             })
 
-            if t <= 5 or t % 10 == 0:
+            if t <= 5 or t % 10 == 0 or t == 51:  # Include 2075 (t=51)
                 retired_info = ""
                 year_to_retire = t - self.retire_year
                 if year_to_retire in self.yearly_additions:
@@ -277,16 +341,16 @@ class TransportModel:
                 print(f"Year {year}: Total Cars={total_cars_t:.0f}, CAVs={n_cav:.0f}, EVs={n_ev_t:.0f}, STIs={n_sti:.0f}, New Cars={incremented_car_number:.0f}{retired_info}")
                 print(f"  Retirement age: {self.retire_year} years, EV fraction: {ev_frac_t:.2f}, CAV fraction: {n_cav/total_cars_t:.2f}")
                 print(f"  New CAVs this year: {self.yearly_additions[t]['cav']:.0f}, Cumulative new cars: {cumulative_new_cars_t:.0f}")
-                print(f"  Power: {power['e_power'] + power['i_power'] + power['s_power']:.2e} kWh, Emissions: {emissions['ats_emission']:.2e} kg CO2")
+                print(f"  STI fraction: {n_sti/self.total_intersections:.2f}")
+                print(f"  Power: {sum(power.values()):.2e} kWh, Emissions: {emissions['ats_emission']:.2e} kg CO2")
                 print()
 
     def save_to_csv(self, filename: str) -> None:
         if not os.path.exists('results'):
             os.makedirs('results')
         df = pd.DataFrame(self.results)
-        filepath = os.path.join('results', filename)
-        df.to_csv(filepath, index=False)
-        print(f"Results saved to '{filepath}'")
+        df.to_csv(filename, index=False)
+        print(f"Results saved to '{filename}'")
 
         yearly_data = []
         for year, data in sorted(self.yearly_additions.items()):
@@ -299,7 +363,7 @@ class TransportModel:
             }
             yearly_data.append(row)
         yearly_df = pd.DataFrame(yearly_data)
-        yearly_filepath = os.path.join('results', f"yearly_additions_{filename}")
+        yearly_filepath = os.path.join('results', f"yearly_additions_{os.path.basename(filename)}")
         yearly_df.to_csv(yearly_filepath, index=False)
         print(f"Yearly additions saved to '{yearly_filepath}'")
 
@@ -311,19 +375,22 @@ def load_config(filename):
         return json.load(f)
 
 def main():
-    common_config = load_config('common.json')
-    consumption_rates = common_config['consumption_rates']
-    emission_factors = common_config['emission_factors']
-
     scenarios = ['california', 'ohio', 'us_average']
     for scenario_name in scenarios:
         scenario_config = load_config(f'{scenario_name}.json')
         initial_data = scenario_config['initial_data']
         growth_rates = scenario_config['growth_rates']
-
+        consumption_rates = scenario_config['consumption_rates']
+        emission_factors = scenario_config['emission_factors']
+        
         model = TransportModel(initial_data, growth_rates, consumption_rates, emission_factors)
-        model.run_simulation(years=76)
-        model.save_to_csv(f'{scenario_name}_ats_model_2024_2100.csv')
+        model.run_simulation(years=68)
+        
+        if not os.path.exists('results'):
+            os.makedirs('results')
+            
+        results_file = os.path.join('results', f'{scenario_name}_results.csv')
+        model.save_to_csv(results_file)
 
         df = pd.DataFrame(model.results)
         print(f"\n{scenario_name.capitalize()} - First 15 Years:")
