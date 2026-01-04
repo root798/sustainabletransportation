@@ -1,9 +1,202 @@
 import numpy as np
 import pandas as pd
-from typing import Dict
+from typing import Dict, Any, Optional, List
 import os
 import json
 import sys
+import copy
+
+
+class EnergyModel:
+    """Interface for per-level power models."""
+
+    def get_ecav_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        raise NotImplementedError
+
+    def get_sti_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        raise NotImplementedError
+
+
+class FixedTableEnergyModel(EnergyModel):
+    """Uses fixed per-level power tables from the config."""
+
+    def __init__(self, consumption_rates: Dict[str, Any]):
+        self.ecav_power = consumption_rates['ecav_power']
+        self.sti_power = consumption_rates['sti_power']
+
+    def get_ecav_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        return self.ecav_power[level]
+
+    def get_sti_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        return self.sti_power[level]
+
+
+class ProfileMixtureEnergyModel(EnergyModel):
+    """
+    Uses weighted sensor-suite profiles to produce correlated power triples per level.
+    Falls back to the fixed tables if profile data are not provided.
+    """
+
+    def __init__(self, consumption_rates: Dict[str, Any]):
+        self.ecav_power = consumption_rates['ecav_power']
+        self.sti_power = consumption_rates['sti_power']
+        self.ecav_profiles = consumption_rates.get('ecav_profiles', {})
+        self.sti_profiles = consumption_rates.get('sti_profiles', {})
+
+    def _mix_profiles(self, profiles: List[Dict[str, Any]], fallback: Dict[str, float]) -> Dict[str, float]:
+        if not profiles:
+            return fallback
+        weights = [float(p.get('weight', 1.0)) for p in profiles]
+        total_weight = sum(weights)
+        if total_weight <= 0:
+            weights = [1.0 for _ in profiles]
+            total_weight = len(profiles)
+        mixed = {'sensing': 0.0, 'computing': 0.0, 'communication': 0.0}
+        for profile, weight in zip(profiles, weights):
+            power = profile.get('power', profile)
+            for key in mixed:
+                mixed[key] += float(power.get(key, 0.0)) * weight / total_weight
+        return mixed
+
+    def get_ecav_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        profiles = self.ecav_profiles.get(level, [])
+        return self._mix_profiles(profiles, self.ecav_power[level])
+
+    def get_sti_power(self, level: str, year_added: int, year: int) -> Dict[str, float]:
+        profiles = self.sti_profiles.get(level, [])
+        return self._mix_profiles(profiles, self.sti_power[level])
+
+
+def _is_distribution_spec(value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    return any(key in value for key in ['dist', 'type', 'values'])
+
+
+def _sample_distribution(spec: Dict[str, Any], rng: np.random.Generator) -> float:
+    dist = spec.get('dist', spec.get('type'))
+    if dist == 'lognormal':
+        mean = float(spec.get('mean', spec.get('value', 0.0)))
+        if 'sigma' in spec:
+            sigma = float(spec['sigma'])
+        else:
+            cv = float(spec.get('cv', 0.0))
+            sigma = np.sqrt(np.log(1 + cv ** 2)) if cv > 0 else 0.0
+        mu = np.log(mean) - 0.5 * sigma ** 2 if mean > 0 else 0.0
+        sample = rng.lognormal(mean=mu, sigma=sigma)
+    elif dist == 'normal':
+        mean = float(spec.get('mean', spec.get('value', 0.0)))
+        sd = float(spec.get('sd', spec.get('std', 0.0)))
+        sample = rng.normal(loc=mean, scale=sd)
+    elif dist == 'triangular':
+        low = float(spec.get('low'))
+        mode = float(spec.get('mode'))
+        high = float(spec.get('high'))
+        sample = rng.triangular(low, mode, high)
+    elif dist == 'beta':
+        if 'alpha' in spec and 'beta' in spec:
+            alpha = float(spec['alpha'])
+            beta = float(spec['beta'])
+        else:
+            mean = float(spec.get('mean', 0.0))
+            sd = float(spec.get('sd', spec.get('std', 0.0)))
+            variance = sd ** 2
+            if variance <= 0 or mean <= 0 or mean >= 1:
+                sample = mean
+                alpha = beta = None
+            else:
+                common = mean * (1 - mean) / variance - 1
+                alpha = mean * common
+                beta = (1 - mean) * common
+        if alpha is not None and beta is not None:
+            sample = rng.beta(alpha, beta)
+    elif dist == 'uniform':
+        low = float(spec.get('low'))
+        high = float(spec.get('high'))
+        sample = rng.uniform(low, high)
+    elif dist == 'choice':
+        values = spec.get('values', [])
+        weights = spec.get('weights')
+        sample = rng.choice(values, p=weights)
+    else:
+        sample = float(spec.get('value', 0.0))
+
+    if 'min' in spec or 'max' in spec:
+        min_val = float(spec.get('min', -np.inf))
+        max_val = float(spec.get('max', np.inf))
+        sample = min(max(sample, min_val), max_val)
+
+    if spec.get('integer'):
+        sample = int(round(sample))
+
+    return float(sample)
+
+
+def _apply_data_uncertainty(target: Dict[str, Any], spec: Dict[str, Any], rng: np.random.Generator) -> None:
+    for key, value in spec.items():
+        if key in ['ev_share', 'ev_fraction']:
+            continue
+        if key not in target:
+            continue
+        if _is_distribution_spec(value):
+            target[key] = _sample_distribution(value, rng)
+        elif isinstance(value, dict) and isinstance(target.get(key), dict):
+            _apply_data_uncertainty(target[key], value, rng)
+        else:
+            target[key] = value
+
+
+def sample_config(base_config: Dict[str, Any], rng: np.random.Generator) -> Dict[str, Any]:
+    sampled = copy.deepcopy(base_config)
+    data_uncertainty = base_config.get('data_uncertainty')
+    if not data_uncertainty:
+        return sampled
+
+    if 'initial_data' in data_uncertainty:
+        _apply_data_uncertainty(sampled['initial_data'], data_uncertainty['initial_data'], rng)
+        ev_share_spec = data_uncertainty['initial_data'].get('ev_share')
+        if ev_share_spec is None:
+            ev_share_spec = data_uncertainty['initial_data'].get('ev_fraction')
+        if ev_share_spec is not None:
+            total_cars = sampled['initial_data']['total_cars']
+            ev_share = _sample_distribution(ev_share_spec, rng)
+            ev_share = min(max(ev_share, 0.0), 1.0)
+            sampled['initial_data']['total_ev'] = int(round(total_cars * ev_share))
+
+    for section in ['growth_rates', 'consumption_rates', 'emission_factors']:
+        if section in data_uncertainty:
+            _apply_data_uncertainty(sampled[section], data_uncertainty[section], rng)
+
+    return sampled
+
+
+def _deep_merge(base: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
+    merged = copy.deepcopy(base)
+    for key, value in overrides.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def _parse_model_variant(variant: Any) -> Dict[str, Any]:
+    if isinstance(variant, str):
+        return {'name': variant, 'type': variant}
+    if isinstance(variant, dict):
+        name = variant.get('name') or variant.get('type', 'fixed_table')
+        merged = dict(variant)
+        merged['name'] = name
+        merged['type'] = variant.get('type', name)
+        return merged
+    return {'name': 'fixed_table', 'type': 'fixed_table'}
+
+
+def build_energy_model(variant: Dict[str, Any], consumption_rates: Dict[str, Any]) -> EnergyModel:
+    model_type = variant.get('type', 'fixed_table')
+    if model_type in ['profile_mixture', 'profile', 'mixture']:
+        return ProfileMixtureEnergyModel(consumption_rates)
+    return FixedTableEnergyModel(consumption_rates)
 
 class TransportModel:
     """
@@ -12,7 +205,16 @@ class TransportModel:
     All power and emissions are in kWh and kg CO2/kWh, respectively.
     """
     
-    def __init__(self, initial_data: Dict, growth_rates: Dict, consumption_rates: Dict, emission_factors: Dict):
+    def __init__(
+        self,
+        initial_data: Dict,
+        growth_rates: Dict,
+        consumption_rates: Dict,
+        emission_factors: Dict,
+        energy_model: Optional[EnergyModel] = None,
+        efficiency_model: str = 'smooth',
+        retrofit_share: float = 0.0
+    ):
         self.total_cars = initial_data['total_cars']
         self.total_intersections = initial_data['total_intersections']
         self.ev_frac = initial_data['total_ev'] / self.total_cars
@@ -33,6 +235,9 @@ class TransportModel:
         self.sti_power = consumption_rates['sti_power']
         self.cav_levels = consumption_rates['cav_levels']
         self.sti_levels = consumption_rates['sti_levels']
+        self.energy_model = energy_model or FixedTableEnergyModel(consumption_rates)
+        self.efficiency_model = efficiency_model
+        self.retrofit_share = max(float(retrofit_share), 0.0)
 
         self.e_clean = emission_factors['e_clean']
         self.e_fossil = emission_factors['e_fossil']
@@ -105,7 +310,11 @@ class TransportModel:
         if self.efficiency_doubling_years <= 0:
             return 1.0
         time_elapsed = max(t_add - t_base, 0)
-        raw_factor = 0.5 ** (time_elapsed / self.efficiency_doubling_years)
+        if self.efficiency_model == 'stepwise':
+            steps = int(time_elapsed / self.efficiency_doubling_years)
+            raw_factor = 0.5 ** steps
+        else:
+            raw_factor = 0.5 ** (time_elapsed / self.efficiency_doubling_years)
         if self.efficiency_doubling_years > 100:
             reasonable_floor = 0.5 ** (time_elapsed / 100)
             return max(raw_factor, reasonable_floor)
@@ -211,12 +420,17 @@ class TransportModel:
                 cav_this_year = self.yearly_additions[t_add]['cav']
                 if cav_this_year > 0:
                     eff_factor = self.cohort_efficiencies.get(t_add, 1.0)
+                    if self.efficiency_model == 'partial_retrofit' and self.efficiency_doubling_years > 0:
+                        time_since_add = max(t - t_add, 0)
+                        retrofit_factor = 0.5 ** ((time_since_add * self.retrofit_share) / self.efficiency_doubling_years)
+                        eff_factor *= retrofit_factor
                     cav_fraction = cav_this_year / n_cav if n_cav > 0 else 0
                     e_cav = n_ecav * cav_fraction
                     i_cav = n_icecav * cav_fraction
 
-                    for lvl_idx, (lvl, power_dict) in enumerate(self.ecav_power.items()):
+                    for lvl_idx, lvl in enumerate(self.ecav_power.keys()):
                         lvl_fraction = self.cav_levels[lvl_idx]
+                        power_dict = self.energy_model.get_ecav_power(lvl, t_add, t)
                         power['e_sensing'] += e_cav * lvl_fraction * power_dict['sensing']
                         power['e_communication'] += e_cav * lvl_fraction * power_dict['communication']
                         power['e_computing'] += e_cav * lvl_fraction * power_dict['computing'] * eff_factor
@@ -228,10 +442,15 @@ class TransportModel:
             if t_add in self.yearly_sti_additions:
                 sti_this_year = self.yearly_sti_additions[t_add]
                 eff_factor = self.cohort_efficiencies.get(t_add, 1.0)
+                if self.efficiency_model == 'partial_retrofit' and self.efficiency_doubling_years > 0:
+                    time_since_add = max(t - t_add, 0)
+                    retrofit_factor = 0.5 ** ((time_since_add * self.retrofit_share) / self.efficiency_doubling_years)
+                    eff_factor *= retrofit_factor
                 sti_fraction = sti_this_year / n_sti if n_sti > 0 else 0
 
-                for lvl_idx, (lvl, power_dict) in enumerate(self.sti_power.items()):
+                for lvl_idx, lvl in enumerate(self.sti_power.keys()):
                     lvl_fraction = self.sti_levels[lvl_idx]
+                    power_dict = self.energy_model.get_sti_power(lvl, t_add, t)
                     power['s_sensing'] += n_sti * sti_fraction * lvl_fraction * power_dict['sensing']
                     power['s_communication'] += n_sti * sti_fraction * lvl_fraction * power_dict['communication']
                     power['s_computing'] += n_sti * sti_fraction * lvl_fraction * power_dict['computing'] * eff_factor
@@ -367,6 +586,84 @@ class TransportModel:
         yearly_df.to_csv(yearly_filepath, index=False)
         print(f"Yearly additions saved to '{yearly_filepath}'")
 
+
+def _compute_turning_point(years: np.ndarray, values: np.ndarray, consecutive_years: int = 5) -> Optional[int]:
+    if len(values) < consecutive_years + 1:
+        return None
+    for idx in range(len(values) - consecutive_years):
+        if all(values[idx + step + 1] < values[idx + step] for step in range(consecutive_years)):
+            return int(years[idx + 1])
+    return None
+
+
+def compute_scalar_metrics(df: pd.DataFrame, emissions_col: str = 'ATS Emissions (kg CO2)', consecutive_years: int = 5) -> Dict[str, Any]:
+    if df.empty:
+        return {
+            'peak_emissions': np.nan,
+            'peak_year': np.nan,
+            'cumulative_emissions': np.nan,
+            'turning_year': np.nan
+        }
+    years = df['Year'].to_numpy()
+    values = df[emissions_col].to_numpy()
+    peak_idx = int(np.argmax(values))
+    turning_year = _compute_turning_point(years, values, consecutive_years)
+    return {
+        'peak_emissions': float(values[peak_idx]),
+        'peak_year': int(years[peak_idx]),
+        'cumulative_emissions': float(np.sum(values)),
+        'turning_year': float(turning_year) if turning_year is not None else np.nan
+    }
+
+
+def compute_quantile_summary(run_results: List[List[Dict[str, Any]]], quantiles: List[float]) -> pd.DataFrame:
+    if not run_results:
+        return pd.DataFrame()
+    dfs = [pd.DataFrame(results).set_index('Year') for results in run_results]
+    years = dfs[0].index.to_numpy()
+    output = {'Year': years}
+
+    for column in dfs[0].columns:
+        stacked = np.vstack([df[column].to_numpy() for df in dfs])
+        qvals = np.quantile(stacked, quantiles, axis=0)
+        for idx, q in enumerate(quantiles):
+            suffix = f"p{int(round(q * 100)):02d}"
+            output[f"{column}_{suffix}"] = qvals[idx]
+
+    return pd.DataFrame(output)
+
+
+def compute_metrics_quantiles(metrics: List[Dict[str, Any]], quantiles: List[float]) -> pd.DataFrame:
+    if not metrics:
+        return pd.DataFrame()
+    df = pd.DataFrame(metrics)
+    rows = []
+    for column in df.columns:
+        values = df[column].dropna().to_numpy()
+        if values.size == 0:
+            continue
+        for q in quantiles:
+            rows.append({
+                'metric': column,
+                'quantile': q,
+                'value': float(np.quantile(values, q))
+            })
+    return pd.DataFrame(rows)
+
+
+def _build_output_prefix(
+    scenario_name: str,
+    policy_name: str,
+    model_name: str,
+    is_default: bool
+) -> str:
+    if is_default:
+        return scenario_name
+    safe_policy = policy_name.replace(' ', '_')
+    safe_model = model_name.replace(' ', '_')
+    return f"{scenario_name}__policy-{safe_policy}__model-{safe_model}"
+
+
 def load_config(filename):
     config_dir = os.path.join('configs')
     if not os.path.exists(config_dir):
@@ -378,23 +675,88 @@ def main():
     scenarios = ['california', 'ohio', 'us_average']
     for scenario_name in scenarios:
         scenario_config = load_config(f'{scenario_name}.json')
-        initial_data = scenario_config['initial_data']
-        growth_rates = scenario_config['growth_rates']
-        consumption_rates = scenario_config['consumption_rates']
-        emission_factors = scenario_config['emission_factors']
-        
-        model = TransportModel(initial_data, growth_rates, consumption_rates, emission_factors)
-        model.run_simulation(years=68)
-        
+        policy_scenarios = scenario_config.get('policy_scenarios')
+        if policy_scenarios:
+            policy_items = list(policy_scenarios.items())
+        else:
+            policy_items = [('baseline', {})]
+
+        model_variants = scenario_config.get('model_variants')
+        if model_variants:
+            variants = [_parse_model_variant(v) for v in model_variants]
+        else:
+            variants = [_parse_model_variant('fixed_table')]
+
+        data_uncertainty = scenario_config.get('data_uncertainty')
+        mc_runs = int(scenario_config.get('mc_runs', 1))
+        mc_runs = max(mc_runs, 1)
+        random_seed = scenario_config.get('random_seed')
+        is_default = not policy_scenarios and not model_variants and not data_uncertainty and mc_runs == 1
+
         if not os.path.exists('results'):
             os.makedirs('results')
-            
-        results_file = os.path.join('results', f'{scenario_name}_results.csv')
-        model.save_to_csv(results_file)
 
-        df = pd.DataFrame(model.results)
-        print(f"\n{scenario_name.capitalize()} - First 15 Years:")
-        print(df.head(15))
+        for policy_name, policy_patch in policy_items:
+            policy_config = _deep_merge(scenario_config, policy_patch)
+            for variant in variants:
+                run_results = []
+                metrics = []
+                last_model = None
+                for run_id in range(mc_runs if data_uncertainty else 1):
+                    seed = None if random_seed is None else int(random_seed) + run_id
+                    rng = np.random.default_rng(seed)
+                    sampled = sample_config(policy_config, rng) if data_uncertainty else copy.deepcopy(policy_config)
+                    energy_model = build_energy_model(variant, sampled['consumption_rates'])
+                    efficiency_model = variant.get('efficiency_model', 'smooth')
+                    retrofit_share = variant.get('retrofit_share', 0.0)
+
+                    model = TransportModel(
+                        sampled['initial_data'],
+                        sampled['growth_rates'],
+                        sampled['consumption_rates'],
+                        sampled['emission_factors'],
+                        energy_model=energy_model,
+                        efficiency_model=efficiency_model,
+                        retrofit_share=retrofit_share
+                    )
+                    model.run_simulation(years=68)
+                    run_results.append(model.results)
+                    metrics.append(compute_scalar_metrics(pd.DataFrame(model.results)))
+                    last_model = model
+
+                prefix = _build_output_prefix(
+                    scenario_name,
+                    policy_name,
+                    variant['name'],
+                    is_default
+                )
+
+                if data_uncertainty and mc_runs > 1:
+                    all_runs = []
+                    for run_id, results in enumerate(run_results):
+                        df = pd.DataFrame(results)
+                        df['run_id'] = run_id
+                        all_runs.append(df)
+                    runs_df = pd.concat(all_runs, ignore_index=True)
+                    runs_path = os.path.join('results', f'{prefix}_mc_runs.csv')
+                    runs_df.to_csv(runs_path, index=False)
+                    quantiles = [0.05, 0.5, 0.95]
+                    quantile_df = compute_quantile_summary(run_results, quantiles)
+                    quantile_path = os.path.join('results', f'{prefix}_quantiles.csv')
+                    quantile_df.to_csv(quantile_path, index=False)
+                    metrics_df = pd.DataFrame(metrics)
+                    metrics_path = os.path.join('results', f'{prefix}_metrics.csv')
+                    metrics_df.to_csv(metrics_path, index=False)
+                    metrics_quantiles = compute_metrics_quantiles(metrics, quantiles)
+                    metrics_quantile_path = os.path.join('results', f'{prefix}_metrics_quantiles.csv')
+                    metrics_quantiles.to_csv(metrics_quantile_path, index=False)
+                else:
+                    results_file = os.path.join('results', f'{prefix}_results.csv')
+                    last_model.save_to_csv(results_file)
+
+                df = pd.DataFrame(run_results[0])
+                print(f"\n{scenario_name.capitalize()} ({policy_name}, {variant['name']}) - First 15 Years:")
+                print(df.head(15))
 
 if __name__ == "__main__":
     main()
