@@ -11,6 +11,98 @@ let simulationResults = {};  // Store simulation results by simulation ID
 let latestSimulationByState = {};  // Track the latest simulation ID for each state
 let isRealtimeEnabled = false;  // Flag for real-time simulation mode
 let realtimeSimulationTimeout = null;  // Timeout for debouncing real-time simulations
+let uncertaintyState = '';
+
+function formatUncertaintyValue(value) {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+        return 'n/a';
+    }
+    return new Intl.NumberFormat().format(value);
+}
+
+function renderUncertaintySection(targetId, section, fallbackMessage) {
+    const container = document.getElementById(targetId);
+    if (!container) return;
+    if (!section || !section.available) {
+        container.textContent = section?.message || fallbackMessage;
+        return;
+    }
+
+    const lines = [];
+    if (section.metric && section.year) {
+        lines.push(`<div><strong>${section.metric}</strong> (Year ${section.year})</div>`);
+    }
+    if (section.policy) {
+        lines.push(`<div>Policy: ${section.policy}</div>`);
+    }
+    if (section.model) {
+        lines.push(`<div>Model: ${section.model}</div>`);
+    }
+    if (section.p05 !== undefined) {
+        lines.push(`<div>p05: ${formatUncertaintyValue(section.p05)}</div>`);
+        lines.push(`<div>p50: ${formatUncertaintyValue(section.p50)}</div>`);
+        lines.push(`<div>p95: ${formatUncertaintyValue(section.p95)}</div>`);
+    }
+    if (section.variants) {
+        const items = section.variants.map(v => `${v.model}: ${formatUncertaintyValue(v.median)}`);
+        lines.push(`<div>Variants (median): ${items.join(', ')}</div>`);
+        lines.push(`<div>Spread: ${formatUncertaintyValue(section.spread)}</div>`);
+    }
+    if (section.scenarios) {
+        const items = section.scenarios.map(v => `${v.policy}: ${formatUncertaintyValue(v.median)}`);
+        lines.push(`<div>Policies (median): ${items.join(', ')}</div>`);
+        lines.push(`<div>Spread: ${formatUncertaintyValue(section.spread)}</div>`);
+    }
+    if (section.turning_year) {
+        const ty = section.turning_year;
+        if (ty.p05 !== undefined) {
+            lines.push(`<div>Turning year p05/p50/p95: ${formatUncertaintyValue(ty.p05)} / ${formatUncertaintyValue(ty.p50)} / ${formatUncertaintyValue(ty.p95)}</div>`);
+        }
+    }
+
+    container.innerHTML = lines.join('');
+}
+
+function updateUncertaintyPanel(state) {
+    if (!state) return;
+    fetch(window.location.origin + '/uncertainty', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            state: state
+        }),
+    })
+    .then(response => response.json())
+    .then(summary => {
+        const note = document.getElementById('uncertainty-note');
+        if (note) {
+            note.textContent = summary.website_gap || '';
+        }
+        renderUncertaintySection(
+            'uncertainty-data-source',
+            summary.data_source,
+            'No data-source uncertainty outputs found.'
+        );
+        renderUncertaintySection(
+            'uncertainty-model',
+            summary.model,
+            'No model-uncertainty outputs found.'
+        );
+        renderUncertaintySection(
+            'uncertainty-policy',
+            summary.policy,
+            'No policy-uncertainty outputs found.'
+        );
+    })
+    .catch(error => {
+        const note = document.getElementById('uncertainty-note');
+        if (note) {
+            note.textContent = `Unable to load uncertainty summary: ${error.message || error}`;
+        }
+    });
+}
 
 // Function to show status message
 function showStatusMessage(message, type = 'info') {
@@ -169,6 +261,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Set up uncertainty state selection change event
+    const uncertaintySelect = document.getElementById('uncertainty-state-select');
+    if (uncertaintySelect) {
+        uncertaintyState = uncertaintySelect.value;
+        uncertaintySelect.addEventListener('change', function() {
+            uncertaintyState = this.value;
+            updateUncertaintyPanel(uncertaintyState);
+        });
+    }
+
     // Set up simulate button
     document.getElementById('simulate-btn').addEventListener('click', function() {
         runSimulation();
@@ -221,6 +323,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update chart with default selections
     updateChart();
+
+    if (uncertaintyState) {
+        updateUncertaintyPanel(uncertaintyState);
+    }
 });
 
 // Function to set up parameter sliders

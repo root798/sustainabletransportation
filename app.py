@@ -152,6 +152,181 @@ def load_data():
     
     return data
 
+# Load uncertainty analysis outputs for a specific state
+def load_uncertainty_summary(state):
+    results_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
+    summary = {
+        'state': state,
+        'website_gap': (
+            'The website currently charts deterministic results from *_results.csv only. '
+            'Uncertainty bands require MC outputs in *_quantiles.csv plus model/policy sweeps.'
+        ),
+        'data_source': {
+            'available': False,
+            'message': 'No MC quantiles found. Run with --mc to generate *_quantiles.csv.'
+        },
+        'model': {
+            'available': False,
+            'message': 'No model-variant quantiles found. Run multiple model variants with MC.'
+        },
+        'policy': {
+            'available': False,
+            'message': 'No policy-scenario quantiles found. Run multiple policy scenarios with MC.'
+        }
+    }
+
+    if not os.path.exists(results_dir):
+        return summary
+
+    quantile_entries = []
+    metrics_entries = []
+
+    def parse_entry(filename, suffix):
+        if not filename.endswith(suffix):
+            return None
+        base = filename[:-len(suffix)]
+        policy = 'baseline'
+        model = 'fixed_table'
+        if '__policy-' in base and '__model-' in base:
+            state_name, rest = base.split('__policy-', 1)
+            policy, model = rest.split('__model-', 1)
+        else:
+            state_name = base
+        return state_name, policy, model
+
+    for filename in os.listdir(results_dir):
+        if filename.endswith('_quantiles.csv'):
+            parsed = parse_entry(filename, '_quantiles.csv')
+            if parsed and parsed[0] == state:
+                quantile_entries.append({
+                    'policy': parsed[1],
+                    'model': parsed[2],
+                    'path': os.path.join(results_dir, filename)
+                })
+        elif filename.endswith('_metrics_quantiles.csv'):
+            parsed = parse_entry(filename, '_metrics_quantiles.csv')
+            if parsed and parsed[0] == state:
+                metrics_entries.append({
+                    'policy': parsed[1],
+                    'model': parsed[2],
+                    'path': os.path.join(results_dir, filename)
+                })
+
+    if not quantile_entries:
+        return summary
+
+    def select_entry(entries, policy_name=None, model_name=None):
+        selected = entries
+        if policy_name:
+            filtered = [e for e in entries if e['policy'] == policy_name]
+            if filtered:
+                selected = filtered
+        if model_name:
+            filtered = [e for e in selected if e['model'] == model_name]
+            if filtered:
+                selected = filtered
+        return selected[0] if selected else None
+
+    def load_band(entry, column_base):
+        df = pd.read_csv(entry['path'])
+        year = int(df['Year'].iloc[-1])
+        p05 = df.get(f"{column_base}_p05")
+        p50 = df.get(f"{column_base}_p50")
+        p95 = df.get(f"{column_base}_p95")
+        if p05 is None or p50 is None or p95 is None:
+            return None
+        return {
+            'year': year,
+            'p05': float(p05.iloc[-1]),
+            'p50': float(p50.iloc[-1]),
+            'p95': float(p95.iloc[-1])
+        }
+
+    def load_metric_quantiles(entry, metric_name):
+        match = next((m for m in metrics_entries if m['policy'] == entry['policy'] and m['model'] == entry['model']), None)
+        if not match:
+            return None
+        df = pd.read_csv(match['path'])
+        metric_df = df[df['metric'] == metric_name]
+        if metric_df.empty:
+            return None
+        values = {f"p{int(row['quantile'] * 100):02d}": float(row['value']) for _, row in metric_df.iterrows()}
+        return values
+
+    # Data-source uncertainty: within a fixed policy/model, use MC quantiles.
+    data_entry = select_entry(quantile_entries, policy_name='baseline', model_name='fixed_table')
+    if data_entry is None:
+        data_entry = quantile_entries[0]
+    band = load_band(data_entry, 'ATS Emissions (kg CO2)')
+    if band:
+        summary['data_source'] = {
+            'available': True,
+            'policy': data_entry['policy'],
+            'model': data_entry['model'],
+            'metric': 'ATS Emissions (kg CO2)',
+            'year': band['year'],
+            'p05': band['p05'],
+            'p50': band['p50'],
+            'p95': band['p95'],
+            'turning_year': load_metric_quantiles(data_entry, 'turning_year')
+        }
+
+    # Model uncertainty: compare medians across model variants at a fixed policy.
+    policy_name = 'baseline'
+    policy_entries = [e for e in quantile_entries if e['policy'] == policy_name]
+    if not policy_entries:
+        policy_entries = quantile_entries
+        policy_name = policy_entries[0]['policy']
+    if policy_entries:
+        variants = []
+        for entry in policy_entries:
+            band = load_band(entry, 'ATS Emissions (kg CO2)')
+            if band:
+                variants.append({
+                    'model': entry['model'],
+                    'median': band['p50'],
+                    'year': band['year']
+                })
+        if len(variants) > 1:
+            medians = [v['median'] for v in variants]
+            summary['model'] = {
+                'available': True,
+                'policy': policy_name,
+                'metric': 'ATS Emissions (kg CO2)',
+                'year': variants[0]['year'],
+                'variants': variants,
+                'spread': max(medians) - min(medians)
+            }
+
+    # Policy uncertainty: compare medians across policies at a fixed model.
+    model_name = 'fixed_table'
+    model_entries = [e for e in quantile_entries if e['model'] == model_name]
+    if not model_entries:
+        model_entries = quantile_entries
+        model_name = model_entries[0]['model']
+    if model_entries:
+        scenarios = []
+        for entry in model_entries:
+            band = load_band(entry, 'ATS Emissions (kg CO2)')
+            if band:
+                scenarios.append({
+                    'policy': entry['policy'],
+                    'median': band['p50'],
+                    'year': band['year']
+                })
+        if len(scenarios) > 1:
+            medians = [s['median'] for s in scenarios]
+            summary['policy'] = {
+                'available': True,
+                'model': model_name,
+                'metric': 'ATS Emissions (kg CO2)',
+                'year': scenarios[0]['year'],
+                'scenarios': scenarios,
+                'spread': max(medians) - min(medians)
+            }
+
+    return summary
+
 # Get available columns for visualization (excluding 'Year' which is used as x-axis)
 def get_columns(data):
     # Use the first dataset to get columns
@@ -207,6 +382,13 @@ def get_parameters():
     
     parameters = load_model_parameters(state)
     return jsonify(parameters)
+
+@app.route('/uncertainty', methods=['POST'])
+def get_uncertainty():
+    state = request.json.get('state')
+    if not state:
+        return jsonify({'error': 'State not specified'}), 400
+    return jsonify(load_uncertainty_summary(state))
 
 @app.route('/reset_parameters', methods=['POST'])
 def reset_parameters():

@@ -3,8 +3,8 @@ import pandas as pd
 from typing import Dict, Any, Optional, List
 import os
 import json
-import sys
 import copy
+import argparse
 
 
 class EnergyModel:
@@ -70,19 +70,39 @@ class ProfileMixtureEnergyModel(EnergyModel):
 def _is_distribution_spec(value: Any) -> bool:
     if not isinstance(value, dict):
         return False
-    return any(key in value for key in ['dist', 'type', 'values'])
+    if 'dist' in value:
+        return True
+    if 'type' in value:
+        return any(key in value for key in [
+            'mean', 'median', 'sd', 'std', 'low', 'high', 'mode', 'alpha',
+            'beta', 'kappa', 'values', 'probs', 'weights', 'cv', 'sigma',
+            'min', 'max'
+        ])
+    if 'values' in value and any(key in value for key in ['probs', 'weights']):
+        return True
+    return False
 
 
-def _sample_distribution(spec: Dict[str, Any], rng: np.random.Generator) -> float:
+def _sample_distribution(spec: Dict[str, Any], rng: np.random.Generator) -> Any:
     dist = spec.get('dist', spec.get('type'))
+    if dist is None and 'values' in spec:
+        dist = 'choice'
+    if isinstance(dist, str):
+        dist = dist.lower()
+
     if dist == 'lognormal':
-        mean = float(spec.get('mean', spec.get('value', 0.0)))
-        if 'sigma' in spec:
-            sigma = float(spec['sigma'])
+        if 'median' in spec:
+            median = float(spec.get('median', spec.get('value', 0.0)))
+            sigma = float(spec.get('sigma', 0.0))
+            mu = np.log(median) if median > 0 else 0.0
         else:
-            cv = float(spec.get('cv', 0.0))
-            sigma = np.sqrt(np.log(1 + cv ** 2)) if cv > 0 else 0.0
-        mu = np.log(mean) - 0.5 * sigma ** 2 if mean > 0 else 0.0
+            mean = float(spec.get('mean', spec.get('value', 0.0)))
+            if 'sigma' in spec:
+                sigma = float(spec['sigma'])
+            else:
+                cv = float(spec.get('cv', 0.0))
+                sigma = np.sqrt(np.log(1 + cv ** 2)) if cv > 0 else 0.0
+            mu = np.log(mean) - 0.5 * sigma ** 2 if mean > 0 else 0.0
         sample = rng.lognormal(mean=mu, sigma=sigma)
     elif dist == 'normal':
         mean = float(spec.get('mean', spec.get('value', 0.0)))
@@ -94,7 +114,12 @@ def _sample_distribution(spec: Dict[str, Any], rng: np.random.Generator) -> floa
         high = float(spec.get('high'))
         sample = rng.triangular(low, mode, high)
     elif dist == 'beta':
-        if 'alpha' in spec and 'beta' in spec:
+        if 'kappa' in spec:
+            mean = float(spec.get('mean', 0.0))
+            kappa = float(spec.get('kappa', 1.0))
+            alpha = max(mean * kappa, 1e-6)
+            beta = max((1 - mean) * kappa, 1e-6)
+        elif 'alpha' in spec and 'beta' in spec:
             alpha = float(spec['alpha'])
             beta = float(spec['beta'])
         else:
@@ -114,22 +139,53 @@ def _sample_distribution(spec: Dict[str, Any], rng: np.random.Generator) -> floa
         low = float(spec.get('low'))
         high = float(spec.get('high'))
         sample = rng.uniform(low, high)
-    elif dist == 'choice':
+    elif dist in ['choice', 'discrete']:
         values = spec.get('values', [])
-        weights = spec.get('weights')
+        weights = spec.get('probs', spec.get('weights'))
         sample = rng.choice(values, p=weights)
+        if isinstance(sample, np.generic):
+            sample = sample.item()
+    elif dist == 'dirichlet':
+        alpha = np.array(spec.get('alpha', []), dtype=float)
+        sample = rng.dirichlet(alpha).tolist()
     else:
         sample = float(spec.get('value', 0.0))
 
-    if 'min' in spec or 'max' in spec:
-        min_val = float(spec.get('min', -np.inf))
-        max_val = float(spec.get('max', np.inf))
-        sample = min(max(sample, min_val), max_val)
+    if isinstance(sample, (int, float, np.floating, np.integer)):
+        if 'min' in spec or 'max' in spec:
+            min_val = float(spec.get('min', -np.inf))
+            max_val = float(spec.get('max', np.inf))
+            sample = min(max(float(sample), min_val), max_val)
+        if spec.get('integer'):
+            sample = int(round(float(sample)))
+        return float(sample)
+    return sample
 
-    if spec.get('integer'):
-        sample = int(round(sample))
 
-    return float(sample)
+def resolve_distributions(obj: Any, rng: np.random.Generator, skip_keys: Optional[set] = None) -> Any:
+    if _is_distribution_spec(obj):
+        return _sample_distribution(obj, rng)
+    if isinstance(obj, dict):
+        resolved = {}
+        for key, value in obj.items():
+            if skip_keys and key in skip_keys:
+                resolved[key] = copy.deepcopy(value)
+            else:
+                resolved[key] = resolve_distributions(value, rng, skip_keys)
+        return resolved
+    if isinstance(obj, list):
+        return [resolve_distributions(item, rng, skip_keys) for item in obj]
+    return obj
+
+
+def has_distribution_spec(obj: Any) -> bool:
+    if _is_distribution_spec(obj):
+        return True
+    if isinstance(obj, dict):
+        return any(has_distribution_spec(value) for value in obj.values())
+    if isinstance(obj, list):
+        return any(has_distribution_spec(value) for value in obj)
+    return False
 
 
 def _apply_data_uncertainty(target: Dict[str, Any], spec: Dict[str, Any], rng: np.random.Generator) -> None:
@@ -150,7 +206,7 @@ def sample_config(base_config: Dict[str, Any], rng: np.random.Generator) -> Dict
     sampled = copy.deepcopy(base_config)
     data_uncertainty = base_config.get('data_uncertainty')
     if not data_uncertainty:
-        return sampled
+        return resolve_distributions(sampled, rng, skip_keys={'data_uncertainty'})
 
     if 'initial_data' in data_uncertainty:
         _apply_data_uncertainty(sampled['initial_data'], data_uncertainty['initial_data'], rng)
@@ -167,7 +223,7 @@ def sample_config(base_config: Dict[str, Any], rng: np.random.Generator) -> Dict
         if section in data_uncertainty:
             _apply_data_uncertainty(sampled[section], data_uncertainty[section], rng)
 
-    return sampled
+    return resolve_distributions(sampled, rng, skip_keys={'data_uncertainty'})
 
 
 def _deep_merge(base: Dict[str, Any], overrides: Dict[str, Any]) -> Dict[str, Any]:
@@ -211,6 +267,7 @@ class TransportModel:
         growth_rates: Dict,
         consumption_rates: Dict,
         emission_factors: Dict,
+        model_variants: Optional[Dict[str, Any]] = None,
         energy_model: Optional[EnergyModel] = None,
         efficiency_model: str = 'smooth',
         retrofit_share: float = 0.0
@@ -238,6 +295,16 @@ class TransportModel:
         self.energy_model = energy_model or FixedTableEnergyModel(consumption_rates)
         self.efficiency_model = efficiency_model
         self.retrofit_share = max(float(retrofit_share), 0.0)
+        self.model_variants = model_variants or {}
+        self.adoption_curve = self.model_variants.get('adoption_curve', 'exponential')
+        self.efficiency_curve = self.model_variants.get('efficiency_curve')
+        if not self.efficiency_curve:
+            if self.efficiency_model in ['step', 'stepwise']:
+                self.efficiency_curve = 'step'
+            else:
+                self.efficiency_curve = 'continuous'
+        self.ev_t_mid = int(self.model_variants.get('ev_t_mid', 20))
+        self.ev_carrying_capacity = float(self.model_variants.get('ev_carrying_capacity', 1.0))
 
         self.e_clean = emission_factors['e_clean']
         self.e_fossil = emission_factors['e_fossil']
@@ -310,7 +377,7 @@ class TransportModel:
         if self.efficiency_doubling_years <= 0:
             return 1.0
         time_elapsed = max(t_add - t_base, 0)
-        if self.efficiency_model == 'stepwise':
+        if self.efficiency_curve in ['step', 'stepwise']:
             steps = int(time_elapsed / self.efficiency_doubling_years)
             raw_factor = 0.5 ** steps
         else:
@@ -319,6 +386,18 @@ class TransportModel:
             reasonable_floor = 0.5 ** (time_elapsed / 100)
             return max(raw_factor, reasonable_floor)
         return raw_factor
+
+    def _ev_fraction(self, t: int) -> float:
+        if self.adoption_curve == 'linear':
+            return min(max(self.ev_frac + self.ev_growth_rate * t, 0.0), 1.0)
+        if self.adoption_curve == 'logistic':
+            r = self.ev_growth_rate
+            t_mid = self.ev_t_mid
+            k = self.ev_carrying_capacity
+            x0 = max(self.ev_frac, 1e-6)
+            a = (k - x0) / x0 * np.exp(-r * (0 - t_mid))
+            return float(k / (1.0 + a * np.exp(-r * (t - t_mid))))
+        return min(self.ev_frac * (1 + self.ev_growth_rate) ** t, 1.0)
 
     def _update_car_population(self, t: int) -> tuple:
         if t == 0:
@@ -334,7 +413,7 @@ class TransportModel:
             prev_ev = self.ev_history[-1]
             prev_icev = self.icev_history[-1]
             prev_new_cars = self.cumulative_new_cars[-1]
-            ev_frac_t = min(self.ev_frac * (1 + self.ev_growth_rate) ** t, 1.0)
+            ev_frac_t = self._ev_fraction(t)
 
             year_to_retire = t - self.retire_year
             if year_to_retire in self.yearly_additions:
@@ -671,27 +750,49 @@ def load_config(filename):
     with open(os.path.join(config_dir, filename), 'r') as f:
         return json.load(f)
 
+
+def _normalize_variants(model_variants: Any) -> List[Dict[str, Any]]:
+    if not model_variants:
+        return [_parse_model_variant('fixed_table')]
+    if isinstance(model_variants, dict):
+        return [_parse_model_variant(model_variants)]
+    if isinstance(model_variants, list):
+        return [_parse_model_variant(v) for v in model_variants]
+    return [_parse_model_variant('fixed_table')]
+
+
 def main():
-    scenarios = ['california', 'ohio', 'us_average']
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--scenarios', nargs='*', default=['california', 'ohio', 'us_average'])
+    parser.add_argument('--years', type=int, default=68)
+    parser.add_argument('--policy', type=str, default='baseline')
+    parser.add_argument('--mc', type=int, default=0)
+    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--model', type=str, default=None)
+    args = parser.parse_args()
+
+    scenarios = args.scenarios
     for scenario_name in scenarios:
         scenario_config = load_config(f'{scenario_name}.json')
-        policy_scenarios = scenario_config.get('policy_scenarios')
-        if policy_scenarios:
-            policy_items = list(policy_scenarios.items())
+        policy_scenarios = scenario_config.get('policy_scenarios', {})
+        if args.policy == 'all':
+            policy_items = list(policy_scenarios.items()) if policy_scenarios else [('baseline', {})]
         else:
-            policy_items = [('baseline', {})]
+            policy_override = policy_scenarios.get(args.policy, {})
+            policy_items = [(args.policy, policy_override)]
 
-        model_variants = scenario_config.get('model_variants')
-        if model_variants:
-            variants = [_parse_model_variant(v) for v in model_variants]
-        else:
-            variants = [_parse_model_variant('fixed_table')]
+        variants = _normalize_variants(scenario_config.get('model_variants'))
+        if args.model:
+            selected = [v for v in variants if v['name'] == args.model or v.get('type') == args.model]
+            variants = selected if selected else [_parse_model_variant(args.model)]
 
         data_uncertainty = scenario_config.get('data_uncertainty')
-        mc_runs = int(scenario_config.get('mc_runs', 1))
+        mc_runs = args.mc if args.mc and args.mc > 0 else int(scenario_config.get('mc_runs', 1))
         mc_runs = max(mc_runs, 1)
-        random_seed = scenario_config.get('random_seed')
-        is_default = not policy_scenarios and not model_variants and not data_uncertainty and mc_runs == 1
+        random_seed = args.seed
+        has_inline_dist = has_distribution_spec(scenario_config)
+        use_sampling = bool(data_uncertainty) or has_inline_dist or args.mc > 0
+        is_default = len(policy_items) == 1 and len(variants) == 1 and mc_runs == 1 and not use_sampling
 
         if not os.path.exists('results'):
             os.makedirs('results')
@@ -702,10 +803,11 @@ def main():
                 run_results = []
                 metrics = []
                 last_model = None
-                for run_id in range(mc_runs if data_uncertainty else 1):
+                run_count = mc_runs if use_sampling and mc_runs > 1 else 1
+                for run_id in range(run_count):
                     seed = None if random_seed is None else int(random_seed) + run_id
                     rng = np.random.default_rng(seed)
-                    sampled = sample_config(policy_config, rng) if data_uncertainty else copy.deepcopy(policy_config)
+                    sampled = sample_config(policy_config, rng) if use_sampling else copy.deepcopy(policy_config)
                     energy_model = build_energy_model(variant, sampled['consumption_rates'])
                     efficiency_model = variant.get('efficiency_model', 'smooth')
                     retrofit_share = variant.get('retrofit_share', 0.0)
@@ -715,11 +817,12 @@ def main():
                         sampled['growth_rates'],
                         sampled['consumption_rates'],
                         sampled['emission_factors'],
+                        model_variants=variant,
                         energy_model=energy_model,
                         efficiency_model=efficiency_model,
                         retrofit_share=retrofit_share
                     )
-                    model.run_simulation(years=68)
+                    model.run_simulation(years=args.years)
                     run_results.append(model.results)
                     metrics.append(compute_scalar_metrics(pd.DataFrame(model.results)))
                     last_model = model
@@ -731,7 +834,7 @@ def main():
                     is_default
                 )
 
-                if data_uncertainty and mc_runs > 1:
+                if use_sampling and mc_runs > 1:
                     all_runs = []
                     for run_id, results in enumerate(run_results):
                         df = pd.DataFrame(results)

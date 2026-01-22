@@ -3,7 +3,10 @@ import subprocess
 import sys
 import logging
 import socket
+import argparse
+from typing import Optional, List
 from pathlib import Path
+import argparse
 
 # Configure logging
 logging.basicConfig(
@@ -32,7 +35,7 @@ def check_configs_exist():
     logger.info("All required configuration files found.")
     return True
 
-def run_model():
+def run_model(mc: int = 0, policy: str = "baseline", seed: int = 0, scenarios: Optional[List[str]] = None, years: Optional[int] = None):
     """Run the ATS model to generate CSV files."""
     logger.info("Generating model data by running ATS model...")
     model_script = Path("footprint_model.py")
@@ -42,8 +45,20 @@ def run_model():
         return False
     
     try:
+        cmd = [sys.executable, str(model_script)]
+        if scenarios:
+            cmd += ["--scenarios"] + scenarios
+        if years is not None:
+            cmd += ["--years", str(years)]
+        if mc and mc > 0:
+            cmd += ["--mc", str(mc)]
+        if policy:
+            cmd += ["--policy", policy]
+        if seed is not None:
+            cmd += ["--seed", str(seed)]
+
         result = subprocess.run(
-            [sys.executable, str(model_script)],
+            cmd,
             check=True,
             capture_output=True,
             text=True
@@ -118,33 +133,39 @@ def check_results_exist():
     return True
 
 def main():
-    """Main execution flow."""
-    # Check for config files first
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--no-app", action="store_true", help="Run model only, do not start Flask app.")
+    parser.add_argument("--mc", type=int, default=0)
+    parser.add_argument("--policy", type=str, default="baseline")
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--scenarios", nargs="*", default=None)
+    parser.add_argument("--years", type=int, default=None)
+    args = parser.parse_args()
+
     if not check_configs_exist():
         logger.error("Aborting due to missing configuration files.")
         sys.exit(1)
 
-    # Create results directory if it doesn't exist
     results_dir = Path("results")
-    if not results_dir.exists():
-        results_dir.mkdir(parents=True)
+    results_dir.mkdir(parents=True, exist_ok=True)
 
-    # Run the model
-    if not run_model():
+    if not run_model(mc=args.mc, policy=args.policy, seed=args.seed, scenarios=args.scenarios, years=args.years):
         logger.error("Aborting due to model execution failure.")
         sys.exit(1)
 
-    # Verify results - this is now required
     if not check_results_exist():
         logger.error("Model ran but no results were generated. Cannot proceed without results files.")
         sys.exit(1)
 
-    # Run the Flask app
-    if not run_app():
-        logger.error("Web application failed to start.")
-        sys.exit(1)
+    if not args.no_app:
+        if not run_app():
+            logger.error("Web application failed to start.")
+            sys.exit(1)
+    else:
+        logger.info("Skipping web app (--no-app).")
 
     logger.info("Execution completed successfully.")
+
 
 if __name__ == "__main__":
     main()

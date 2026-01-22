@@ -349,6 +349,52 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Uncertainty Analysis -->
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-header py-2 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Uncertainty Analysis</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">
+                                <select id="uncertainty-state-select" class="form-select form-select-sm">
+                                    {% for state in states %}
+                                    <option value="{{ state }}">{{ state|capitalize }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#uncertaintyCollapse" aria-expanded="true" aria-controls="uncertaintyCollapse">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="collapse show" id="uncertaintyCollapse">
+                        <div class="card-body py-2">
+                            <div class="text-muted small mb-2" id="uncertainty-note"></div>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2 h-100">
+                                        <div class="fw-bold small mb-1">Data-Source Uncertainty</div>
+                                        <div class="small" id="uncertainty-data-source"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2 h-100">
+                                        <div class="fw-bold small mb-1">Model Uncertainty</div>
+                                        <div class="small" id="uncertainty-model"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded p-2 h-100">
+                                        <div class="fw-bold small mb-1">Policy Uncertainty</div>
+                                        <div class="small" id="uncertainty-policy"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

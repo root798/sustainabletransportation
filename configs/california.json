@@ -35,5 +35,26 @@
         "e_clean": 0.03,
         "e_fossil": 0.5,
         "e_gasoline": 1.65
+    },
+    "policy_scenarios": {
+        "baseline": {},
+        "aggressive": {
+            "growth_rates": {
+                "ev": 0.2,
+                "clean_energy": 0.1,
+                "efficiency_doubling": 2.0
+            }
+        },
+        "conservative": {
+            "growth_rates": {
+                "ev": 0.05,
+                "clean_energy": 0.02,
+                "efficiency_doubling": 6.0
+            }
+        }
+    },
+    "model_variants": {
+        "adoption_curve": "exponential",
+        "efficiency_curve": "continuous"
     }
 }
