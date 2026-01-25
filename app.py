@@ -195,6 +195,8 @@ def load_uncertainty_summary(state):
         return state_name, policy, model
 
     for filename in os.listdir(results_dir):
+        if filename.endswith('_metrics_quantiles.csv'):
+            continue
         if filename.endswith('_quantiles.csv'):
             parsed = parse_entry(filename, '_quantiles.csv')
             if parsed and parsed[0] == state:
@@ -327,6 +329,158 @@ def load_uncertainty_summary(state):
 
     return summary
 
+
+def load_quantile_entries(state):
+    results_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
+    entries = []
+    if not os.path.exists(results_dir):
+        return entries
+
+    def parse_entry(filename, suffix):
+        if not filename.endswith(suffix):
+            return None
+        base = filename[:-len(suffix)]
+        policy = 'baseline'
+        model = 'fixed_table'
+        if '__policy-' in base and '__model-' in base:
+            state_name, rest = base.split('__policy-', 1)
+            policy, model = rest.split('__model-', 1)
+        else:
+            state_name = base
+        return state_name, policy, model
+
+    for filename in os.listdir(results_dir):
+        if filename.endswith('_metrics_quantiles.csv'):
+            continue
+        if filename.endswith('_quantiles.csv'):
+            parsed = parse_entry(filename, '_quantiles.csv')
+            if parsed and parsed[0] == state:
+                entries.append({
+                    'policy': parsed[1],
+                    'model': parsed[2],
+                    'path': os.path.join(results_dir, filename)
+                })
+    return entries
+
+
+def list_uncertainty_states():
+    results_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results')
+    states = set()
+    if not os.path.exists(results_dir):
+        return []
+
+    for filename in os.listdir(results_dir):
+        if filename.endswith('_metrics_quantiles.csv'):
+            continue
+        if not filename.endswith('_quantiles.csv'):
+            continue
+        base = filename[:-len('_quantiles.csv')]
+        if '__policy-' in base and '__model-' in base:
+            state_name = base.split('__policy-', 1)[0]
+        else:
+            state_name = base
+        states.add(state_name)
+    return sorted(states)
+
+
+def _load_band_df(entry, column_base):
+    df = pd.read_csv(entry['path'])
+    columns = [f"{column_base}_p05", f"{column_base}_p50", f"{column_base}_p95"]
+    if not all(col in df.columns for col in columns):
+        return None
+    return df[['Year'] + columns].rename(columns={
+        f"{column_base}_p05": 'p05',
+        f"{column_base}_p50": 'p50',
+        f"{column_base}_p95": 'p95'
+    })
+
+
+def _combine_band_dfs(entries, column_base):
+    band_dfs = []
+    for idx, entry in enumerate(entries):
+        band_df = _load_band_df(entry, column_base)
+        if band_df is None:
+            continue
+        band_df = band_df.rename(columns={
+            'p05': f'p05_{idx}',
+            'p50': f'p50_{idx}',
+            'p95': f'p95_{idx}'
+        })
+        band_dfs.append(band_df)
+
+    if len(band_dfs) < 2:
+        return None
+
+    merged = None
+    for band_df in band_dfs:
+        if merged is None:
+            merged = band_df
+        else:
+            merged = merged.merge(band_df, on='Year', how='inner')
+
+    if merged is None or merged.empty:
+        return None
+
+    p05_cols = [col for col in merged.columns if col.startswith('p05_')]
+    p50_cols = [col for col in merged.columns if col.startswith('p50_')]
+    p95_cols = [col for col in merged.columns if col.startswith('p95_')]
+    return pd.DataFrame({
+        'Year': merged['Year'],
+        'p05': merged[p05_cols].min(axis=1),
+        'p50': merged[p50_cols].median(axis=1),
+        'p95': merged[p95_cols].max(axis=1)
+    })
+
+
+def _extract_metric_names(df):
+    metrics = set()
+    for column in df.columns:
+        if column == 'Year':
+            continue
+        for suffix in ('_p05', '_p50', '_p95'):
+            if column.endswith(suffix):
+                metrics.add(column[:-len(suffix)])
+                break
+    return sorted(metrics)
+
+
+def _enforce_nested_bands(layer1, layer2, layer3):
+    if layer1 is None:
+        return layer1, layer2, layer3
+
+    def align_layers(base, other):
+        if other is None:
+            return base, None
+        merged = base.merge(other, on='Year', suffixes=('_base', '_other'))
+        base_aligned = merged[['Year', 'p05_base', 'p50_base', 'p95_base']].rename(columns={
+            'p05_base': 'p05',
+            'p50_base': 'p50',
+            'p95_base': 'p95'
+        })
+        other_aligned = merged[['Year', 'p05_other', 'p50_other', 'p95_other']].rename(columns={
+            'p05_other': 'p05',
+            'p50_other': 'p50',
+            'p95_other': 'p95'
+        })
+        return base_aligned, other_aligned
+
+    if layer2 is not None:
+        layer1, layer2 = align_layers(layer1, layer2)
+        layer2['p05'] = np.minimum(layer2['p05'].to_numpy(), layer1['p05'].to_numpy())
+        layer2['p95'] = np.maximum(layer2['p95'].to_numpy(), layer1['p95'].to_numpy())
+
+    if layer3 is not None:
+        base = layer2 if layer2 is not None else layer1
+        base, layer3 = align_layers(base, layer3)
+        if layer2 is not None:
+            layer2 = base
+        else:
+            layer1 = base
+        layer3['p05'] = np.minimum(layer3['p05'].to_numpy(), base['p05'].to_numpy())
+        layer3['p95'] = np.maximum(layer3['p95'].to_numpy(), base['p95'].to_numpy())
+
+    return layer1, layer2, layer3
+
 # Get available columns for visualization (excluding 'Year' which is used as x-axis)
 def get_columns(data):
     # Use the first dataset to get columns
@@ -389,6 +543,106 @@ def get_uncertainty():
     if not state:
         return jsonify({'error': 'State not specified'}), 400
     return jsonify(load_uncertainty_summary(state))
+
+
+@app.route('/uncertainty_layers', methods=['POST'])
+def get_uncertainty_layers():
+    request_data = request.json or {}
+    state = request_data.get('state')
+    metric = request_data.get('metric', 'ATS Emissions (kg CO2)')
+    policy = request_data.get('policy')
+    model = request_data.get('model')
+
+    if not state:
+        return jsonify({'error': 'State not specified'}), 400
+
+    available_states = list_uncertainty_states()
+    entries = load_quantile_entries(state)
+    if not entries and available_states:
+        state = available_states[0]
+        entries = load_quantile_entries(state)
+    policies = sorted({entry['policy'] for entry in entries})
+    models = sorted({entry['model'] for entry in entries})
+
+    if not entries:
+        return jsonify({
+            'available': False,
+            'message': 'No MC quantiles found for this state.',
+            'available_states': available_states,
+            'available_policies': [],
+            'available_models': [],
+            'layers': {}
+        })
+
+    if not policy or policy not in policies:
+        policy = policies[0]
+    if not model or model not in models:
+        model = models[0]
+
+    selected_entry = next(
+        (entry for entry in entries if entry['policy'] == policy and entry['model'] == model),
+        entries[0]
+    )
+    selected_df = pd.read_csv(selected_entry['path'])
+    available_metrics = _extract_metric_names(selected_df)
+    if available_metrics and metric not in available_metrics:
+        metric = available_metrics[0]
+    data_band = _load_band_df(selected_entry, metric)
+
+    policy_entries = [entry for entry in entries if entry['policy'] == policy]
+    model_band = _combine_band_dfs(policy_entries, metric) if len(policy_entries) > 1 else None
+
+    model_entries = [entry for entry in entries if entry['model'] == model]
+    policy_band = _combine_band_dfs(model_entries, metric) if len(model_entries) > 1 else None
+
+    data_band, model_band, policy_band = _enforce_nested_bands(data_band, model_band, policy_band)
+
+    def to_payload(band_df):
+        return {
+            'year': band_df['Year'].tolist(),
+            'p05': band_df['p05'].tolist(),
+            'p50': band_df['p50'].tolist(),
+            'p95': band_df['p95'].tolist()
+        }
+
+    layers = {
+        'data': {
+            'available': data_band is not None,
+            'label': 'Layer 1: data uncertainty',
+            'policy': selected_entry['policy'],
+            'model': selected_entry['model']
+        },
+        'model': {
+            'available': model_band is not None,
+            'label': 'Layer 2: data + model uncertainty',
+            'policy': policy
+        },
+        'policy': {
+            'available': policy_band is not None,
+            'label': 'Layer 3: data + model + policy uncertainty',
+            'model': model
+        }
+    }
+
+    if data_band is not None:
+        layers['data'].update(to_payload(data_band))
+    if model_band is not None:
+        layers['model'].update(to_payload(model_band))
+    if policy_band is not None:
+        layers['policy'].update(to_payload(policy_band))
+
+    return jsonify({
+        'available': data_band is not None,
+        'state': state,
+        'metric': metric,
+        'policy': policy,
+        'model': model,
+        'available_metrics': available_metrics,
+        'available_states': available_states,
+        'available_policies': policies,
+        'available_models': models,
+        'layers': layers
+    })
 
 @app.route('/reset_parameters', methods=['POST'])
 def reset_parameters():

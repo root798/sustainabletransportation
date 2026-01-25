@@ -12,6 +12,13 @@ let latestSimulationByState = {};  // Track the latest simulation ID for each st
 let isRealtimeEnabled = false;  // Flag for real-time simulation mode
 let realtimeSimulationTimeout = null;  // Timeout for debouncing real-time simulations
 let uncertaintyState = '';
+let uncertaintyBandsEnabled = false;
+let uncertaintyBandConfig = {
+    state: '',
+    metric: 'ATS Emissions (kg CO2)',
+    policy: '',
+    model: ''
+};
 
 function formatUncertaintyValue(value) {
     if (value === null || value === undefined || Number.isNaN(value)) {
@@ -102,6 +109,263 @@ function updateUncertaintyPanel(state) {
             note.textContent = `Unable to load uncertainty summary: ${error.message || error}`;
         }
     });
+}
+
+function getUncertaintyBandConfig() {
+    if (!uncertaintyBandsEnabled) {
+        return null;
+    }
+    return {
+        state: uncertaintyBandConfig.state,
+        metric: uncertaintyBandConfig.metric,
+        policy: uncertaintyBandConfig.policy,
+        model: uncertaintyBandConfig.model
+    };
+}
+
+function updateUncertaintyBandSelectors(payload) {
+    if (!payload) return;
+    const stateSelect = document.getElementById('uncertainty-band-state');
+    const policySelect = document.getElementById('uncertainty-band-policy');
+    const modelSelect = document.getElementById('uncertainty-band-model');
+    const metricSelect = document.getElementById('uncertainty-band-metric');
+    if (!policySelect || !modelSelect) return;
+
+    const states = payload.available_states || [];
+    const policies = payload.available_policies || [];
+    const models = payload.available_models || [];
+    const metrics = payload.available_metrics || [];
+
+    if (stateSelect) {
+        stateSelect.innerHTML = '';
+    }
+    policySelect.innerHTML = '';
+    modelSelect.innerHTML = '';
+    if (metricSelect) {
+        metricSelect.innerHTML = '';
+    }
+
+    if (stateSelect) {
+        if (states.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'n/a';
+            stateSelect.appendChild(option);
+        } else {
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                if (state === payload.state) {
+                    option.selected = true;
+                }
+                stateSelect.appendChild(option);
+            });
+        }
+    }
+
+    if (policies.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'n/a';
+        policySelect.appendChild(option);
+    } else {
+        policies.forEach(policy => {
+            const option = document.createElement('option');
+            option.value = policy;
+            option.textContent = policy;
+            if (policy === payload.policy) {
+                option.selected = true;
+            }
+            policySelect.appendChild(option);
+        });
+    }
+
+    if (models.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'n/a';
+        modelSelect.appendChild(option);
+    } else {
+        models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            if (model === payload.model) {
+                option.selected = true;
+            }
+            modelSelect.appendChild(option);
+        });
+    }
+
+    if (metricSelect) {
+        if (metrics.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'n/a';
+            metricSelect.appendChild(option);
+        } else {
+            metrics.forEach(metric => {
+                const option = document.createElement('option');
+                option.value = metric;
+                option.textContent = metric;
+                if (metric === payload.metric) {
+                    option.selected = true;
+                }
+                metricSelect.appendChild(option);
+            });
+        }
+    }
+
+    if (payload.policy) {
+        uncertaintyBandConfig.policy = payload.policy;
+    }
+    if (payload.model) {
+        uncertaintyBandConfig.model = payload.model;
+    }
+    if (payload.metric) {
+        uncertaintyBandConfig.metric = payload.metric;
+    }
+    if (payload.state) {
+        uncertaintyBandConfig.state = payload.state;
+    }
+}
+
+function updateUncertaintyBandStatus(message) {
+    const status = document.getElementById('uncertainty-band-status');
+    if (status) {
+        status.textContent = message || '';
+    }
+}
+
+function fetchUncertaintyLayers(config, allowRetry = true) {
+    if (!config || !config.state || !config.metric) {
+        return Promise.resolve(null);
+    }
+    return fetch(window.location.origin + '/uncertainty_layers', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+    })
+    .then(response => response.json())
+    .then(payload => {
+        updateUncertaintyBandSelectors(payload);
+        if (payload.available_states?.length && !payload.available_states.includes(config.state) && allowRetry) {
+            const nextState = payload.available_states[0];
+            uncertaintyBandConfig.state = nextState;
+            config.state = nextState;
+            return fetchUncertaintyLayers(config, false);
+        }
+        if (payload.available_metrics?.length && !payload.available_metrics.includes(config.metric) && allowRetry) {
+            const nextMetric = payload.available_metrics[0];
+            uncertaintyBandConfig.metric = nextMetric;
+            config.metric = nextMetric;
+            return fetchUncertaintyLayers(config, false);
+        }
+        if (!payload.available) {
+            updateUncertaintyBandStatus(payload.message || 'No uncertainty layers available for this selection.');
+        } else {
+            const layerLabels = [];
+            if (payload.layers?.data?.available) layerLabels.push('Layer 1');
+            if (payload.layers?.model?.available) layerLabels.push('Layer 2');
+            if (payload.layers?.policy?.available) layerLabels.push('Layer 3');
+            updateUncertaintyBandStatus(
+                layerLabels.length
+                    ? `Showing ${layerLabels.join(', ')} bands for ${payload.metric}.`
+                    : 'No uncertainty layers available for this selection.'
+            );
+        }
+        return payload;
+    })
+    .catch(error => {
+        updateUncertaintyBandStatus(`Unable to load uncertainty bands: ${error.message || error}`);
+        return null;
+    });
+}
+
+function createBandDatasets(layerName, metric, band, color, showMedian) {
+    const datasets = [];
+    const baseLabel = `${metric} ${layerName} uncertainty`;
+    const medianColor = color.replace(/0\.\d+\)/, '0.8)');
+
+    datasets.push({
+        label: `${baseLabel} (p05)`,
+        data: band.p05,
+        borderColor: 'rgba(0,0,0,0)',
+        backgroundColor: 'rgba(0,0,0,0)',
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        borderWidth: 0,
+        fill: false,
+        isUncertaintyBand: true,
+        showInLegend: false
+    });
+
+    datasets.push({
+        label: `${baseLabel} band`,
+        data: band.p95,
+        borderColor: color,
+        backgroundColor: color,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        borderWidth: 0,
+        fill: '-1',
+        isUncertaintyBand: true,
+        showInLegend: true
+    });
+
+    if (showMedian) {
+        datasets.push({
+            label: `${metric} ${layerName} p50`,
+            data: band.p50,
+            borderColor: medianColor,
+            backgroundColor: color,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            borderWidth: 2,
+            fill: false,
+            isUncertaintyBand: true,
+            showInLegend: true,
+            tension: 0.1
+        });
+    }
+
+    return datasets;
+}
+
+function applyUncertaintyBands(displayData, config, payload) {
+    if (!payload || !payload.layers || !displayData[config.state]) {
+        return displayData;
+    }
+
+    const layers = payload.layers;
+    const bandDatasets = [];
+
+    if (layers.policy?.available) {
+        bandDatasets.push(
+            ...createBandDatasets('Layer 3', config.metric, layers.policy, 'rgba(255, 99, 132, 0.2)', true)
+        );
+    }
+    if (layers.model?.available) {
+        bandDatasets.push(
+            ...createBandDatasets('Layer 2', config.metric, layers.model, 'rgba(255, 206, 86, 0.25)', false)
+        );
+    }
+    if (layers.data?.available) {
+        bandDatasets.push(
+            ...createBandDatasets('Layer 1', config.metric, layers.data, 'rgba(54, 162, 235, 0.3)', false)
+        );
+    }
+
+    if (bandDatasets.length === 0) {
+        return displayData;
+    }
+
+    const existing = displayData[config.state].datasets || [];
+    displayData[config.state].datasets = [...bandDatasets, ...existing];
+    return displayData;
 }
 
 // Function to show status message
@@ -271,6 +535,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const bandToggle = document.getElementById('uncertainty-band-toggle');
+    const bandStateSelect = document.getElementById('uncertainty-band-state');
+    const bandMetricSelect = document.getElementById('uncertainty-band-metric');
+    const bandPolicySelect = document.getElementById('uncertainty-band-policy');
+    const bandModelSelect = document.getElementById('uncertainty-band-model');
+
+    if (bandStateSelect) {
+        uncertaintyBandConfig.state = bandStateSelect.value;
+    }
+    if (bandMetricSelect) {
+        uncertaintyBandConfig.metric = bandMetricSelect.value;
+    }
+
+    const refreshBands = () => {
+        if (bandStateSelect) {
+            uncertaintyBandConfig.state = bandStateSelect.value;
+        }
+        if (bandMetricSelect) {
+            uncertaintyBandConfig.metric = bandMetricSelect.value;
+        }
+        if (bandPolicySelect) {
+            uncertaintyBandConfig.policy = bandPolicySelect.value;
+        }
+        if (bandModelSelect) {
+            uncertaintyBandConfig.model = bandModelSelect.value;
+        }
+        updateChart();
+    };
+
+    if (bandToggle) {
+        bandToggle.addEventListener('change', function() {
+            uncertaintyBandsEnabled = this.checked;
+            refreshBands();
+        });
+    }
+
+    [bandStateSelect, bandMetricSelect, bandPolicySelect, bandModelSelect].forEach(select => {
+        if (!select) return;
+        select.addEventListener('change', refreshBands);
+    });
+
     // Set up simulate button
     document.getElementById('simulate-btn').addEventListener('click', function() {
         runSimulation();
@@ -326,6 +631,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (uncertaintyState) {
         updateUncertaintyPanel(uncertaintyState);
+    }
+
+    if (uncertaintyBandConfig.state) {
+        fetchUncertaintyLayers({
+            state: uncertaintyBandConfig.state,
+            metric: uncertaintyBandConfig.metric,
+            policy: uncertaintyBandConfig.policy,
+            model: uncertaintyBandConfig.model
+        });
     }
 });
 
@@ -605,10 +919,10 @@ function updateChart() {
     .then(response => response.json())
     .then(data => {
         originalChartData = data;
-        
+
         // Prepare display data with any active simulations
-        const displayData = { ...data };
-        
+        let displayData = { ...data };
+
         // Add any active simulation results for selected states
         for (const simId in simulationResults) {
             const sim = simulationResults[simId];
@@ -622,7 +936,18 @@ function updateChart() {
                 };
             }
         }
-        
+
+        const bandConfig = getUncertaintyBandConfig();
+        if (bandConfig) {
+            return fetchUncertaintyLayers(bandConfig).then(payload => {
+                if (payload && payload.available) {
+                    displayData = applyUncertaintyBands(displayData, bandConfig, payload);
+                }
+                renderCharts(displayData, selectedStates);
+                showStatusMessage('Charts updated successfully.', 'success');
+            });
+        }
+
         renderCharts(displayData, selectedStates);
         showStatusMessage('Charts updated successfully.', 'success');
     })
@@ -999,7 +1324,11 @@ function renderCharts(data, states) {
                             position: 'top',
                             labels: {
                                 usePointStyle: true,
-                                boxWidth: 6
+                                boxWidth: 6,
+                                filter: function(legendItem, data) {
+                                    const dataset = data.datasets[legendItem.datasetIndex];
+                                    return dataset.showInLegend !== false;
+                                }
                             }
                         }
                     },
@@ -1376,7 +1705,11 @@ function renderChart(data, chartId = 'atsChart') {
                         position: 'top',
                         labels: {
                             usePointStyle: true,
-                            boxWidth: 6
+                            boxWidth: 6,
+                            filter: function(legendItem, data) {
+                                const dataset = data.datasets[legendItem.datasetIndex];
+                                return dataset.showInLegend !== false;
+                            }
                         }
                     }
                 },
