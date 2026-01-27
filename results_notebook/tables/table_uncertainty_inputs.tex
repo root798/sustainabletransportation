@@ -1,0 +1,47 @@
+\begin{longtable}{llllllll}
+\caption{Input uncertainty specification used in Monte Carlo sampling. Each row lists one uncertain parameter, its uncertainty layer, and the distribution family. Moments or bounds are shown when available.} \label{tab:uncertainty-inputs} \\
+\toprule
+Layer & Block & Parameter & Dist & Mean & SD & Min & Max \\
+\midrule
+\endfirsthead
+\caption[]{Input uncertainty specification used in Monte Carlo sampling. Each row lists one uncertain parameter, its uncertainty layer, and the distribution family. Moments or bounds are shown when available.} \\
+\toprule
+Layer & Block & Parameter & Dist & Mean & SD & Min & Max \\
+\midrule
+\endhead
+\midrule
+\multicolumn{8}{r}{Continued on next page} \\
+\midrule
+\endfoot
+\bottomrule
+\endlastfoot
+L1 & initial\_data & initial\_data.total\_cars & normal & 8e+06 & 800000 & 1 & --- \\
+L1 & initial\_data & initial\_data.total\_intersections & normal & 171000 & 17100 & 1 & --- \\
+L1 & initial\_data & initial\_data.f\_clean & beta & 0.39 & --- & 0 & 1 \\
+L1 & initial\_data & initial\_data.ev\_share & beta & 0.00593625 & --- & 0 & 1 \\
+L3 & growth\_rates & growth\_rates.ev & lognormal & --- & --- & 0 & --- \\
+L3 & growth\_rates & growth\_rates.clean\_energy & lognormal & --- & --- & 0 & --- \\
+L3 & growth\_rates & growth\_rates.total\_car\_increase & lognormal & --- & --- & 0 & --- \\
+L3 & growth\_rates & growth\_rates.efficiency\_doubling & lognormal & --- & --- & 0 & --- \\
+L1 & emission\_factors & emission\_factors.e\_clean & lognormal & 0.03 & --- & 0 & --- \\
+L1 & emission\_factors & emission\_factors.e\_fossil & lognormal & 0.5 & --- & 0 & --- \\
+L1 & emission\_factors & emission\_factors.e\_gasoline & lognormal & 1.65 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L3.sensing & lognormal & 106 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L3.computing & lognormal & 3472 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L3.communication & lognormal & 12 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L4.sensing & lognormal & 249 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L4.computing & lognormal & 6945 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L4.communication & lognormal & 17 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L5.sensing & lognormal & 446 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L5.computing & lognormal & 13891 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.ecav\_power.L5.communication & lognormal & 24 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Basic.sensing & lognormal & 179 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Basic.computing & lognormal & 27782 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Basic.communication & lognormal & 569 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Semi.sensing & lognormal & 1076 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Semi.computing & lognormal & 55564 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Semi.communication & lognormal & 735 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Highly.sensing & lognormal & 1417 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Highly.computing & lognormal & 111129 & --- & 0 & --- \\
+L2 & consumption\_rates & consumption\_rates.sti\_power.Highly.communication & lognormal & 884 & --- & 0 & --- \\
+\end{longtable}
