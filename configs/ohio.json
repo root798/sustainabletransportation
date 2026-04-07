@@ -1,11 +1,11 @@
 {
     "initial_data": {
-        "total_cars": 8000000,
-        "total_ev": 47490,
+        "total_cars": 10385000,
+        "total_ev": 69400,
         "total_cav": 400,
         "total_intersections": 171000,
         "total_sti": 0,
-        "f_clean": 0.39
+        "f_clean": 0.247
     },
     "growth_rates": {
         "cav": 0.45,

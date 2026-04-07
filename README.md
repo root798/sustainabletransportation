@@ -2,6 +2,15 @@
 
 CLEAR-ATS is a simulation framework that models the evolution of transportation systems from **2024 to 2100**. It focuses on the interplay between **Connected Autonomous Vehicles (CAVs)** and **Smart Traffic Infrastructure (STI)** to evaluate energy consumption, CO₂ emissions, and counts of vehicles and infrastructure across various regional scenarios (e.g., California, Ohio, US Average).
 
+## Current Scientific Status
+
+- The quantitatively implemented boundary in this repo is the **utility phase only**. Production, logistics, and end-of-life remain conceptual unless a file explicitly proves otherwise.
+- The main output columns stored as `*Power (kWh)` are **annual energy totals**, not instantaneous power. In the corrected dashboard they are labeled as annual energy demand in `kWh/year`.
+- Under the current `TransportModel` implementation, `growth_rates.cav` and `growth_rates.sti` behave like **target fractions reached by 2075**, not literal annual growth rates.
+- `initial_data.total_ev` is used as a **battery-electric vehicle (BEV)** count in the current code path; it is not a BEV+PHEV total unless explicitly stated elsewhere.
+- The `us_average` region is a **synthetic California/Ohio midpoint template**, not an official U.S. national total.
+- Aligned precomputed quantile support in `results/` is **baseline-only**. Legacy notebook quantiles in `results_notebook/` are retained as legacy artifacts and should not be silently mixed with the current deterministic pipeline.
+
 ---
 
 ## Table of Contents
@@ -256,3 +265,34 @@ This change eliminates abrupt retirement spikes (e.g., in 2036-2037) while prese
    Run the following command:
    ```bash
    pip install -r requirements.txt
+   ```
+
+2. **Generate deterministic baseline outputs for the corrected state defaults:**
+   ```bash
+   python footprint_model.py --scenarios california ohio us_average --years 68 --policy baseline
+   ```
+
+3. **Generate aggressive and conservative deterministic outputs if needed:**
+   ```bash
+   python footprint_model.py --scenarios california ohio us_average --years 68 --policy aggressive
+   python footprint_model.py --scenarios california ohio us_average --years 68 --policy conservative
+   ```
+
+4. **Generate aligned baseline quantiles:**
+   ```bash
+   python footprint_model.py --scenarios california ohio us_average --years 68 --policy baseline --mc 200
+   ```
+
+## Deployment
+
+- **Local Streamlit app:**
+  ```bash
+  streamlit run v3_streamlit_app/streamlit_app.py
+  ```
+
+- **Public Streamlit line:**
+  ```bash
+  streamlit run v3_streamlit_app/streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+  ```
+
+This public command binds the Streamlit server to all interfaces so it can be exposed by the host environment or reverse proxy.

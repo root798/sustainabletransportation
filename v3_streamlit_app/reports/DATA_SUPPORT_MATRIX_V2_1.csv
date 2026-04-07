@@ -1,0 +1,10 @@
+module,implemented,data_available,dashboard_shown,hidden,conceptual_only,notes
+Utility phase,yes,yes,yes,no,no,Core implemented model outputs.
+State-level totals,yes,yes,yes,no,no,Live simulation and deterministic CSV parity verified.
+Uncertainty quantiles,yes,partial,yes,no,no,Coverage varies by region and policy.
+Policy comparisons,yes,partial,yes,no,no,Live deterministic support for all config-defined policies; precomputed quantiles are incomplete outside California.
+Production phase,no,no,no,yes,yes,Conceptual boundary only.
+Logistics phase,no,no,no,yes,yes,Conceptual boundary only.
+End-of-life,no,no,no,yes,yes,Conceptual boundary only.
+Subsystem decomposition,yes,yes,yes,no,no,Supported because subsystem columns exist in outputs.
+Turning-point metrics,yes,yes,yes,no,no,Derived from annual emissions outputs.

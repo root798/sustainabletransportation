@@ -1,0 +1,55 @@
+region,scenario,page,deterministic_support,quantile_support,fallback_used,notes
+california,aggressive,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config. Notebook quantiles are intentionally excluded from overlays because they diverge from the current deterministic pipeline.
+california,aggressive,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+california,aggressive,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+california,aggressive,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+california,aggressive,Uncertainty Analysis (legacy notebook),n/a,yes,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+california,aggressive,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
+california,baseline,Scenario Explorer,yes,aligned `results/` only at exact defaults,no,Live deterministic scenario is supported from runtime config. The aligned default quantile file exists but its p05-p95 band is currently zero-width. Notebook quantiles are intentionally excluded from overlays because they diverge from the current deterministic pipeline.
+california,baseline,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+california,baseline,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+california,baseline,Uncertainty Analysis (aligned results),n/a,yes,no,Only aligned `results/` quantiles are offered in this mode. The current aligned baseline file has zero-width p05-p95 bands.
+california,baseline,Uncertainty Analysis (legacy notebook),n/a,yes,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+california,baseline,Utility Phase Analysis,yes,aligned `results/` only at exact defaults,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists. The current aligned baseline file is zero-width.
+california,conservative,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config. Notebook quantiles are intentionally excluded from overlays because they diverge from the current deterministic pipeline.
+california,conservative,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+california,conservative,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+california,conservative,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+california,conservative,Uncertainty Analysis (legacy notebook),n/a,yes,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+california,conservative,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
+ohio,aggressive,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config.
+ohio,aggressive,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+ohio,aggressive,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+ohio,aggressive,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+ohio,aggressive,Uncertainty Analysis (legacy notebook),n/a,no,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+ohio,aggressive,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
+ohio,baseline,Scenario Explorer,yes,aligned `results/` only at exact defaults,no,Live deterministic scenario is supported from runtime config. The aligned default quantile file exists but its p05-p95 band is currently zero-width. Notebook quantiles are intentionally excluded from overlays because they diverge from the current deterministic pipeline.
+ohio,baseline,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+ohio,baseline,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+ohio,baseline,Uncertainty Analysis (aligned results),n/a,yes,no,Only aligned `results/` quantiles are offered in this mode. The current aligned baseline file has zero-width p05-p95 bands.
+ohio,baseline,Uncertainty Analysis (legacy notebook),n/a,yes,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+ohio,baseline,Utility Phase Analysis,yes,aligned `results/` only at exact defaults,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists. The current aligned baseline file is zero-width.
+ohio,conservative,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config.
+ohio,conservative,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+ohio,conservative,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+ohio,conservative,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+ohio,conservative,Uncertainty Analysis (legacy notebook),n/a,no,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+ohio,conservative,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
+us_average,aggressive,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config.
+us_average,aggressive,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+us_average,aggressive,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+us_average,aggressive,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+us_average,aggressive,Uncertainty Analysis (legacy notebook),n/a,no,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+us_average,aggressive,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
+us_average,baseline,Scenario Explorer,yes,aligned `results/` only at exact defaults,no,Live deterministic scenario is supported from runtime config. The aligned default quantile file exists but its p05-p95 band is currently zero-width. Notebook quantiles are intentionally excluded from overlays because they diverge from the current deterministic pipeline.
+us_average,baseline,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+us_average,baseline,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+us_average,baseline,Uncertainty Analysis (aligned results),n/a,yes,no,Only aligned `results/` quantiles are offered in this mode. The current aligned baseline file has zero-width p05-p95 bands.
+us_average,baseline,Uncertainty Analysis (legacy notebook),n/a,yes,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+us_average,baseline,Utility Phase Analysis,yes,aligned `results/` only at exact defaults,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists. The current aligned baseline file is zero-width.
+us_average,conservative,Scenario Explorer,yes,none,no,Live deterministic scenario is supported from runtime config.
+us_average,conservative,State Results,yes,support table only,no,Cross-state charts are deterministic live runs only. Quantile availability is reported but not substituted.
+us_average,conservative,Turning Points,yes,not used,no,Turning metrics are recomputed from live deterministic runs. Precomputed quantiles are informational only.
+us_average,conservative,Uncertainty Analysis (aligned results),n/a,no,no,Only aligned `results/` quantiles are offered in this mode.
+us_average,conservative,Uncertainty Analysis (legacy notebook),n/a,no,no,Legacy notebook files are exposed only as separate artifacts with a mismatch warning.
+us_average,conservative,Utility Phase Analysis,yes,none,no,Mirrors the applied explorer scenario. Quantile bands are shown only when an aligned `results/` file exists.
