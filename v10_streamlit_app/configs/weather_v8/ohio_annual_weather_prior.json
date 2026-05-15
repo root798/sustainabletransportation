@@ -1,6 +1,0 @@
-{
-  "region": "ohio",
-  "classes": ["clear", "cloudy", "adverse"],
-  "annual_centroid": [0.34, 0.39, 0.27],
-  "kappa": 96
-}
