@@ -1,0 +1,44 @@
+{
+  "group_id": "l1_initial_state",
+  "layer": "L1",
+  "group_label": "2024 baseline conditions",
+  "help": "Measured 2024 starting points of the regional fleet and grid. These are baseline state inputs, not scenario-design levers. They are rapidly absorbed by the growth-rate parameters (F25, F26) within 3-5 simulated years, contributing little to post-2030 band width. Classification: fixed or low; medium is rejected as uninformative inflation.",
+  "parameters": [
+    {
+      "param_id": "F01",
+      "config_path": "initial_data.f_clean",
+      "label": "Initial low-carbon electricity share",
+      "physical_meaning": "2024 fraction of regional electricity generation from low-carbon sources. California 2024: ~54% renewables + 9% nuclear + 11% large hydro (EIA); Ohio 2024: ~15% nuclear + 8% renewables with 43% natural gas and 34% coal dominating fossil generation (EIA).",
+      "citation": "U.S. Energy Information Administration (EIA), State Electricity Profiles. California: https://www.eia.gov/state/print.php?sid=CA; Ohio: https://www.eia.gov/state/analysis.php?sid=OH",
+      "affects": ["level", "width"],
+      "allowed_levels": ["fixed", "low"],
+      "default_level": "fixed",
+      "paper_safe_level": "low",
+      "levels": {
+        "fixed": {"fixed_to": "region_mean"},
+        "low":   {"dist": "beta", "mean": "__REGION_MEAN__", "kappa": "__REGION_KAPPA_X2__"}
+      },
+      "why_default_fixed": "Measurement-grade EIA state-by-state reporting. Beta draw is dominated by a constant offset swallowed by F26 compounding in 3-5 years. Fixing improves readability without hiding real uncertainty.",
+      "why_medium_rejected": "The previous MEDIUM beta(kappa) treated the EIA-reported number as having much wider disagreement than observed. LOW (kappa x 2) already captures residual measurement uncertainty.",
+      "duplicates": "partially duplicates F26 (clean_energy growth)"
+    },
+    {
+      "param_id": "F02",
+      "config_path": "initial_data.ev_share",
+      "label": "Initial BEV share of light-duty fleet",
+      "physical_meaning": "2024 battery-electric vehicle share of the regional light-duty fleet. California 2024: ~1,256,600 EVs out of ~34.2M registered light-duty vehicles (~3.7%); Ohio 2024: ~50,400 EVs out of ~9.6M (~0.5%) (DOE AFDC).",
+      "citation": "U.S. Department of Energy, Alternative Fuels Data Center (AFDC), State Vehicle Registration Counts. https://afdc.energy.gov/vehicle-registration",
+      "affects": ["level"],
+      "allowed_levels": ["fixed", "low"],
+      "default_level": "fixed",
+      "paper_safe_level": "low",
+      "levels": {
+        "fixed": {"fixed_to": "region_mean"},
+        "low":   {"dist": "beta", "mean": "__REGION_MEAN__", "kappa": "__REGION_KAPPA_X2__"}
+      },
+      "why_default_fixed": "Regionally measured (DOE AFDC state registration counts). Absorbed by F25 growth exponent within 3-5 years.",
+      "why_medium_rejected": "Same rationale as F01; widening the Beta beyond measurement spread does not reflect evidence.",
+      "duplicates": "partially duplicates F25 (ev growth)"
+    }
+  ]
+}

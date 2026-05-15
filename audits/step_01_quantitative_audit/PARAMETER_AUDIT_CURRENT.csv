@@ -1,0 +1,176 @@
+parameter_name,current_value,file_path,code_symbol_or_json_path,semantic_role,units,region_specific_or_global,used_in_live_simulation,used_in_dashboard_only,overridden_by_policy,appears_in_methods_or_results_text_if_detectable,candidate_uncertainty_class,notes_on_risk
+# ===== HORIZON AND INTERPRETATION =====
+default_simulation_years,68,footprint_model.py,main argparse --years default (L767),CLI default horizon,years,global,yes,no,no,yes (2024-2092 window),deterministic_control,"Code default differs from v3 KEY_YEAR_LIST narrative and paper narrative that ends at 2075/2100"
+DEFAULT_HORIZON_years_v3,68,v3_streamlit_app/dashboard_core.py,DEFAULT_HORIZON_YEARS (L240),v3 dashboard default years,years,global,no,yes,no,yes,deterministic_control,Matches CLI
+DEFAULT_HORIZON_years_v4,68,v4_streamlit_app/core.py,DEFAULT_HORIZON (L59),v4 dashboard default years,years,global,no,yes,no,yes,deterministic_control,"CLAUDE.md (now corrected) previously said v3=51; verify no stale doc still says 51"
+BASE_YEAR,2024,v4_streamlit_app/core.py,BASE_YEAR (L58),Start calendar year,year,global,yes (footprint_model.py hard-codes 2024 at L574),no,no,yes,deterministic_control,"footprint_model.py uses literal 2024 at L574 and L656; not derived from BASE_YEAR constant"
+target_reach_year_divisor_51,51,footprint_model.py,L468 L477 L633,Hard-coded divisor for CAV/STI target-reach time factor,years,global,yes,no,no,yes (2075 narrative),deterministic_control,"Magic number; if BASE_YEAR or horizon ever changes, silently wrong. Represents 2075 target only while BASE_YEAR=2024"
+print_trigger_year_51,51,footprint_model.py,L633 (t == 51),Stdout logging trigger,n/a,global,no,no,no,no,deterministic_control,Logging only
+INTERPRETATION_BOUNDARY_THRESHOLD_v3,1.5,v3_streamlit_app/dashboard_core.py,INTERPRETATION_BOUNDARY_THRESHOLD (L886),(p95-p05)/p50 cutover threshold,ratio,global,no,yes,no,yes (methods boundary),deterministic_control,Must match v4; currently does
+INTERPRETATION_BOUNDARY_START_YEAR_v3,2026,v3_streamlit_app/dashboard_core.py,INTERPRETATION_BOUNDARY_START_YEAR (L887),v3 earliest year to test threshold,year,global,no,yes,no,yes,deterministic_control,"DIFFERS FROM v4 (2027). One-year inconsistency across versions"
+INTERP_THRESHOLD_v4,1.5,v4_streamlit_app/core.py,INTERP_THRESHOLD (L63),v4 same-meaning threshold,ratio,global,no,yes,no,yes,deterministic_control,Matches v3
+INTERP_START_YEAR_v4,2027,v4_streamlit_app/core.py,INTERP_START_YEAR (L64),v4 earliest year,year,global,no,yes,no,yes,deterministic_control,"DIFFERS FROM v3 (2026). Unify before any methodology doc"
+turning_year_decline_ratio,0.5,footprint_model.py AND v3 dashboard_core.py AND v4 core.py,"L537/L546 v3; L402 v4",Turning year = first year <= 50% of peak,ratio,global,yes (footprint_model compute_scalar_metrics) + yes,no,no,yes,deterministic_control,"Threshold hard-coded in three places; if definition changes, must update all"
+turning_year_consecutive_years,5,footprint_model.py,_compute_turning_point default (L669 L678),Legacy definition: N consecutive decline years,years,global,yes (compute_scalar_metrics only),no,no,unclear,deterministic_control,"Dashboards use the 0.5 peak-rule; compute_scalar_metrics uses a DIFFERENT 5-year consecutive rule; two definitions coexist"
+KEY_YEAR_LIST_v3,"[2025, 2045, 2075]",v3_streamlit_app/dashboard_core.py,KEY_YEAR_LIST (L239),v3 key year palette,years,global,no,yes,no,yes,deterministic_control,Differs from v4 comp_years
+comp_years_v4,"[2025, 2030, 2045, 2075, 2092]",v4_streamlit_app/pages/02_State_Results.py,L70,v4 state comparison years,years,global,no,yes,no,yes,deterministic_control,"Includes 2030 and 2092; diverges from v3"
+cumulative_window_label,"2024-2092",v4_streamlit_app/pages/03_Turning_Points.py,L72 caption,Caption literal in docs table,years,global,no,yes,no,yes,deterministic_control,Caption literal; breaks if user slides horizon
+# ===== INITIAL STATE: California =====
+ca_total_cars,37428700,configs/california.json,initial_data.total_cars,Initial light-duty vehicle stock,count,region_specific,yes,no,no,yes,L1_data_source,"Cross-checked to DOE AFDC 2024 per REGION_NOTES"
+ca_total_ev,1533900,configs/california.json,initial_data.total_ev,Initial BEV count (absolute),count,region_specific,yes,no,no,yes,L1_data_source,Implied ev_share 0.041
+ca_total_cav,1603,configs/california.json,initial_data.total_cav,Initial CAV count,count,region_specific,yes,no,no,yes,L1_data_source,Lowly sourced; likely estimate
+ca_total_intersections,380400,configs/california.json,initial_data.total_intersections,Convertible intersections,count,region_specific,yes,no,no,yes,L1_data_source,
+ca_total_sti,0,configs/california.json,initial_data.total_sti,Initial STI count,count,region_specific,yes,no,no,yes,L1_data_source,Assumed 0
+ca_f_clean,0.656,configs/california.json,initial_data.f_clean,Initial low-carbon grid share,fraction,region_specific,yes,no,no,yes,L1_data_source,"Beta distribution mean 0.656 kappa 80 in MC"
+# ===== INITIAL STATE: Ohio =====
+oh_total_cars,10385000,configs/ohio.json,initial_data.total_cars,Initial vehicle stock,count,region_specific,yes,no,no,yes,L1_data_source,
+oh_total_ev,69400,configs/ohio.json,initial_data.total_ev,Initial BEV count,count,region_specific,yes,no,no,yes,L1_data_source,Implied ev_share 0.00668
+oh_total_cav,400,configs/ohio.json,initial_data.total_cav,Initial CAV count,count,region_specific,yes,no,no,yes,L1_data_source,
+oh_total_intersections,171000,configs/ohio.json,initial_data.total_intersections,Intersections,count,region_specific,yes,no,no,yes,L1_data_source,
+oh_total_sti,0,configs/ohio.json,initial_data.total_sti,Initial STI count,count,region_specific,yes,no,no,yes,L1_data_source,
+oh_f_clean,0.247,configs/ohio.json,initial_data.f_clean,Initial low-carbon grid share,fraction,region_specific,yes,no,no,yes,L1_data_source,"Beta mean 0.247 kappa 80 in MC"
+# ===== INITIAL STATE: US Average (synthetic) =====
+us_total_cars,23906850,configs/us_average.json,initial_data.total_cars,Initial vehicle stock,count,region_specific,yes,no,no,yes,L1_data_source,Arithmetic midpoint of CA+OH = 23906850 — verified
+us_total_ev,801650,configs/us_average.json,initial_data.total_ev,Initial BEV count,count,region_specific,yes,no,no,yes,L1_data_source,Arithmetic midpoint of CA+OH = 801650 — verified
+us_total_cav,1002,configs/us_average.json,initial_data.total_cav,Initial CAV count,count,region_specific,yes,no,no,yes,L1_data_source,(1603+400)/2 = 1001.5 ~ verified
+us_total_intersections,275700,configs/us_average.json,initial_data.total_intersections,Intersections,count,region_specific,yes,no,no,yes,L1_data_source,(380400+171000)/2 = 275700 — verified
+us_total_sti,0,configs/us_average.json,initial_data.total_sti,Initial STI count,count,region_specific,yes,no,no,yes,L1_data_source,
+us_f_clean,0.4515,configs/us_average.json,initial_data.f_clean,Initial low-carbon grid share,fraction,region_specific,yes,no,no,yes,L1_data_source,(0.656+0.247)/2 = 0.4515 — verified
+# ===== GROWTH / ADOPTION: California =====
+ca_cav_target,0.45,configs/california.json,growth_rates.cav,CAV fleet target fraction by 2075,fraction,region_specific,yes,no,no,yes,L3_trajectory,"Mis-named as 'cav growth rate' in code/config; actually a target fraction reached linearly by 2075"
+ca_sti_target,0.5,configs/california.json,growth_rates.sti,STI target fraction by 2075,fraction,region_specific,yes,no,no,yes,L3_trajectory,Same mis-naming as CAV
+ca_ev_growth,0.07,configs/california.json,growth_rates.ev,Annual BEV-share growth exponent,fraction/yr,region_specific,yes,no,yes (aggressive=0.2 conservative=0.05),yes,L3_trajectory,Compound exponent; saturates fast
+ca_clean_growth,0.05,configs/california.json,growth_rates.clean_energy,Annual low-carbon-share growth exponent,fraction/yr,region_specific,yes,no,yes (aggressive=0.1 conservative=0.02),yes,L3_trajectory,Exponential; CA saturates ~2041
+ca_efficiency_doubling,2.8,configs/california.json,growth_rates.efficiency_doubling,Hardware efficiency doubling time,years,region_specific,yes,no,yes (aggressive=2.0 conservative=6.0),yes,L2_load_model,Cohort efficiency
+ca_total_car_increase,0.002,configs/california.json,growth_rates.total_car_increase,Annual fleet size growth,fraction/yr,region_specific,yes,no,no,yes,L3_trajectory,
+ca_retire_year,12,configs/california.json,growth_rates.retire_year,Vehicle service life,years,region_specific,yes,no,no,yes,L2_load_model,"Never uncertain in MC; structurally important"
+# ===== GROWTH / ADOPTION: Ohio =====
+oh_cav_target,0.45,configs/ohio.json,growth_rates.cav,CAV target,fraction,region_specific,yes,no,no,yes,L3_trajectory,
+oh_sti_target,0.5,configs/ohio.json,growth_rates.sti,STI target,fraction,region_specific,yes,no,no,yes,L3_trajectory,
+oh_ev_growth,0.07,configs/ohio.json,growth_rates.ev,BEV growth,fraction/yr,region_specific,yes,no,yes,yes,L3_trajectory,
+oh_clean_growth,0.05,configs/ohio.json,growth_rates.clean_energy,Clean energy growth,fraction/yr,region_specific,yes,no,yes,yes,L3_trajectory,
+oh_efficiency_doubling,2.8,configs/ohio.json,growth_rates.efficiency_doubling,Efficiency doubling,years,region_specific,yes,no,yes,yes,L2_load_model,
+oh_total_car_increase,0.002,configs/ohio.json,growth_rates.total_car_increase,Fleet growth,fraction/yr,region_specific,yes,no,no,yes,L3_trajectory,
+oh_retire_year,12,configs/ohio.json,growth_rates.retire_year,Service life,years,region_specific,yes,no,no,yes,L2_load_model,
+# ===== GROWTH / ADOPTION: US Average =====
+us_cav_target,0.24,configs/us_average.json,growth_rates.cav,CAV target,fraction,region_specific,yes,no,no,yes,L3_trajectory,"NOT arithmetic midpoint of CA(0.45)+OH(0.45); CONTRADICTS 'synthetic midpoint' REGION_NOTES"
+us_sti_target,0.03,configs/us_average.json,growth_rates.sti,STI target,fraction,region_specific,yes,no,no,yes,L3_trajectory,"NOT arithmetic midpoint of CA(0.5)+OH(0.5); CONTRADICTS midpoint narrative"
+us_ev_growth,0.07,configs/us_average.json,growth_rates.ev,BEV growth,fraction/yr,region_specific,yes,no,yes,yes,L3_trajectory,
+us_clean_growth,0.05,configs/us_average.json,growth_rates.clean_energy,Clean energy growth,fraction/yr,region_specific,yes,no,yes,yes,L3_trajectory,
+us_efficiency_doubling,3.8,configs/us_average.json,growth_rates.efficiency_doubling,Efficiency doubling,years,region_specific,yes,no,yes,yes,L2_load_model,"NOT midpoint of CA/OH(2.8/2.8); contradicts midpoint narrative"
+us_total_car_increase,0.004,configs/us_average.json,growth_rates.total_car_increase,Fleet growth,fraction/yr,region_specific,yes,no,no,yes,L3_trajectory,"NOT midpoint of CA/OH(0.002/0.002); contradicts midpoint narrative"
+us_retire_year,12,configs/us_average.json,growth_rates.retire_year,Service life,years,region_specific,yes,no,no,yes,L2_load_model,
+# ===== TECHNOLOGY / EFFICIENCY =====
+adoption_curve_default,exponential,configs/*.json,model_variants.adoption_curve,"BEV adoption curve form (linear|logistic|exponential)",form,global_via_config,yes,no,no,unclear,structural_shock_candidate,"All three configs use exponential; logistic parameters ev_t_mid=20 ev_carrying_capacity=1.0 dormant"
+efficiency_curve_default,continuous,configs/*.json,model_variants.efficiency_curve,"Efficiency curve mode (continuous|step|stepwise)",form,global_via_config,yes,no,no,no,structural_shock_candidate,Continuous only in active configs
+ev_t_mid_default,20,footprint_model.py,L306,Logistic midpoint year offset,years,global,only if adoption_curve=logistic,no,no,no,dead_in_current_config,Dormant — never used because adoption_curve=exponential
+ev_carrying_capacity_default,1.0,footprint_model.py,L307,Logistic asymptote,fraction,global,only if adoption_curve=logistic,no,no,no,dead_in_current_config,Dormant
+efficiency_doubling_floor_trigger,100,footprint_model.py,L385,Threshold to apply reasonable_floor in efficiency,years,global,yes (if doubling>100),no,no,no,deterministic_control,"Safety floor never triggers for current configs (all doubling <=6.5)"
+decay_factor_initial_cohorts,0.7,footprint_model.py,L334,Age-distribution weight for initial CAV cohorts,unitless,global,yes,no,no,no,L2_load_model,"Hard-coded; not in config; affects initial-cohort efficiency distribution"
+icecav_power_factor,1.6,configs/*.json,consumption_rates.icecav_power_factor,ICECAV overhead multiplier vs ECAV,ratio,global_via_config,yes,no,no,no,L2_load_model,"Never uncertain in MC despite being a load-model assumption"
+retrofit_share_default,0.0,footprint_model.py,L273 L297,Fraction of fleet undergoing partial retrofit,fraction,global,yes (only if efficiency_model='partial_retrofit'),no,no,no,dead_in_current_config,Dormant — efficiency_model default='smooth'
+efficiency_model_default,smooth,footprint_model.py,L272,efficiency_model arg,form,global,yes,no,no,no,structural_shock_candidate,Non-default 'partial_retrofit' never activated
+MAX_REASONABLE_POWER,1e15,footprint_model.py,L537,Silent safety cap on power values,kWh,global,yes,no,no,no,deterministic_control,"Silent clip risks distorting outputs if hit; unlikely for current magnitudes"
+cohort_efficiency_formula,"0.5^(elapsed/doubling)",footprint_model.py,_calculate_efficiency_factor L384,Cohort hardware efficiency decay,ratio,global,yes,no,no,yes,L2_load_model,
+# ===== CONSUMPTION: California =====
+ca_ecav_L3_sensing,78,configs/california.json,consumption_rates.ecav_power.L3.sensing,Per-vehicle sensing power,W,region_specific,yes,no,no,yes (methods),L2_load_model,NOT in data_uncertainty
+ca_ecav_L3_computing,4960,configs/california.json,consumption_rates.ecav_power.L3.computing,Per-vehicle computing power,W,region_specific,yes,no,no,yes,L2_load_model,NOT in data_uncertainty
+ca_ecav_L3_communication,18,configs/california.json,consumption_rates.ecav_power.L3.communication,Per-vehicle communication,W,region_specific,yes,no,no,yes,L2_load_model,NOT in data_uncertainty
+ca_ecav_L4_sensing,184,configs/california.json,consumption_rates.ecav_power.L4.sensing,L4 sensing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_ecav_L4_computing,9920,configs/california.json,consumption_rates.ecav_power.L4.computing,L4 computing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_ecav_L4_communication,26,configs/california.json,consumption_rates.ecav_power.L4.communication,L4 comm,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_ecav_L5_sensing,325,configs/california.json,consumption_rates.ecav_power.L5.sensing,L5 sensing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_ecav_L5_computing,19841,configs/california.json,consumption_rates.ecav_power.L5.computing,L5 computing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_ecav_L5_communication,36,configs/california.json,consumption_rates.ecav_power.L5.communication,L5 comm,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Basic_sensing,176,configs/california.json,consumption_rates.sti_power.Basic.sensing,STI basic sensing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Basic_computing,39682,configs/california.json,consumption_rates.sti_power.Basic.computing,STI basic computing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Basic_communication,854,configs/california.json,consumption_rates.sti_power.Basic.communication,STI basic comm,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Semi_sensing,1054,configs/california.json,consumption_rates.sti_power.Semi.sensing,STI semi sensing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Semi_computing,79365,configs/california.json,consumption_rates.sti_power.Semi.computing,STI semi computing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Semi_communication,1103,configs/california.json,consumption_rates.sti_power.Semi.communication,STI semi comm,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Highly_sensing,1303,configs/california.json,consumption_rates.sti_power.Highly.sensing,STI highly sensing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Highly_computing,158730,configs/california.json,consumption_rates.sti_power.Highly.computing,STI highly computing,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+ca_sti_Highly_communication,1327,configs/california.json,consumption_rates.sti_power.Highly.communication,STI highly comm,W,region_specific,yes,no,no,yes,L2_load_model,NOT uncertain
+# ===== CONSUMPTION: Ohio (power values differ from CA) =====
+oh_ecav_L3_sensing,106,configs/ohio.json,consumption_rates.ecav_power.L3.sensing,L3 sensing,W,region_specific,yes,no,no,yes,L2_load_model,"OH values differ from CA and from US avg (US=1053); unclear why load profiles are region-specific"
+oh_ecav_L3_computing,3472,configs/ohio.json,consumption_rates.ecav_power.L3.computing,L3 computing,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L3_communication,12,configs/ohio.json,consumption_rates.ecav_power.L3.communication,L3 comm,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L4_sensing,249,configs/ohio.json,consumption_rates.ecav_power.L4.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L4_computing,6945,configs/ohio.json,consumption_rates.ecav_power.L4.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L4_communication,17,configs/ohio.json,consumption_rates.ecav_power.L4.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L5_sensing,446,configs/ohio.json,consumption_rates.ecav_power.L5.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L5_computing,13891,configs/ohio.json,consumption_rates.ecav_power.L5.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_ecav_L5_communication,24,configs/ohio.json,consumption_rates.ecav_power.L5.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Basic_sensing,179,configs/ohio.json,consumption_rates.sti_power.Basic.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Basic_computing,27782,configs/ohio.json,consumption_rates.sti_power.Basic.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Basic_communication,569,configs/ohio.json,consumption_rates.sti_power.Basic.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Semi_sensing,1076,configs/ohio.json,consumption_rates.sti_power.Semi.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Semi_computing,55564,configs/ohio.json,consumption_rates.sti_power.Semi.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Semi_communication,735,configs/ohio.json,consumption_rates.sti_power.Semi.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Highly_sensing,1417,configs/ohio.json,consumption_rates.sti_power.Highly.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Highly_computing,111129,configs/ohio.json,consumption_rates.sti_power.Highly.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+oh_sti_Highly_communication,884,configs/ohio.json,consumption_rates.sti_power.Highly.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+# ===== CONSUMPTION: US Average (values diverge from CA/OH by ~10-30x for STI sensing; suspected anomaly) =====
+us_ecav_L3_sensing,1053.4093,configs/us_average.json,consumption_rates.ecav_power.L3.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,"~10x CA/OH; not midpoint"
+us_ecav_L3_computing,3542.651725,configs/us_average.json,consumption_rates.ecav_power.L3.computing,,W,region_specific,yes,no,no,yes,L2_load_model,"Close to OH (3472) — NOT midpoint of CA(4960)+OH(3472)=4216"
+us_ecav_L3_communication,506.07725,configs/us_average.json,consumption_rates.ecav_power.L3.communication,,W,region_specific,yes,no,no,yes,L2_load_model,"~30x CA/OH; anomalous"
+us_ecav_L4_sensing,1624.7643,configs/us_average.json,consumption_rates.ecav_power.L4.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_ecav_L4_computing,6071.00345,configs/us_average.json,consumption_rates.ecav_power.L4.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_ecav_L4_communication,508.787375,configs/us_average.json,consumption_rates.ecav_power.L4.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_ecav_L5_sensing,3223.0515,configs/us_average.json,consumption_rates.ecav_power.L5.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_ecav_L5_computing,12061.5069,configs/us_average.json,consumption_rates.ecav_power.L5.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_ecav_L5_communication,1012.045,configs/us_average.json,consumption_rates.ecav_power.L5.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Basic_sensing,5089.8776,configs/us_average.json,consumption_rates.sti_power.Basic.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,"~30x CA(176)/OH(179); likely unit error or alternate formula"
+us_sti_Basic_computing,24692.562,configs/us_average.json,consumption_rates.sti_power.Basic.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Basic_communication,2784.7,configs/us_average.json,consumption_rates.sti_power.Basic.communication,,W,region_specific,yes,no,no,yes,L2_load_model,"~3-5x CA/OH"
+us_sti_Semi_sensing,10538.2144,configs/us_average.json,consumption_rates.sti_power.Semi.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Semi_computing,49653.18,configs/us_average.json,consumption_rates.sti_power.Semi.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Semi_communication,5367.92,configs/us_average.json,consumption_rates.sti_power.Semi.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Highly_sensing,20708.5088,configs/us_average.json,consumption_rates.sti_power.Highly.sensing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Highly_computing,98609.94,configs/us_average.json,consumption_rates.sti_power.Highly.computing,,W,region_specific,yes,no,no,yes,L2_load_model,
+us_sti_Highly_communication,10442.38,configs/us_average.json,consumption_rates.sti_power.Highly.communication,,W,region_specific,yes,no,no,yes,L2_load_model,
+# ===== LEVEL DISTRIBUTIONS (all regions identical) =====
+cav_levels,"[0.5, 0.333, 0.167]",configs/*.json,consumption_rates.cav_levels,Fraction at L3/L4/L5,fraction,global_via_config,yes,no,no,yes,L2_load_model,"Sums to 1.000; all three regions identical; NOT uncertain in MC"
+sti_levels,"[0.5, 0.333, 0.167]",configs/*.json,consumption_rates.sti_levels,Fraction at Basic/Semi/Highly,fraction,global_via_config,yes,no,no,yes,L2_load_model,"Sums to 1.000; all three regions identical; NOT uncertain in MC"
+# ===== EMISSION FACTORS (identical across regions) =====
+e_clean,0.03,configs/*.json,emission_factors.e_clean,Low-carbon electricity CO2 intensity,kg CO2/kWh,global_via_config,yes,no,no,yes,L1_data_source,"NEVER overridden by policy; NEVER in data_uncertainty — always deterministic"
+e_fossil,0.5,configs/*.json,emission_factors.e_fossil,Fossil electricity CO2 intensity,kg CO2/kWh,global_via_config,yes,no,no,yes,L1_data_source,"Triangular 0.35/0.50/0.65 in MC; never overridden by policy"
+e_gasoline,1.65,configs/*.json,emission_factors.e_gasoline,Gasoline-equivalent CO2 intensity,kg CO2/kWh-eq,global_via_config,yes,no,no,yes,L1_data_source,"Triangular 1.45/1.65/1.85 in MC; never overridden by policy"
+# ===== POLICY OVERRIDES (deep-merged onto growth_rates only) =====
+policy_aggressive_ev,0.2,configs/*.json,policy_scenarios.aggressive.growth_rates.ev,Aggressive BEV growth,fraction/yr,global_via_config,yes (when --policy aggressive),no,replaces base growth_rates.ev,yes,L3_trajectory,
+policy_aggressive_clean_energy,0.1,configs/*.json,policy_scenarios.aggressive.growth_rates.clean_energy,Aggressive clean-energy growth,fraction/yr,global_via_config,yes,no,replaces base,yes,L3_trajectory,
+policy_aggressive_efficiency_doubling,2.0,configs/*.json,policy_scenarios.aggressive.growth_rates.efficiency_doubling,Aggressive doubling time,years,global_via_config,yes,no,replaces base,yes,L2_load_model,
+policy_conservative_ev,0.05,configs/*.json,policy_scenarios.conservative.growth_rates.ev,Conservative BEV growth,fraction/yr,global_via_config,yes,no,replaces base,yes,L3_trajectory,
+policy_conservative_clean_energy,0.02,configs/*.json,policy_scenarios.conservative.growth_rates.clean_energy,Conservative clean growth,fraction/yr,global_via_config,yes,no,replaces base,yes,L3_trajectory,
+policy_conservative_efficiency_doubling,6.0,configs/*.json,policy_scenarios.conservative.growth_rates.efficiency_doubling,Conservative doubling,years,global_via_config,yes,no,replaces base,yes,L2_load_model,
+# ===== DATA UNCERTAINTY SPECS =====
+du_ca_f_clean,"beta mean=0.656 kappa=80",configs/california.json,data_uncertainty.initial_data.f_clean,Beta distribution for f_clean,dist,region_specific,yes (MC path),no,no,yes,L1_data_source,Active via _apply_data_uncertainty
+du_ca_ev_share,"beta mean=0.041 kappa=120",configs/california.json,data_uncertainty.initial_data.ev_share,Beta for BEV share,dist,region_specific,yes (MC),no,no,yes,L1_data_source,"Special path: sampled then used to recompute total_ev; _apply_data_uncertainty explicitly skips key 'ev_share' (L193)"
+du_oh_f_clean,"beta mean=0.247 kappa=80",configs/ohio.json,data_uncertainty.initial_data.f_clean,,dist,region_specific,yes,no,no,yes,L1_data_source,
+du_oh_ev_share,"beta mean=0.00668 kappa=120",configs/ohio.json,data_uncertainty.initial_data.ev_share,,dist,region_specific,yes,no,no,yes,L1_data_source,
+du_us_f_clean,"beta mean=0.4515 kappa=60",configs/us_average.json,data_uncertainty.initial_data.f_clean,,dist,region_specific,yes,no,no,yes,L1_data_source,"kappa=60 differs from CA/OH=80 (wider)"
+du_us_ev_share,"beta mean=0.0335 kappa=100",configs/us_average.json,data_uncertainty.initial_data.ev_share,,dist,region_specific,yes,no,no,yes,L1_data_source,"kappa=100 differs from CA/OH=120 (wider)"
+du_ca_growth_cav,"triangular low=0.25 mode=0.45 high=0.70",configs/california.json,data_uncertainty.growth_rates.cav,Uncertainty over 2075 target fraction (mis-labeled as growth_rate),dist,region_specific,yes,no,no,yes,L3_trajectory,"Semantically confusing: sampled distribution mislabeled as 'growth_rate'"
+du_ca_growth_sti,"triangular 0.25/0.50/0.75",configs/california.json,data_uncertainty.growth_rates.sti,2075 STI target uncertainty,dist,region_specific,yes,no,no,yes,L3_trajectory,
+du_ca_growth_ev,"normal mean=0.07 sd=0.015 min=0.02 max=0.15",configs/california.json,data_uncertainty.growth_rates.ev,BEV growth uncertainty,dist,region_specific,yes,no,no,yes,L3_trajectory,
+du_ca_growth_clean,"normal mean=0.05 sd=0.012 min=0.01 max=0.10",configs/california.json,data_uncertainty.growth_rates.clean_energy,Clean growth uncertainty,dist,region_specific,yes,no,no,yes,L3_trajectory,
+du_ca_efficiency,"triangular 1.5/2.8/5.0",configs/california.json,data_uncertainty.growth_rates.efficiency_doubling,Doubling-time uncertainty,dist,region_specific,yes,no,no,yes,L2_load_model,
+du_ca_fleet,"normal mean=0.002 sd=0.001 min=-0.005 max=0.01",configs/california.json,data_uncertainty.growth_rates.total_car_increase,Fleet growth uncertainty,dist,region_specific,yes,no,no,yes,L3_trajectory,
+du_ca_e_fossil,"triangular 0.35/0.50/0.65",configs/california.json,data_uncertainty.emission_factors.e_fossil,Fossil grid intensity uncertainty,dist,region_specific,yes,no,no,yes,L1_data_source,
+du_ca_e_gasoline,"triangular 1.45/1.65/1.85",configs/california.json,data_uncertainty.emission_factors.e_gasoline,Gasoline intensity uncertainty,dist,region_specific,yes,no,no,yes,L1_data_source,
+du_missing_e_clean,N/A,configs/*.json,data_uncertainty.emission_factors.e_clean,MISSING — e_clean never sampled,dist,global,no,no,no,N/A,L1_data_source,"GAP: paper-side framing of grid uncertainty likely assumes all three emission factors are uncertain"
+du_missing_consumption_rates,N/A,configs/*.json,data_uncertainty.consumption_rates.*,MISSING — all sensing/computing/comm power values deterministic in MC,dist,global,no,no,no,N/A,L2_load_model,"MAJOR GAP: engineering-uncertain per-level load values never sampled"
+du_missing_icecav_factor,N/A,configs/*.json,data_uncertainty.consumption_rates.icecav_power_factor,MISSING,dist,global,no,no,no,N/A,L2_load_model,
+du_missing_retire_year,N/A,configs/*.json,data_uncertainty.growth_rates.retire_year,MISSING,dist,global,no,no,no,N/A,L2_load_model,"Retirement age is a structural shock candidate"
+du_missing_cav_levels,N/A,configs/*.json,data_uncertainty.consumption_rates.cav_levels,MISSING,dist,global,no,no,no,N/A,L2_load_model,"Level mix [0.5,0.333,0.167] is a strong assumption; Dirichlet candidate"
+du_missing_sti_levels,N/A,configs/*.json,data_uncertainty.consumption_rates.sti_levels,MISSING,dist,global,no,no,no,N/A,L2_load_model,
+# ===== DISPLAY-ONLY / METADATA =====
+REGION_LABELS_us_average,"U.S. Average (synthetic CA/OH midpoint)",v3_streamlit_app/dashboard_core.py L28-32 AND v4 core.py L41-45,constant,Region display label,text,global,no,yes,no,yes,deterministic_control,"Narrative claim contradicts actual us_average growth/consumption values"
+REGION_NOTES_us_average,"synthetic arithmetic midpoint ...",v3 L33-37 AND v4 L46-50,constant,Region note,text,global,no,yes,no,yes,deterministic_control,"Narrative 'arithmetic midpoint' is true ONLY for total_cars/total_ev/total_intersections/f_clean — NOT for growth_rates.cav,sti,efficiency_doubling,total_car_increase and not for consumption_rates.*"
+CONTROL_SPECS_cav_growth_rate_label_v3,"CAV target fraction by 2075",v3 dashboard_core.py L60,Slider label,text,global,no,yes,no,yes,deterministic_control,"Label accurate but underlying config key is misnamed 'cav' in growth_rates"
+CONTROL_SPECS_initial_ev_share_path_v3,"(initial_data, total_ev_share)",v3 dashboard_core.py L154 AND v4 core.py L114,Slider config-path metadata,text,global,no,yes,no,no,dead_metadata,"Path points to non-existent config key; special-cased by code via key-name branch; path entry is dead/misleading"
+CONTROL_SPECS_initial_ev_share_path_v4,"(initial_data, total_ev_share)",v4 core.py L114,Slider config-path metadata,text,global,no,yes,no,no,dead_metadata,Same as v3
+default_rng_seed_cli,0,footprint_model.py,main argparse --seed default (L770),Default PRNG seed,int,global,yes,no,no,no,deterministic_control,
+default_mc_cli,0,footprint_model.py,main argparse --mc default (L769),Default MC count,int,global,yes,no,no,no,deterministic_control,"BUT use_sampling=True whenever data_uncertainty present — so single-run 'deterministic' output IS actually one MC draw at seed 0"
+quantiles_fixed,"[0.05, 0.5, 0.95]",footprint_model.py,L846,Quantile levels for MC output,fraction,global,yes,no,no,yes (paper),deterministic_control,"Only p05/p50/p95; no p25/p75 captured"
+mc_sample_count_default,200,results/*mc_runs.csv,external run,Standard MC ensemble size used to generate committed results,count,global,yes (via CLI --mc 200),no,no,yes,deterministic_control,"Not in code default; emerges from run.py / notebook convention"

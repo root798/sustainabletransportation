@@ -1,0 +1,47 @@
+{
+  "group_id": "l2_dirichlet_mixes",
+  "layer": "L2",
+  "group_label": "Autonomy and infrastructure level mixes",
+  "help": "Dirichlet-distributed shares over CAV automation levels and STI infrastructure levels. These are scenario-defining assumptions about how the fleet distributes across capability tiers — they are not residual empirical uncertainty. The Dirichlet concentration controls the spread around the assumed mix; it lacks an external empirical anchor and is a modeling design choice.",
+  "semantic_category": "scenario_assumption",
+  "parameters": [
+    {
+      "param_id": "F18",
+      "config_path": "consumption_rates.cav_levels",
+      "label": "CAV level mix (L3 / L4 / L5)",
+      "physical_meaning": "Simplex over the three CAV automation levels. This is a scenario-defining assumption about how the autonomous fleet distributes across L3 (conditional automation), L4 (high automation), and L5 (full automation) capability tiers. The Dirichlet concentration is a modeling choice: higher alpha = more concentrated around the assumed mean; lower alpha = wider spread across the simplex.",
+      "citation": "No external empirical anchor for the concentration. The Dirichlet alpha is a modeling assumption; SAE J3016 defines the automation levels.",
+      "affects": ["width"],
+      "allowed_levels": ["fixed", "low", "medium"],
+      "default_level": "low",
+      "paper_safe_level": "medium",
+      "levels": {
+        "fixed":  {"fixed_to": [0.5, 0.333, 0.167]},
+        "low":    {"dist": "dirichlet", "alpha": [15.0, 9.99, 5.01]},
+        "medium": {"dist": "dirichlet", "alpha": [5.0, 3.33, 1.67]}
+      },
+      "why_default_free": "Level mix is a scenario assumption. LOW triples alpha for a tighter simplex while preserving the mean; MEDIUM retains the original wider spread. The spread itself is a modeling choice, not measured empirical uncertainty.",
+      "why_high_rejected": "Loosening alpha below MEDIUM produces near-uniform simplex draws that have no physical basis.",
+      "duplicates": null
+    },
+    {
+      "param_id": "F19",
+      "config_path": "consumption_rates.sti_levels",
+      "label": "STI level mix (Basic / Semi / Highly)",
+      "physical_meaning": "Simplex over the three STI infrastructure levels. This is a scenario-defining assumption about the distribution of smart-traffic infrastructure across capability tiers (Basic roadside sensing, Semi-automated signal coordination, Highly-automated corridor management).",
+      "citation": "No external empirical anchor for the concentration. Modeling assumption.",
+      "affects": ["width"],
+      "allowed_levels": ["fixed", "low", "medium"],
+      "default_level": "low",
+      "paper_safe_level": "medium",
+      "levels": {
+        "fixed":  {"fixed_to": [0.5, 0.333, 0.167]},
+        "low":    {"dist": "dirichlet", "alpha": [15.0, 9.99, 5.01]},
+        "medium": {"dist": "dirichlet", "alpha": [5.0, 3.33, 1.67]}
+      },
+      "why_default_free": "Same rationale as F18. Scenario assumption, not empirical uncertainty.",
+      "why_high_rejected": "Same rationale as F18.",
+      "duplicates": null
+    }
+  ]
+}

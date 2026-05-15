@@ -17,26 +17,68 @@ DATA_ROOT = Path(__file__).parent.parent.parent
 
 RESULTS_NOTEBOOK = DATA_ROOT / "results_notebook"
 RESULTS_DIR = DATA_ROOT / "results"
+# Canonical scenario source of truth lives in scenarios/{region}/scenario.json.
+# CONFIGS_DIR is retained as a legacy fallback for this data-contracts module.
+SCENARIOS_DIR = DATA_ROOT / "scenarios"
 CONFIGS_DIR = DATA_ROOT / "configs"
 
 # ---------------------------------------------------------------------------
 # Quantile CSV path registry
 # ---------------------------------------------------------------------------
+#
+# Active v3/v4 dashboard pages read quantile CSVs through
+# `v3_streamlit_app/dashboard_core.quantile_path` and `v4_streamlit_app/core.quantile_path`,
+# both of which resolve against the current `results/` pipeline. The registry below
+# is preserved only so legacy notebook-style consumers of `load_quantile_csv`
+# (e.g. notebooks reading `results_notebook/__DU-*` variants) continue to work.
+#
+# Paper-safe baseline entries now point at the aligned `results/` pipeline; the
+# legacy `results_notebook/` locations remain available behind an explicit
+# `variant="notebook"` key so nothing silently drifts back to stale outputs.
+#
+# Policy-conditional MC (aggressive / conservative) is NOT paper-safe under the
+# current implementation (see METHODS_ALIGNMENT §M14). Those registry entries
+# are marked exploratory-only and must not be cited in paper figures.
+
+def _results_qpath(region: str, policy: str) -> Path:
+    return RESULTS_DIR / f"{region}__policy-{policy}__model-fixed_table_quantiles.csv"
+
 
 QUANTILE_PATHS = {
-    ("california", "baseline"): RESULTS_NOTEBOOK / "california__policy-baseline__quantiles.csv",
-    ("california", "aggressive"): RESULTS_NOTEBOOK / "california__policy-aggressive__quantiles.csv",
-    ("california", "conservative"): RESULTS_NOTEBOOK / "california__policy-conservative__quantiles.csv",
-    ("ohio", "baseline"): RESULTS_NOTEBOOK / "ohio__policy-baseline__quantiles.csv",
-    ("us_average", "baseline"): RESULTS_NOTEBOOK / "us_average__policy-baseline__quantiles.csv",
-    # DU-REGIONMEAN variants
+    # Paper-safe aligned-pipeline entries (current active code path).
+    ("california", "baseline"): _results_qpath("california", "baseline"),
+    ("ohio", "baseline"): _results_qpath("ohio", "baseline"),
+    ("us_average", "baseline"): _results_qpath("us_average", "baseline"),
+    # Exploratory-only policy-conditional MC (see METHODS_ALIGNMENT §M14;
+    # NOT paper-safe because data_uncertainty is not re-centred under
+    # aggressive / conservative policy patches).
+    ("california", "aggressive"): _results_qpath("california", "aggressive"),
+    ("california", "conservative"): _results_qpath("california", "conservative"),
+    # Legacy notebook-pipeline entries, retained for backward-compatibility with
+    # any notebook that still reads results_notebook/ outputs directly.
+    ("california", "baseline", "notebook"): RESULTS_NOTEBOOK / "california__policy-baseline__quantiles.csv",
+    ("ohio", "baseline", "notebook"): RESULTS_NOTEBOOK / "ohio__policy-baseline__quantiles.csv",
+    ("us_average", "baseline", "notebook"): RESULTS_NOTEBOOK / "us_average__policy-baseline__quantiles.csv",
+    # Historical DU-REGIONMEAN / DU-INJECTED notebook variants.
     ("california", "baseline", "DU-REGIONMEAN"): RESULTS_NOTEBOOK / "california__policy-baseline__quantiles__DU-REGIONMEAN.csv",
     ("ohio", "baseline", "DU-REGIONMEAN"): RESULTS_NOTEBOOK / "ohio__policy-baseline__quantiles__DU-REGIONMEAN.csv",
     ("us_average", "baseline", "DU-REGIONMEAN"): RESULTS_NOTEBOOK / "us_average__policy-baseline__quantiles__DU-REGIONMEAN.csv",
-    # DU-INJECTED variant
     ("california", "baseline", "DU-INJECTED"): RESULTS_NOTEBOOK / "california__policy-baseline__quantiles__DU-INJECTED.csv",
     ("ohio", "baseline", "DU-INJECTED"): RESULTS_NOTEBOOK / "ohio__policy-baseline__quantiles__DU-INJECTED.csv",
     ("us_average", "baseline", "DU-INJECTED"): RESULTS_NOTEBOOK / "us_average__policy-baseline__quantiles__DU-INJECTED.csv",
+}
+
+# Set of (region, policy) keys whose MC is NOT paper-safe under the current
+# implementation. Callers that surface quantile files to paper-facing figures
+# should exclude these keys or tag them as exploratory. See §M14.
+NON_PAPER_SAFE_QUANTILE_KEYS = {
+    ("california", "aggressive"),
+    ("california", "conservative"),
+    ("ohio", "aggressive"),
+    ("ohio", "conservative"),
+    ("us_average", "baseline"),      # region-level quarantine
+    ("us_average", "aggressive"),
+    ("us_average", "conservative"),
 }
 
 DETERMINISTIC_PATHS = {
@@ -45,6 +87,13 @@ DETERMINISTIC_PATHS = {
     "us_average": RESULTS_DIR / "us_average_results.csv",
 }
 
+# Canonical scenario paths (primary). Legacy configs paths are kept as a
+# fallback so older external consumers of this module still work.
+SCENARIO_PATHS = {
+    "california": SCENARIOS_DIR / "california" / "scenario.json",
+    "ohio": SCENARIOS_DIR / "ohio" / "scenario.json",
+    "us_average": SCENARIOS_DIR / "us_average" / "scenario.json",
+}
 CONFIG_PATHS = {
     "california": CONFIGS_DIR / "california.json",
     "ohio": CONFIGS_DIR / "ohio.json",
@@ -151,7 +200,10 @@ def load_uncertainty_inputs() -> "pd.DataFrame | None":
 
 
 def load_config(region: str) -> "dict | None":
-    """Load the JSON config for a region.
+    """Load the canonical scenario for a region.
+
+    Primary path:  scenarios/{region}/scenario.json
+    Legacy path:   configs/{region}.json
 
     Parameters
     ----------
@@ -162,12 +214,17 @@ def load_config(region: str) -> "dict | None":
     -------
     dict or None
     """
-    path = CONFIG_PATHS.get(region)
-    if path is None:
+    if region not in SCENARIO_PATHS and region not in CONFIG_PATHS:
         warnings.warn(f"Unknown region for config: {region!r}")
         return None
-    if not path.exists():
-        warnings.warn(f"Config file not found: {path}")
+    primary = SCENARIO_PATHS.get(region)
+    legacy = CONFIG_PATHS.get(region)
+    path = primary if (primary is not None and primary.exists()) else legacy
+    if path is None or not path.exists():
+        warnings.warn(
+            f"Config file not found for region {region!r}. "
+            f"Tried {primary} and {legacy}."
+        )
         return None
     try:
         with open(path) as fh:

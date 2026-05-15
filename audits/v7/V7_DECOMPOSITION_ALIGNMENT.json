@@ -1,0 +1,44 @@
+[
+  {
+    "region": "california",
+    "year": 2030,
+    "subsystem_sum_kg": 5257798399.152401,
+    "ats_total_kg": 5257798399.152401,
+    "relative_difference": 0.0
+  },
+  {
+    "region": "california",
+    "year": 2050,
+    "subsystem_sum_kg": 3605888325.487943,
+    "ats_total_kg": 3605888325.4879436,
+    "relative_difference": 1.322384708457659e-16
+  },
+  {
+    "region": "california",
+    "year": 2075,
+    "subsystem_sum_kg": 127214012.04943143,
+    "ats_total_kg": 127214012.04943141,
+    "relative_difference": 1.1713459039447264e-16
+  },
+  {
+    "region": "ohio",
+    "year": 2030,
+    "subsystem_sum_kg": 783121319.8812453,
+    "ats_total_kg": 783121319.8812453,
+    "relative_difference": 0.0
+  },
+  {
+    "region": "ohio",
+    "year": 2050,
+    "subsystem_sum_kg": 957246237.4305452,
+    "ats_total_kg": 957246237.4305451,
+    "relative_difference": 1.2453356815563428e-16
+  },
+  {
+    "region": "ohio",
+    "year": 2075,
+    "subsystem_sum_kg": 1577449380.6715386,
+    "ats_total_kg": 1577449380.6715388,
+    "relative_difference": 1.51141825546291e-16
+  }
+]

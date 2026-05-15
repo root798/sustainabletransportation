@@ -25,6 +25,7 @@ from dashboard_core import (
     available_model_names,
     available_policy_names,
     compare_control_values,
+    compute_interpretation_boundary,
     compute_turning_metrics,
     control_values_from_config,
     corrected_metric_label,
@@ -35,8 +36,10 @@ from dashboard_core import (
     key_years_with_peak,
     load_quantile_frame,
     load_runtime_config,
+    load_saturation_metadata,
     quantile_band_metadata,
     quantile_sample_count,
+    region_paper_safety,
     rgba,
     run_transport_simulation,
     scenario_support_record,
@@ -79,7 +82,10 @@ def cached_run(signature: str, years: int) -> pd.DataFrame:
 
 st.title("Interactive Scenario Explorer")
 st.caption(
-    "Live simulation uses `footprint_model.TransportModel` directly. Real-time mode recomputes on every control change; manual mode holds a draft until you press Run Simulation. Precomputed p05-p50-p95 overlays, when present, are baseline-only artifacts and are never recomputed for custom slider settings."
+    "Live simulation uses `footprint_model.TransportModel` directly. "
+    "Precomputed p05\u2013p95 uncertainty bands (from 200-run Monte Carlo parameter sampling) are available for baseline defaults only. "
+    "A red interpretation boundary marks the year where accumulated parameter uncertainty exceeds 150% of the median \u2014 "
+    "outputs before this line are quantitatively interpretable; outputs after are scenario-conditioned envelopes."
 )
 st.info(
     "Semantic guardrails: `Initial BEV share` means `total_ev / total_cars` in the config and is BEV-only in the current code. "
@@ -257,6 +263,9 @@ if applied_values["show_uncertainty"] and default_quantiles_match:
     energy_band_meta = quantile_band_metadata(quantile_df, "ATS Total Power (kWh)")
     emissions_band_meta = quantile_band_metadata(quantile_df, "ATS Emissions (kg CO2)")
 
+interpretation_boundary = compute_interpretation_boundary(quantile_df, "ATS Emissions (kg CO2)")
+boundary_year = interpretation_boundary["boundary_year"]
+
 status_col, export_col = st.columns([2, 1])
 with status_col:
     if pending_changes and not real_time_enabled:
@@ -274,11 +283,34 @@ with export_col:
         width="stretch",
     )
 
+_region_for_banner = str(applied_values["region"])
+_safety = region_paper_safety(_region_for_banner)
+if not _safety.get("paper_safe", True):
+    st.error(f"\u26a0\ufe0f {_safety.get('note', '')}")
+
+_horizon_end_yr = int(df["Year"].max()) if not df.empty else None
+_peak_year = turning_metrics.get("peak_year")
+_horizon_edge = bool(_horizon_end_yr and _peak_year and (_horizon_end_yr - int(_peak_year)) <= 20)
+
 metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
-metric_col1.metric("Peak annual emissions", format_emissions(turning_metrics["peak_emissions"]), f"Year {turning_metrics['peak_year']}")
-metric_col2.metric("Turning year", str(turning_metrics["turning_year"]) if turning_metrics["turning_year"] else "Not reached")
-metric_col3.metric("Final-year ATS energy", format_energy(float(df.iloc[-1]["ATS Total Power (kWh)"])))
-metric_col4.metric("Final-year CAV count", format_count(float(df.iloc[-1]["Total CAV"])))
+metric_col1.metric("Modelled peak emissions",
+                   format_emissions(turning_metrics["peak_emissions"]),
+                   f"Modelled peak year {turning_metrics['peak_year']}")
+_turn_yr = turning_metrics.get("turning_year")
+if _turn_yr:
+    metric_col2.metric("Modelled turning year (50% of peak)", str(_turn_yr))
+else:
+    metric_col2.metric("Modelled turning year (50% of peak)", "Not reached in horizon",
+                       help="The 50%-of-peak threshold is not reached within the 2024\u20132092 horizon.")
+metric_col3.metric("Near-term ATS energy (2030)", format_energy(float(df.loc[df["Year"] == 2030, "ATS Total Power (kWh)"].iloc[0])) if 2030 in df["Year"].values else "N/A")
+metric_col4.metric("Near-term CAV count (2030)", format_count(float(df.loc[df["Year"] == 2030, "Total CAV"].iloc[0])) if 2030 in df["Year"].values else "N/A")
+
+if _horizon_edge:
+    st.caption(
+        f"\u26a0\ufe0f Horizon-edge caveat: modelled peak year ({_peak_year}) sits within "
+        f"{_horizon_end_yr - int(_peak_year)} years of the horizon end ({_horizon_end_yr}). "
+        "Treat as a within-horizon extremum, not an asymptote."
+    )
 
 st.caption(REGION_NOTES[str(applied_values["region"])])
 
@@ -316,9 +348,9 @@ with chart_col1:
                 x=list(quantile_df.index) + list(quantile_df.index[::-1]),
                 y=list(scaled_p05) + list(scaled_p95[::-1]),
                 fill="toself",
-                fillcolor=rgba("#636EFA", 0.12),
+                fillcolor=rgba("#636EFA", 0.18),
                 line=dict(width=0),
-                name="Default-scenario uncertainty band",
+                name="Baseline p05-p95 scenario-conditioned range",
                 hoverinfo="skip",
             )
         )
@@ -327,10 +359,21 @@ with chart_col1:
             x=years,
             y=scale_series(df["ATS Total Power (kWh)"], kind="energy")[0],
             mode="lines",
-            name="ATS total annual energy demand",
+            name="ATS total energy demand (median trajectory)",
             line=dict(color="#111111", width=3, dash="dash"),
         )
     )
+    if boundary_year is not None:
+        fig_energy.add_vline(
+            x=boundary_year,
+            line_dash="dot",
+            line_color="red",
+            line_width=2,
+            annotation_text="Interpretation boundary",
+            annotation_position="top left",
+            annotation_font_size=10,
+            annotation_font_color="red",
+        )
     fig_energy.update_layout(
         title="Annual ATS energy demand",
         xaxis_title="Year",
@@ -368,9 +411,9 @@ with chart_col2:
                 x=list(quantile_df.index) + list(quantile_df.index[::-1]),
                 y=list(scaled_p05) + list(scaled_p95[::-1]),
                 fill="toself",
-                fillcolor=rgba("#EF553B", 0.14),
+                fillcolor=rgba("#EF553B", 0.20),
                 line=dict(width=0),
-                name="Default-scenario uncertainty band",
+                name="Baseline p05-p95 scenario-conditioned range",
                 hoverinfo="skip",
             )
         )
@@ -379,12 +422,23 @@ with chart_col2:
             x=years,
             y=scale_series(df["ATS Emissions (kg CO2)"], kind="emissions")[0],
             mode="lines",
-            name="ATS total annual emissions",
+            name="ATS total emissions (median trajectory)",
             line=dict(color="#111111", width=3, dash="dash"),
         )
     )
+    if boundary_year is not None:
+        fig_emissions.add_vline(
+            x=boundary_year,
+            line_dash="dot",
+            line_color="red",
+            line_width=2,
+            annotation_text="Interpretation boundary",
+            annotation_position="top left",
+            annotation_font_size=10,
+            annotation_font_color="red",
+        )
     fig_emissions.update_layout(
-        title="Annual ATS CO2 emissions",
+        title="Annual ATS CO\u2082 emissions",
         xaxis_title="Year",
         yaxis_title=emissions_unit,
         hovermode="x unified",
@@ -460,10 +514,21 @@ if applied_values["show_subsystem_breakdown"]:
     st.plotly_chart(fig_subsystems, width="stretch")
 
 if applied_values["show_uncertainty"] and quantile_df is None:
-    st.info(
-        "Baseline p05-p95 overlays are only shown when the explorer is on exact region-policy defaults with the default 2024-2092 horizon and an aligned `results/` quantile file exists. "
-        "Legacy notebook quantiles are intentionally excluded from live overlays because they diverge from the current deterministic pipeline."
-    )
+    # Distinguish "no overlay because sliders moved" from "no overlay because none on disk"
+    if not default_quantiles_match:
+        st.warning(
+            "Uncertainty overlay suppressed: sliders or horizon differ from the committed "
+            "baseline. The precomputed quantile bands were generated for the baseline "
+            "configuration only, and would not match the live slider state. "
+            "Reset controls to baseline to see uncertainty bands, or run a fresh MC "
+            "ensemble via `python footprint_model.py --mc 200 --policy <policy>` for this scenario."
+        )
+    else:
+        st.info(
+            "Aligned uncertainty is available only for exact baseline region defaults with the default 2024\u20132092 horizon. "
+            "Current controls show deterministic results only. "
+            "Legacy notebook quantiles are intentionally excluded from live overlays."
+        )
 elif quantile_df is not None:
     source = quantile_meta["selected_source"]["source_type"]
     sample_count = quantile_sample_count(str(applied_values["region"]), str(applied_values["policy"]))
@@ -472,9 +537,16 @@ elif quantile_df is not None:
             "The aligned baseline quantile file exists, but the current p05, p50, and p95 series collapse to the same deterministic path. "
             "This means the displayed baseline export does not currently provide a visible uncertainty band."
         )
+    boundary_msg = ""
+    if boundary_year is not None:
+        boundary_msg = (
+            f" **Interpretation boundary at {boundary_year}**: before this year, outputs are shown quantitatively with uncertainty bands. "
+            f"After {boundary_year}, the scenario-conditioned range exceeds 100% of the median \u2014 outputs should be read as indicative envelopes, not point forecasts."
+        )
     st.caption(
-        f"Aligned baseline quantile source: `{source}`. Sample count: `{sample_count if sample_count is not None else 'not recorded'}`. "
-        "Displayed interpretation, when non-zero, is pointwise p05-p95 with p50, not a forecast confidence interval."
+        f"Aligned baseline quantile source: `{source}`. MC sample count: `{sample_count if sample_count is not None else 'not recorded'}`. "
+        "Uncertainty bands are pointwise p05\u2013p95 scenario-conditioned ranges from Monte Carlo parameter sampling, not forecast confidence intervals."
+        + boundary_msg
     )
 
 summary_col1, summary_col2 = st.columns([3, 2])
@@ -504,5 +576,9 @@ with summary_col2:
     st.dataframe(key_year_rows, width="stretch", hide_index=True)
 
 st.caption(
-    "Scientific boundary: charts above are direct simulation outputs for the utility phase only. ECAV = electric autonomous vehicle, ICEAV = internal-combustion autonomous vehicle, STI = smart transportation infrastructure. Baseline p05-p95 overlays, when non-zero, are scenario-conditioned display ranges rather than forecast-confidence claims."
+    "**Scientific boundary**: all charts are utility-phase-only simulation outputs. "
+    "ECAV = electric autonomous vehicle, ICEAV = internal-combustion autonomous vehicle, STI = smart transportation infrastructure. "
+    "Near-term outputs (before the interpretation boundary) can be read quantitatively with parameter-sampled uncertainty bands. "
+    "Far-horizon outputs (after the boundary) are scenario-conditioned envelopes showing indicative levels and ranges, not precise year-by-year forecasts. "
+    "The model's stronger results are near-term sensitivity analysis, marginal energy cost of autonomy, and subsystem burden decomposition."
 )

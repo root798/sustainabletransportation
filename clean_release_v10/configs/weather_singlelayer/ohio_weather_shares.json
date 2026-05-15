@@ -1,0 +1,35 @@
+{
+  "region": "ohio",
+  "classes": ["clear", "cloudy", "adverse"],
+  "notes": [
+    "Monthly baseline weather-share climatology for Ohio.",
+    "Rows are Jan..Dec; each row is (clear, cloudy, adverse) and sums to 1.",
+    "Used as Dirichlet centroids when the single-layer weather module is",
+    "in stochastic mode, and as the deterministic baseline otherwise.",
+    "Source: state-specific centroids per v6 weather module notes."
+  ],
+  "month_labels": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  "monthly_shares": [
+    [0.21, 0.42, 0.37],
+    [0.24, 0.42, 0.34],
+    [0.30, 0.41, 0.29],
+    [0.34, 0.40, 0.26],
+    [0.42, 0.37, 0.21],
+    [0.47, 0.35, 0.18],
+    [0.48, 0.34, 0.18],
+    [0.46, 0.35, 0.19],
+    [0.41, 0.38, 0.21],
+    [0.34, 0.40, 0.26],
+    [0.25, 0.41, 0.34],
+    [0.19, 0.43, 0.38]
+  ],
+  "month_weights": [
+    0.0833, 0.0833, 0.0833, 0.0833, 0.0833, 0.0833,
+    0.0833, 0.0833, 0.0833, 0.0833, 0.0833, 0.0837
+  ],
+  "grid_sensitivity": {
+    "gamma_cloudy":  0.06,
+    "gamma_adverse": 0.15,
+    "grid_intensity_lb_per_mwh": 1005.0
+  }
+}

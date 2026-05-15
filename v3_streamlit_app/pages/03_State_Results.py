@@ -26,6 +26,7 @@ from dashboard_core import (
     format_energy,
     load_runtime_config,
     notebook_quantile_path,
+    region_paper_safety,
     run_transport_simulation,
     scenario_support_record,
     scale_series,
@@ -39,8 +40,18 @@ st.title("State Results")
 st.markdown(
     "Direct comparison across California, Ohio, and U.S. Average using the actual runtime configs applied to the simulator."
 )
+st.error(
+    "\u26a0\ufe0f **U.S. Average is quarantined from paper-facing quantitative comparison.** "
+    "Its `consumption_rates` sensing/communication cells diverge 10\u201330\u00d7 from California/Ohio and "
+    "drive U.S. Average energy and emissions to values that are not paper-safe to cite. "
+    "This page still renders U.S. Average as an exploratory scenario but any downstream numeric claim "
+    "must be restricted to California and Ohio. "
+    "See `audits/step_04_uncertainty_architecture/US_AVERAGE_SOURCE_TRACE.md`."
+)
 st.info(
-    "Scope guardrail: these charts compare utility-phase deterministic outputs only. `U.S. Average` is a synthetic CA/OH midpoint scenario, not an official U.S. registration or generation inventory."
+    "Scope guardrail: these charts compare utility-phase deterministic outputs only. "
+    "California and Ohio are paper-safe; U.S. Average is an exploratory synthetic scenario "
+    "and must not be cited alongside CA/OH in paper tables or figures."
 )
 
 support_rows = []

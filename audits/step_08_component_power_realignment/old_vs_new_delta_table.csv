@@ -1,0 +1,37 @@
+unit_type,level,subsystem,old_kWh_yr,new_kWh_yr,ratio_old_over_new,term_changed
+ECAV,L3,sensing,78.0,65.153,1.197,per-sensor power -> vendor datasheets; duty/utilization
+ECAV,L3,computing,4960.0,65.7,75.495,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ECAV,L3,communication,18.0,2.683,6.71,mode-averaged module power -> vendor datasheets
+ECAV,L3,TOTAL,5056.0,133.535,37.863,sum of the above
+ECAV,L4,sensing,184.0,173.558,1.06,per-sensor power -> vendor datasheets; duty/utilization
+ECAV,L4,computing,9920.0,173.448,57.193,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ECAV,L4,communication,26.0,3.668,7.088,mode-averaged module power -> vendor datasheets
+ECAV,L4,TOTAL,10130.0,350.674,28.887,sum of the above
+ECAV,L5,sensing,325.0,299.483,1.085,per-sensor power -> vendor datasheets; duty/utilization
+ECAV,L5,computing,19841.0,744.6,26.647,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ECAV,L5,communication,36.0,4.161,8.652,mode-averaged module power -> vendor datasheets
+ECAV,L5,TOTAL,20202.0,1048.244,19.272,sum of the above
+ICECAV,L3,sensing,124.8,104.244,1.197,per-sensor power -> vendor datasheets; duty/utilization
+ICECAV,L3,computing,7936.0,105.12,75.495,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ICECAV,L3,communication,28.8,4.292,6.71,mode-averaged module power -> vendor datasheets
+ICECAV,L3,TOTAL,8089.6,213.656,37.863,sum of the above
+ICECAV,L4,sensing,294.4,277.692,1.06,per-sensor power -> vendor datasheets; duty/utilization
+ICECAV,L4,computing,15872.0,277.517,57.193,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ICECAV,L4,communication,41.6,5.869,7.088,mode-averaged module power -> vendor datasheets
+ICECAV,L4,TOTAL,16208.0,561.078,28.887,sum of the above
+ICECAV,L5,sensing,520.0,479.172,1.085,per-sensor power -> vendor datasheets; duty/utilization
+ICECAV,L5,computing,31745.6,1191.36,26.647,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+ICECAV,L5,communication,57.6,6.658,8.652,mode-averaged module power -> vendor datasheets
+ICECAV,L5,TOTAL,32323.2,1677.19,19.272,sum of the above
+STI,Basic,sensing,176.0,998.64,0.176,per-sensor power -> vendor datasheets; duty/utilization
+STI,Basic,computing,39682.0,630.72,62.915,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+STI,Basic,communication,854.0,262.8,3.25,mode-averaged module power -> vendor datasheets
+STI,Basic,TOTAL,40712.0,1892.16,21.516,sum of the above
+STI,Semi,sensing,1054.0,2838.24,0.371,per-sensor power -> vendor datasheets; duty/utilization
+STI,Semi,computing,79365.0,2312.64,34.318,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+STI,Semi,communication,1103.0,700.8,1.574,mode-averaged module power -> vendor datasheets
+STI,Semi,TOTAL,81522.0,5851.68,13.931,sum of the above
+STI,Highly,sensing,1303.0,4415.04,0.295,per-sensor power -> vendor datasheets; duty/utilization
+STI,Highly,computing,158730.0,9066.6,17.507,per-inference energy (A100 server GPU -> automotive ASIC) + per-agent inference count removed
+STI,Highly,communication,1327.0,788.4,1.683,mode-averaged module power -> vendor datasheets
+STI,Highly,TOTAL,161360.0,14270.04,11.308,sum of the above

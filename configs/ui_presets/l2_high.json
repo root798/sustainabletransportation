@@ -1,0 +1,38 @@
+{
+  "preset_id": "l2_high",
+  "layer": "L2",
+  "label": "L2 High (exploratory upper-bound load)",
+  "description": "Exploratory only. Widens the L2 scale factors by 30 percent (multiplicative on sigma) on the dual-axis scheme, and loosens Dirichlet concentration by 30 percent. Intended only for what-if exploration of load-model uncertainty; it retains the known dual-axis compounding with explicit disclosure. Not paper-safe.",
+  "paper_safe": false,
+  "data_uncertainty": {
+    "consumption_rates": {
+      "icecav_power_factor": {"dist": "triangular", "low": 1.2, "mode": 1.6, "high": 2.2},
+      "cohort_decay_factor": {"dist": "triangular", "low": 0.4, "mode": 0.7, "high": 1.0},
+      "cav_levels": {"dist": "dirichlet", "alpha": [3.5, 2.33, 1.17]},
+      "sti_levels": {"dist": "dirichlet", "alpha": [3.5, 2.33, 1.17]},
+      "ecav_scale_factors": {
+        "L3":  {"dist": "lognormal", "mean": 1.0, "sigma": 0.20},
+        "L4":  {"dist": "lognormal", "mean": 1.0, "sigma": 0.26},
+        "L5":  {"dist": "lognormal", "mean": 1.0, "sigma": 0.33},
+        "sensing":       {"dist": "lognormal", "mean": 1.0, "sigma": 0.40},
+        "computing":     {"dist": "lognormal", "mean": 1.0, "sigma": 0.26},
+        "communication": {"dist": "lognormal", "mean": 1.0, "sigma": 0.45}
+      },
+      "sti_scale_factors": {
+        "Basic":  {"dist": "lognormal", "mean": 1.0, "sigma": 0.26},
+        "Semi":   {"dist": "lognormal", "mean": 1.0, "sigma": 0.33},
+        "Highly": {"dist": "lognormal", "mean": 1.0, "sigma": 0.40},
+        "sensing":       {"dist": "lognormal", "mean": 1.0, "sigma": 0.45},
+        "computing":     {"dist": "lognormal", "mean": 1.0, "sigma": 0.33},
+        "communication": {"dist": "lognormal", "mean": 1.0, "sigma": 0.45}
+      }
+    },
+    "growth_rates": {
+      "retire_year": {"dist": "triangular", "low": 8, "mode": 12, "high": 18, "integer": true}
+    }
+  },
+  "notes": {
+    "label_in_ui": "exploratory; must not be used for headline numbers",
+    "disclosure": "retains dual-axis ECAV/STI compounding (S2-01/S2-02) with widened sigma; a known conservative load-model over-inflation"
+  }
+}

@@ -1,0 +1,33 @@
+module,implemented_in_code,data_available,output_validated,suitable_for_dashboard,requires_placeholder,must_be_hidden
+ECAV Operational Energy,Yes,Yes,Yes,Yes,No,No
+ICECAV Operational Energy,Yes,Yes,Yes,Yes,No,No
+STI Operational Energy,Yes,Yes,Yes,Yes,No,No
+ATS Total Annual Emissions,Yes,Yes,Yes,Yes,No,No
+ATS Total Annual Energy Consumption,Yes,Yes,Yes,Yes,No,No
+ECAV Subsystem Energy (Sensing/Computing/Comms),Yes,Yes,Partial,Yes,No,No
+STI Subsystem Energy (Sensing/Computing/Comms),Yes,Yes,Partial,Yes,No,No
+Fleet Size Projections (CAV/STI counts),Yes,Yes,Partial,Yes,No,No
+EV Adoption Fraction,Yes,Yes,Partial,Yes — with caveat,No,No
+Grid Clean Energy Fraction,Yes,Yes,Partial,Yes — with caveat,No,No
+Peak Emissions Year,Yes,Yes,Yes,Yes,No,No
+Emissions Turning Year,Yes,Yes,Yes,Yes — with disclaimer,No,No
+Cumulative Emissions,Yes,Yes,Partial,Yes,No,No
+Emissions Intensity per CAV,No (dashboard-derived),Yes,Partial,Yes — with caveat,No,No
+Policy Scenario Comparison (CA only),Yes,Yes,Partial,Yes,No,No
+Cross-State Comparison (baseline only),Yes,Partial — CA/OH/US,Partial,Yes — with caveat,No,No
+Uncertainty Band Widths,Yes,Yes,Partial,Yes,No,No
+DU-REGIONMEAN vs DU-INJECTED Comparison,Yes,Yes (CA+OH+US for RM; CA only for INJ),Partial,Yes,No,No
+Vehicle Manufacturing Emissions,No,No,No,No,Yes,Yes
+Battery Manufacturing Emissions,No,No,No,No,Yes,Yes
+Sensor Fabrication Emissions,No,No,No,No,Yes,Yes
+Computing Hardware Fabrication,No,No,No,No,Yes,Yes
+STI Infrastructure Construction,No,No,No,No,Yes,Yes
+Supply Chain Logistics Emissions,No,No,No,No,Yes,Yes
+Vehicle Distribution Emissions,No,No,No,No,Yes,Yes
+Battery End-of-Life Emissions,No,No,No,No,Yes,Yes
+Hardware E-Waste Emissions,No,No,No,No,Yes,Yes
+Vehicle Scrapping Emissions,No,No,No,No,Yes,Yes
+Infrastructure Decommissioning,No,No,No,No,Yes,Yes
+Vehicle Propulsion Energy,No,No,No,No,No,Yes
+Road Infrastructure Energy,No,No,No,No,No,Yes
+Upstream Grid Construction,No,No,No,No,No,Yes

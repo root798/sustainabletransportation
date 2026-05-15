@@ -1,0 +1,22 @@
+{
+  "preset_id": "l1_low",
+  "layer": "L1",
+  "label": "L1 Low (tightened evidence-anchored)",
+  "description": "Retains L1 priors at evidence-anchored-but-narrow widths. Beta concentration on initial state is doubled relative to MEDIUM so the 2024 baseline draws tightly around regional reporting. Emission-factor triangulars are trimmed to operational-only ranges (drops the life-cycle high tail on e_clean).",
+  "paper_safe": true,
+  "data_uncertainty": {
+    "initial_data": {
+      "f_clean":  {"dist": "beta", "mean": "__REGION_MEAN__", "kappa": "__REGION_KAPPA_X2__"},
+      "ev_share": {"dist": "beta", "mean": "__REGION_MEAN__", "kappa": "__REGION_KAPPA_X2__"}
+    },
+    "emission_factors": {
+      "e_clean":    {"dist": "triangular", "low": 0.02, "mode": 0.03, "high": 0.05},
+      "e_fossil":   {"dist": "triangular", "low": 0.40, "mode": 0.50, "high": 0.60},
+      "e_gasoline": {"dist": "triangular", "low": 1.55, "mode": 1.65, "high": 1.75}
+    }
+  },
+  "notes": {
+    "e_clean_tightening": "upper bound 0.05 reflects operational-emission-only range; excludes life-cycle-inclusive 0.08 tail that inflates the band without representing same physical quantity",
+    "fixed_vs_unfixed": "All five L1 parameters remain variable but with measurement-grade widths."
+  }
+}

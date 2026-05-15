@@ -1,0 +1,77 @@
+{
+    "schema_version": "v6.0",
+    "description": "Partitions every uncertainty source in CLEAR-ATS into one of four layers: scenario, epistemic (outer), aleatoric (inner), and structural-shock. Each entry names the config path and the computational treatment. Consumed by v6_uncertainty_rearchitecture/nested_mc.py and by the taxonomy tables.",
+
+    "layers": {
+        "scenario": {
+            "meaning": "Externally specified pathway family. Not a random draw. Selected by the analyst.",
+            "members": [
+                {"path": "policy_scenarios", "role": "policy family (baseline / aggressive / conservative)"},
+                {"path": "scenarios/shocks/*.json", "role": "discrete structural-shock family"}
+            ],
+            "computational_treatment": "Select one; run the entire MC pipeline conditional on that selection. Never blended into continuous priors.",
+            "paper_facing": true
+        },
+
+        "epistemic_outer": {
+            "meaning": "Uncertainty about parameters that, once known, would not change year to year within a pathway world. Frozen per outer draw.",
+            "members": [
+                {"path": "initial_data.f_clean",               "rationale": "incomplete knowledge of 2024 low-carbon electricity share"},
+                {"path": "initial_data.ev_share",               "rationale": "incomplete knowledge of 2024 BEV penetration"},
+                {"path": "growth_rates.cav",                    "rationale": "CAV 2075 target fraction (F23)"},
+                {"path": "growth_rates.sti",                    "rationale": "STI 2075 target fraction (F24)"},
+                {"path": "growth_rates.ev",                     "rationale": "BEV growth exponent (F26)"},
+                {"path": "growth_rates.clean_energy",           "rationale": "clean-grid growth exponent (F25)"},
+                {"path": "growth_rates.efficiency_doubling",    "rationale": "hardware efficiency doubling time (F27)"},
+                {"path": "growth_rates.total_car_increase",     "rationale": "fleet growth rate"},
+                {"path": "growth_rates.retire_year",            "rationale": "vehicle service life"},
+                {"path": "consumption_rates.cohort_decay_factor", "rationale": "Moore-style learning decay"},
+                {"path": "consumption_rates.cav_levels",        "rationale": "pathway-level mix at L3/L4/L5"},
+                {"path": "consumption_rates.sti_levels",        "rationale": "pathway-level mix at Basic/Semi/Highly"},
+                {"path": "consumption_rates.ecav_scale_factors", "rationale": "subsystem scale factors (L3/L4/L5 + s/c/comm)"},
+                {"path": "consumption_rates.sti_scale_factors",  "rationale": "STI subsystem scale factors"},
+                {"path": "emission_factors.e_clean",             "rationale": "upstream clean-grid emission factor"},
+                {"path": "emission_factors.e_fossil",            "rationale": "upstream fossil-grid emission factor"},
+                {"path": "emission_factors.e_gasoline",          "rationale": "tank-to-wheel gasoline emission factor"}
+            ],
+            "computational_treatment": "Single draw per outer-loop iteration. Frozen inside the inner loop.",
+            "paper_facing": true
+        },
+
+        "aleatoric_inner": {
+            "meaning": "Irreducible year-to-year variation conditional on the outer epistemic world. Resampled each year of each inner realization.",
+            "members": [
+                {"path": "consumption_rates.icecav_power_factor", "rationale": "operational overhead variability (weather, dispatch, terrain)"},
+                {"path": "__v6_injected__.annual_load_multiplier", "rationale": "weather / utilization modulation of annual ATS energy demand; v6 introduces this as Normal(1.0, 0.02) per year"},
+                {"path": "__v6_injected__.annual_grid_realization", "rationale": "short-horizon grid-mix realization around the epistemic clean fraction; v6 introduces this as Normal(1.0, 0.015) per year"}
+            ],
+            "computational_treatment": "Sampled per (outer, year) pair. Small, not the dominant source. See `nested_mc.py:_apply_aleatoric_realizations`.",
+            "paper_facing": false,
+            "note": "Aleatoric terms are deliberately small. v6 exposes them so that the architecture is correct (outer × inner); their numerical contribution should be expected to be a fraction of the epistemic band."
+        },
+
+        "structural_shock": {
+            "meaning": "Discrete, labelled, low-probability regime breaks. Not probabilized into continuous priors.",
+            "members": [
+                {"path": "scenarios/shocks/grid_stall.json"},
+                {"path": "scenarios/shocks/ev_slowdown.json"},
+                {"path": "scenarios/shocks/hardware_supply_shock.json"},
+                {"path": "scenarios/shocks/policy_freeze.json"},
+                {"path": "scenarios/shocks/geopolitical_disruption.json"}
+            ],
+            "computational_treatment": "Run as separate named simulations. Compared visually against the baseline world; never merged into baseline MC quantile CSVs.",
+            "paper_facing": true
+        }
+    },
+
+    "benchmark_years": [2030, 2035, 2045, 2055, 2075],
+
+    "defaults": {
+        "n_outer": 40,
+        "n_inner": 20,
+        "seed_outer": 42,
+        "seed_inner": 2025,
+        "annual_load_sigma": 0.02,
+        "annual_grid_sigma": 0.015
+    }
+}

@@ -17,10 +17,22 @@ REPO_DIR = APP_DIR.parent
 if str(REPO_DIR) not in sys.path:
     sys.path.insert(0, str(REPO_DIR))
 
-from footprint_model import TransportModel
+from footprint_model import (
+    TransportModel,
+    BASE_YEAR as FM_BASE_YEAR,
+    TARGET_YEAR as FM_TARGET_YEAR,
+    INTERP_BOUNDARY_THRESHOLD as FM_INTERP_THRESHOLD,
+    INTERP_BOUNDARY_START_YEAR as FM_INTERP_START_YEAR,
+    INTERP_BOUNDARY_METRIC as FM_INTERP_METRIC,
+    TURNING_YEAR_DECLINE_RATIO as FM_TURNING_RATIO,
+    compute_interpretation_boundary as fm_compute_interpretation_boundary,
+)
 
 RESULTS_DIR = REPO_DIR / "results"
 RESULTS_NOTEBOOK_DIR = REPO_DIR / "results_notebook"
+# Canonical scenario source lives in scenarios/{region}/scenario.json;
+# CONFIGS_DIR retained as a legacy fallback.
+SCENARIOS_DIR = REPO_DIR / "scenarios"
 CONFIGS_DIR = REPO_DIR / "configs"
 REPORTS_DIR = APP_DIR / "reports"
 
@@ -33,7 +45,16 @@ REGION_LABELS = {
 REGION_NOTES = {
     "california": "Baseline vehicle stock and BEV count are cross-checked to DOE AFDC 2024 light-duty registrations. The initial low-carbon electricity share is a modeled non-fossil baseline cross-checked to 2024 EIA California electricity data.",
     "ohio": "Baseline vehicle stock and BEV count are cross-checked to DOE AFDC 2024 light-duty registrations. The initial low-carbon electricity share is a modeled non-fossil baseline cross-checked to 2024 EIA Ohio electricity data.",
-    "us_average": "This is not an official national total. It is a synthetic arithmetic midpoint between the California and Ohio baselines for scenario comparison only.",
+    "us_average": (
+        "Distinct synthetic scenario, NOT an official national total. Initial-state fields "
+        "(total_cars, total_ev, total_cav, total_intersections, f_clean) are arithmetic "
+        "midpoints of the California and Ohio baselines. Growth rates, CAV/STI targets, "
+        "efficiency doubling time, and per-level consumption rates are INDEPENDENT "
+        "assumptions that are NOT midpoints of CA/OH. U.S. Average consumption_rates "
+        "sensing and communication entries diverge 10–30x from the CA/OH tables; this "
+        "is a known anomaly and U.S. Average load figures are not paper-safe to cite "
+        "until the anomaly is resolved. See US_AVERAGE_DECISION_NOTE.md."
+    ),
 }
 POLICY_ORDER = ["baseline", "aggressive", "conservative"]
 POLICY_LABELS = {
@@ -258,7 +279,15 @@ def ordered_policy_names(raw_names: list[str]) -> list[str]:
 
 
 def load_base_config(region: str) -> dict[str, Any]:
-    with open(CONFIGS_DIR / f"{region}.json", encoding="utf-8") as handle:
+    """Load the canonical scenario file for `region`.
+
+    Primary path:   scenarios/{region}/scenario.json
+    Legacy path:    configs/{region}.json
+    """
+    canonical = SCENARIOS_DIR / region / "scenario.json"
+    legacy = CONFIGS_DIR / f"{region}.json"
+    path = canonical if canonical.exists() else legacy
+    with open(path, encoding="utf-8") as handle:
         return json.load(handle)
 
 
@@ -371,11 +400,19 @@ def scenario_signature(control_values: dict[str, Any]) -> str:
 
 
 def run_transport_simulation(config: dict[str, Any], years: int) -> pd.DataFrame:
+    # Pass model_variants through so live-resim honours the scenario's declared
+    # adoption / efficiency curve form. Previously this kwarg was dropped; see
+    # dossier S4-03. Latent-regression fix.
+    variants = config.get("model_variants") or []
+    variant = variants[0] if isinstance(variants, list) and variants else (variants or {})
+    if not isinstance(variant, dict):
+        variant = {"type": str(variant), "name": str(variant)}
     model = TransportModel(
         config["initial_data"],
         config["growth_rates"],
         config["consumption_rates"],
         config["emission_factors"],
+        model_variants=variant or None,
     )
     with redirect_stdout(io.StringIO()):
         model.run_simulation(years=years)
@@ -405,14 +442,19 @@ def rgba(color: str, alpha: float) -> str:
 
 
 def scale_series(series: pd.Series, *, kind: str) -> tuple[pd.Series, str, float]:
+    """Unit-safe auto-scale. Energy series are in kWh/yr; correct divisors are
+    1e9 for TWh, 1e6 for GWh, 1e3 for MWh. Previous divisors were 1000x too
+    large and labelled values a decade too small; corrected here to match
+    v4 behaviour.
+    """
     max_value = float(series.max()) if not series.empty else 0.0
     if kind == "energy":
-        if max_value >= 1e12:
-            return series / 1e12, "TWh/year", 1e12
         if max_value >= 1e9:
-            return series / 1e9, "GWh/year", 1e9
+            return series / 1e9, "TWh/year", 1e9
         if max_value >= 1e6:
-            return series / 1e6, "MWh/year", 1e6
+            return series / 1e6, "GWh/year", 1e6
+        if max_value >= 1e3:
+            return series / 1e3, "MWh/year", 1e3
         return series, "kWh/year", 1.0
     if kind == "emissions":
         if max_value >= 1e9:
@@ -430,12 +472,13 @@ def scale_series(series: pd.Series, *, kind: str) -> tuple[pd.Series, str, float
 
 
 def format_energy(value: float) -> str:
-    if value >= 1e12:
-        return f"{value / 1e12:.2f} TWh/year"
+    # kWh/yr → correct divisors: 1 TWh = 1e9 kWh, 1 GWh = 1e6 kWh, 1 MWh = 1e3 kWh.
     if value >= 1e9:
-        return f"{value / 1e9:.2f} GWh/year"
+        return f"{value / 1e9:.2f} TWh/year"
     if value >= 1e6:
-        return f"{value / 1e6:.2f} MWh/year"
+        return f"{value / 1e6:.2f} GWh/year"
+    if value >= 1e3:
+        return f"{value / 1e3:.2f} MWh/year"
     return f"{value:,.0f} kWh/year"
 
 
@@ -858,6 +901,40 @@ def quantile_sample_count(region: str, policy: str) -> int | None:
     return int(frame["run_id"].nunique())
 
 
+def saturation_metadata_path(region: str, policy: str) -> Path:
+    return RESULTS_DIR / f"{region}__policy-{policy}__model-fixed_table_quantiles_metadata.json"
+
+
+def load_saturation_metadata(region: str, policy: str) -> dict[str, Any]:
+    """Load the saturation sidecar JSON for a (region, policy)."""
+    p = saturation_metadata_path(region, policy)
+    if not p.exists():
+        return {"missing": True, "start_year": None, "fields": {}}
+    try:
+        with open(p, encoding="utf-8") as fh:
+            return json.load(fh)
+    except Exception:
+        return {"missing": True, "start_year": None, "fields": {}, "error": "failed_to_parse"}
+
+
+REGION_PAPER_SAFETY: dict[str, dict[str, Any]] = {
+    "california": {"paper_safe": True, "note": ""},
+    "ohio": {"paper_safe": True, "note": ""},
+    "us_average": {
+        "paper_safe": False,
+        "note": (
+            "U.S. Average is quarantined from paper-facing quantitative comparison. "
+            "Its consumption_rates sensing and communication cells diverge 10\u201330\u00d7 from CA/OH; "
+            "see audits/step_04_uncertainty_architecture/US_AVERAGE_SOURCE_TRACE.md."
+        ),
+    },
+}
+
+
+def region_paper_safety(region: str) -> dict[str, Any]:
+    return REGION_PAPER_SAFETY.get(region, {"paper_safe": True, "note": ""})
+
+
 def quantile_band_metadata(frame: pd.DataFrame | None, metric_base: str) -> dict[str, Any]:
     metadata = {
         "available": False,
@@ -881,6 +958,33 @@ def quantile_band_metadata(frame: pd.DataFrame | None, metric_base: str) -> dict
     metadata["width_ratio_max"] = float(finite.max()) if not finite.empty else None
     metadata["degenerate"] = bool(float(widths.max()) == 0.0)
     return metadata
+
+
+# Interpretation-boundary constants re-exported from footprint_model (single
+# source of truth). Legacy names preserved for backward compatibility.
+INTERPRETATION_BOUNDARY_THRESHOLD = FM_INTERP_THRESHOLD
+INTERPRETATION_BOUNDARY_START_YEAR = FM_INTERP_START_YEAR
+
+
+def compute_interpretation_boundary(
+    quantile_frame: pd.DataFrame | None,
+    metric_base: str = FM_INTERP_METRIC,
+    threshold: float = INTERPRETATION_BOUNDARY_THRESHOLD,
+    start_year: int = INTERPRETATION_BOUNDARY_START_YEAR,
+) -> dict[str, Any]:
+    """Delegates to footprint_model.compute_interpretation_boundary.
+
+    Kept as a thin wrapper so existing page imports continue to work. The legacy
+    result key was `boundary_year`; the backend helper returns the same key plus
+    `threshold`, `start_year`, `metric`, `reason`. A `reason` fallback preserves
+    the v3 phrasing when no data is available.
+    """
+    res = fm_compute_interpretation_boundary(
+        quantile_frame, metric_base=metric_base, threshold=threshold, start_year=start_year
+    )
+    if res.get("boundary_year") is None and res.get("reason", "").startswith("No quantile"):
+        res["reason"] = "No quantile data available."
+    return res
 
 
 def key_years_with_peak(df: pd.DataFrame) -> list[int]:

@@ -1,0 +1,17 @@
+{
+  "preset_id": "l2_fixed",
+  "layer": "L2",
+  "label": "L2 Fixed (no L2 uncertainty)",
+  "description": "Freezes every L2 (load-model) parameter at its central value. No ECAV/STI scale factors sampled, no Dirichlet draw on the automation-level mix, no icecav overhead sampling, no cohort-decay or retire-year sampling. Use to isolate L1 and L3 contributions.",
+  "paper_safe": true,
+  "data_uncertainty": {
+    "consumption_rates": {},
+    "growth_rates": {
+      "retire_year": {"dist": "triangular", "low": 12, "mode": 12, "high": 12, "integer": true}
+    }
+  },
+  "notes": {
+    "scope": "L2 here means the full load-model: per-level and per-subsystem multiplicative axes, level-mix Dirichlets, ICECAV overhead, cohort decay, and retire-year (cohort turnover).",
+    "retire_year": "technically a growth_rates key but is an L2 fleet-turnover parameter in the registry; fixed at mode 12 years when L2 is fixed."
+  }
+}

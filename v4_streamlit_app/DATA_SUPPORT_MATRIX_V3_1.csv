@@ -1,0 +1,19 @@
+output,implemented,shown_in_app,direct_or_derived,source_file,units,confidence,notes
+Annual ATS energy demand,yes,Scenario Explorer + Utility Phase,direct,footprint_model.py,kWh/yr,high,Core model output
+Annual ATS emissions,yes,Scenario Explorer + Utility Phase,direct,footprint_model.py,kg CO2/yr,high,Core model output
+ECAV/ICEAV/STI subsystem energy,yes,Utility Phase Analysis,direct,footprint_model.py,kWh/yr,high,Component breakdown
+ECAV/ICEAV/STI subsystem emissions,yes,Utility Phase Analysis,direct,footprint_model.py,kg CO2/yr,high,Component breakdown
+Vehicle and infrastructure counts,yes,Scenario Explorer + State Results,direct,footprint_model.py,count,high,Fleet dynamics
+BEV share,yes,Scenario Explorer,direct,footprint_model.py,fraction,high,EV adoption curve
+Low-carbon electricity share,yes,Scenario Explorer,direct,footprint_model.py,fraction,high,Grid decarbonisation assumption
+Cumulative energy (running sum),yes,Scenario Explorer (toggle),derived,v4 dashboard cumsum,kWh,medium,Depends on annual values being correct
+Cumulative emissions (running sum),yes,Scenario Explorer (toggle) + Turning Points,derived,v4 dashboard cumsum,kg CO2,medium,Depends on annual values being correct
+Peak emissions year,yes,Turning Points,derived,argmax over annual,year,medium,Scenario-conditioned — changes with any input
+Turning year,yes,Turning Points,derived,post-peak search,year,low-medium,Sensitive to growth assumptions — scenario-conditioned
+Uncertainty bands (p05-p95),yes,Scenario Explorer + Uncertainty Analysis,derived,200 MC runs,same as metric,medium,Baseline only — parameter sampling
+Interpretation boundary,yes,Scenario Explorer,derived,width/median threshold,year,medium,Threshold = 150% of median
+State comparison,yes,State Results,direct,per-region simulation,various,high,Each region uses own config
+Production phase,no,Framework Scope (text only),conceptual,—,—,n/a,Not quantitatively implemented
+Logistics phase,no,Framework Scope (text only),conceptual,—,—,n/a,Not quantitatively implemented
+End-of-life phase,no,Framework Scope (text only),conceptual,—,—,n/a,Not quantitatively implemented
+Lifecycle narrative,no,Framework Scope (text only),conceptual,—,—,n/a,Contextual framing only

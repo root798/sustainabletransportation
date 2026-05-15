@@ -1,0 +1,15 @@
+{
+  "preset_id": "l1_fixed",
+  "layer": "L1",
+  "label": "L1 Fixed (no L1 uncertainty)",
+  "description": "L1 (baseline-data and emission-factor) parameters are held at their region-specific central values. No Beta draws on initial BEV share or initial low-carbon-electricity share; no triangular draws on e_clean, e_fossil, e_gasoline. Used when the user wants to isolate load-model (L2) and trajectory (L3) uncertainty.",
+  "paper_safe": true,
+  "data_uncertainty": {
+    "initial_data": {},
+    "emission_factors": {}
+  },
+  "notes": {
+    "rationale": "Initial BEV share and initial f_clean are regionally well-constrained (EIA, AFDC, state reporting); their spread contributes primarily to a constant offset that is dwarfed after ~2035 by trajectory divergence. Dropping them to fixed simplifies interpretation without misleading the reader.",
+    "centre_values_preserved": "yes; initial_data and emission_factors means/modes are taken from scenarios/{region}/scenario.json and are not overwritten"
+  }
+}
