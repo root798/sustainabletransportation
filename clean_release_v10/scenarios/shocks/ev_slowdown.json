@@ -1,0 +1,34 @@
+{
+    "name": "ev_slowdown",
+    "narrative": "Battery supply-chain constraints, recession, or charging-infrastructure lag slow BEV adoption.",
+    "paper_scope": "main_text",
+    "paper_safe_regions": ["california", "ohio"],
+    "default_onset_year": 2028,
+    "default_duration_years": 10,
+    "default_severity": "moderate",
+    "severities": {
+        "mild": {
+            "label": "Mild — BEV growth halved",
+            "perturbations": {
+                "growth_rates.ev": {"op": "multiply_during_window", "factor": 0.5}
+            }
+        },
+        "moderate": {
+            "label": "Moderate — BEV growth quartered",
+            "perturbations": {
+                "growth_rates.ev": {"op": "multiply_during_window", "factor": 0.25}
+            }
+        },
+        "severe": {
+            "label": "Severe — BEV growth frozen",
+            "perturbations": {
+                "growth_rates.ev": {"op": "set_during_window", "value": 0.0}
+            }
+        }
+    },
+    "provenance": {
+        "author": "CLEAR-ATS structural shocks stage 2",
+        "source_notes": "Expert-elicited. Reflects reviewer concern about BEV-adoption fragility.",
+        "decision_file": "audits/step_07_structural_shocks/STRUCTURAL_SHOCK_FAMILY_DESIGN.md"
+    }
+}

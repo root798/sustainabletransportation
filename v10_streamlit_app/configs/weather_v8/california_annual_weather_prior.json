@@ -1,0 +1,6 @@
+{
+  "region": "california",
+  "classes": ["clear", "cloudy", "adverse"],
+  "annual_centroid": [0.61, 0.25, 0.14],
+  "kappa": 120
+}

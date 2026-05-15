@@ -1,0 +1,161 @@
+state,year,scenario_source,quantity_group,quantity_name,value,unit,notes
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Total ATS energy,6.046230664387228,TWh,Sum of all ATS subsystems (ECAV + ICECAV + STI)
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity-based ATS energy,2.11870483344456,TWh,ECAV + STI electrified subsystems
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline-based ATS energy,3.9275258309426673,TWh,ICECAV gasoline-driven subsystems
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity share of ATS energy,35.04174668564826,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline share of ATS energy,64.95825331435174,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV electricity-based energy,0.5016598101617455,TWh,Battery-electric autonomous vehicle hardware overhead
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI electricity-based energy,1.6170450232828146,TWh,"Smart traffic infrastructure (intersections, edge compute, comms)"
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV share of electricity-based energy,23.67766393141956,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI share of electricity-based energy,76.32233606858043,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV gasoline-based energy,3.9275258309426673,TWh,Sensing/computing/communication overhead on ICE-powered CAVs
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV share of gasoline-based energy,100.0,%,Single category in the current model; 100% by definition when gasoline > 0
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon grid share of electricity,100.0,%,f_clean = clean_electricity / total_electricity
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil grid share of electricity,0.0,%,1 - f_clean
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon electricity used by ATS,2.11870483344456,TWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil electricity used by ATS,0.0,TWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",E_gasoline_source_mix,Gasoline share of gasoline-fuel branch,100.0,%,100% — model has no other gasoline-based ATS categories
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Total ATS CO2 emissions,6543.978766058738,kt CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity-based CO2 emissions,63.561145003336804,kt CO2,ECAV + STI
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline-based CO2 emissions,6480.417621055401,kt CO2,ICECAV
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV electricity-related CO2,15.049794304852366,kt CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI electricity-related CO2,48.511350698484435,kt CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV gasoline-related CO2,6480.417621055401,kt CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity share of total CO2,0.9712920422817626,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline share of total CO2,99.02870795771823,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV share within electricity CO2,23.677663931419563,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI share within electricity CO2,76.32233606858044,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV share within gasoline CO2,100.0,%,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Total CO2 intensity,1082.323703692498,kt CO2 / TWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Electricity CO2 intensity,30.0,kt CO2 / TWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Gasoline CO2 intensity,1650.0,kt CO2 / TWh,≈ 1650 by construction (e_gasoline = 1.65 kg/kWh)
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (kWh),0.0,kWh,should be ≈ 0
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (relative),0.0,fraction,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (kWh),0.0,kWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (relative),0.0,fraction,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (kWh),0.0,kWh,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (relative),0.0,fraction,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (kg),0.0,kg CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (rel),0.0,fraction,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (kg),0.0,kg CO2,
+California,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (rel),0.0,fraction,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Total ATS energy,4.779879676944212,TWh,Sum of all ATS subsystems (ECAV + ICECAV + STI)
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity-based ATS energy,4.779879676944212,TWh,ECAV + STI electrified subsystems
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline-based ATS energy,0.0,TWh,ICECAV gasoline-driven subsystems
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity share of ATS energy,100.0,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline share of ATS energy,0.0,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV electricity-based energy,2.97123011716593,TWh,Battery-electric autonomous vehicle hardware overhead
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI electricity-based energy,1.8086495597782821,TWh,"Smart traffic infrastructure (intersections, edge compute, comms)"
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV share of electricity-based energy,62.16119061527181,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI share of electricity-based energy,37.838809384728194,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV gasoline-based energy,0.0,TWh,Sensing/computing/communication overhead on ICE-powered CAVs
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV share of gasoline-based energy,0.0,%,Single category in the current model; 100% by definition when gasoline > 0
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon grid share of electricity,100.0,%,f_clean = clean_electricity / total_electricity
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil grid share of electricity,0.0,%,1 - f_clean
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon electricity used by ATS,4.779879676944212,TWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil electricity used by ATS,0.0,TWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",E_gasoline_source_mix,Gasoline share of gasoline-fuel branch,0.0,%,100% — model has no other gasoline-based ATS categories
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Total ATS CO2 emissions,143.39639030832637,kt CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity-based CO2 emissions,143.39639030832637,kt CO2,ECAV + STI
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline-based CO2 emissions,0.0,kt CO2,ICECAV
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV electricity-related CO2,89.13690351497792,kt CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI electricity-related CO2,54.25948679334846,kt CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV gasoline-related CO2,0.0,kt CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity share of total CO2,100.0,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline share of total CO2,0.0,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV share within electricity CO2,62.16119061527182,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI share within electricity CO2,37.838809384728194,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV share within gasoline CO2,0.0,%,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Total CO2 intensity,30.000000000000004,kt CO2 / TWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Electricity CO2 intensity,30.000000000000004,kt CO2 / TWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Gasoline CO2 intensity,0.0,kt CO2 / TWh,≈ 1650 by construction (e_gasoline = 1.65 kg/kWh)
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (kWh),0.0,kWh,should be ≈ 0
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (relative),0.0,fraction,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (kWh),0.0,kWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (relative),0.0,fraction,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (kWh),0.0,kWh,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (relative),0.0,fraction,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (kg),0.0,kg CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (rel),0.0,fraction,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (kg),0.0,kg CO2,
+California,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (rel),0.0,fraction,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Total ATS energy,1.0622900376027933,TWh,Sum of all ATS subsystems (ECAV + ICECAV + STI)
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity-based ATS energy,0.3202167088426774,TWh,ECAV + STI electrified subsystems
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline-based ATS energy,0.7420733287601159,TWh,ICECAV gasoline-driven subsystems
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity share of ATS energy,30.14399999131042,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline share of ATS energy,69.85600000868958,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV electricity-based energy,0.009741010200405645,TWh,Battery-electric autonomous vehicle hardware overhead
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI electricity-based energy,0.31047569864227176,TWh,"Smart traffic infrastructure (intersections, edge compute, comms)"
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV share of electricity-based energy,3.042005595401771,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI share of electricity-based energy,96.95799440459822,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV gasoline-based energy,0.7420733287601159,TWh,Sensing/computing/communication overhead on ICE-powered CAVs
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV share of gasoline-based energy,100.0,%,Single category in the current model; 100% by definition when gasoline > 0
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon grid share of electricity,50.86795740007254,%,f_clean = clean_electricity / total_electricity
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil grid share of electricity,49.13204259992746,%,1 - f_clean
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon electricity used by ATS,0.16288769904200748,TWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil electricity used by ATS,0.15732900980066994,TWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",E_gasoline_source_mix,Gasoline share of gasoline-fuel branch,100.0,%,100% — model has no other gasoline-based ATS categories
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Total ATS CO2 emissions,1307.9721283257866,kt CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity-based CO2 emissions,83.5511358715952,kt CO2,ECAV + STI
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline-based CO2 emissions,1224.4209924541913,kt CO2,ICECAV
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV electricity-related CO2,2.5416302282356624,kt CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI electricity-related CO2,81.00950564335955,kt CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV gasoline-related CO2,1224.4209924541913,kt CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity share of total CO2,6.387837635236252,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline share of total CO2,93.61216236476373,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV share within electricity CO2,3.042005595401771,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI share within electricity CO2,96.95799440459824,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV share within gasoline CO2,100.0,%,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Total CO2 intensity,1231.2759058509193,kt CO2 / TWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Electricity CO2 intensity,260.9206002196591,kt CO2 / TWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Gasoline CO2 intensity,1650.0,kt CO2 / TWh,≈ 1650 by construction (e_gasoline = 1.65 kg/kWh)
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (kWh),0.0,kWh,should be ≈ 0
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (relative),0.0,fraction,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (kWh),0.0,kWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (relative),0.0,fraction,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (kWh),0.0,kWh,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (relative),0.0,fraction,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (kg),-2.384185791015625e-07,kg CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (rel),-1.822810853062595e-16,fraction,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (kg),0.0,kg CO2,
+Ohio,2045,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (rel),0.0,fraction,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Total ATS energy,1.371209707088766,TWh,Sum of all ATS subsystems (ECAV + ICECAV + STI)
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity-based ATS energy,0.4206835251011145,TWh,ECAV + STI electrified subsystems
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline-based ATS energy,0.9505261819876516,TWh,ICECAV gasoline-driven subsystems
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Electricity share of ATS energy,30.67973650757428,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",A_top_layer,Gasoline share of ATS energy,69.32026349242571,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV electricity-based energy,0.06786569866570571,TWh,Battery-electric autonomous vehicle hardware overhead
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI electricity-based energy,0.35281782643540877,TWh,"Smart traffic infrastructure (intersections, edge compute, comms)"
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,ECAV share of electricity-based energy,16.13224540927617,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",B_electricity_objective,STI share of electricity-based energy,83.86775459072382,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV gasoline-based energy,0.9505261819876516,TWh,Sensing/computing/communication overhead on ICE-powered CAVs
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",C_gasoline_objective,ICECAV share of gasoline-based energy,100.0,%,Single category in the current model; 100% by definition when gasoline > 0
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon grid share of electricity,100.0,%,f_clean = clean_electricity / total_electricity
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil grid share of electricity,0.0,%,1 - f_clean
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Low-carbon electricity used by ATS,0.4206835251011145,TWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",D_electricity_source_mix,Fossil electricity used by ATS,0.0,TWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",E_gasoline_source_mix,Gasoline share of gasoline-fuel branch,100.0,%,100% — model has no other gasoline-based ATS categories
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Total ATS CO2 emissions,1580.9887060326587,kt CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity-based CO2 emissions,12.620505753033433,kt CO2,ECAV + STI
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline-based CO2 emissions,1568.3682002796252,kt CO2,ICECAV
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV electricity-related CO2,2.0359709599711713,kt CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI electricity-related CO2,10.584534793062263,kt CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV gasoline-related CO2,1568.3682002796252,kt CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Electricity share of total CO2,0.7982666609114114,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,Gasoline share of total CO2,99.20173333908859,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ECAV share within electricity CO2,16.132245409276173,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,STI share within electricity CO2,83.86775459072383,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",F_bottom_layer_co2,ICECAV share within gasoline CO2,100.0,%,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Total CO2 intensity,1152.9882685772968,kt CO2 / TWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Electricity CO2 intensity,29.999999999999993,kt CO2 / TWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",G_intensity,Gasoline CO2 intensity,1650.0,kt CO2 / TWh,≈ 1650 by construction (e_gasoline = 1.65 kg/kWh)
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (kWh),0.0,kWh,should be ≈ 0
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity + gasoline - total energy (relative),0.0,fraction,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (kWh),0.0,kWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV + STI - electricity (relative),0.0,fraction,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (kWh),0.0,kWh,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ICECAV - gasoline (relative),0.0,fraction,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (kg),0.0,kg CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,electricity CO2 + gasoline CO2 - total CO2 (rel),0.0,fraction,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (kg),0.0,kg CO2,
+Ohio,2075,"v9 dashboard default (policy=baseline, weather=Auto p_state)",H_consistency,ECAV CO2 + STI CO2 - electricity CO2 (rel),0.0,fraction,

@@ -1,0 +1,30 @@
+{
+  "california": {
+    "cav_target_2075":              0.45,
+    "sti_target_2075":              0.50,
+    "bev_growth_rate":              0.07,
+    "low_carbon_electricity_growth": 0.05,
+    "hardware_doubling_years":       2.8,
+    "_sources": {
+      "cav_target_2075": "California autonomous-vehicle testing framework; adopted AV fleet share projection from CARB analysis",
+      "sti_target_2075": "Caltrans smart-corridor program; inferred coverage target from funded intersections",
+      "bev_growth_rate": "CARB Advanced Clean Cars II mandate (100% ZEV sales by 2035); DOE AFDC 2019-2024 registration CAGR ~45%",
+      "low_carbon_electricity_growth": "SB 100 (100% clean electricity by 2045); EIA 2024 California electricity generation mix",
+      "hardware_doubling_years": "Industry consensus on compute-efficiency trajectory; not state-specific"
+    }
+  },
+  "ohio": {
+    "cav_target_2075":              0.25,
+    "sti_target_2075":              0.30,
+    "bev_growth_rate":              0.03,
+    "low_carbon_electricity_growth": 0.02,
+    "hardware_doubling_years":       2.8,
+    "_sources": {
+      "cav_target_2075": "No Ohio statewide CAV mandate; lower adoption ceiling based on ODOT AV pilot scope",
+      "sti_target_2075": "Ohio TSMO (Transportation Systems Management and Operations) smart-signal deployment; lower coverage baseline",
+      "bev_growth_rate": "DOE AFDC 2019-2024 Ohio BEV registration CAGR ~30%; no state ZEV mandate",
+      "low_carbon_electricity_growth": "EIA 2024 Ohio electricity mix (coal+gas ~75%); no statewide clean-energy mandate",
+      "hardware_doubling_years": "Industry consensus; same as California"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "description": "Parameter-centric uncertainty registry for the CLEAR-ATS v4 dashboard. Each referenced file contains one or more uncertainty parameters with their allowed levels, default level, paper-safe level, and explanatory text.",
+  "groups": [
+    "l1_initial_state.json",
+    "l1_emission_factors.json",
+    "l2_ecav_scale_factors.json",
+    "l2_sti_scale_factors.json",
+    "l2_dirichlet_mixes.json",
+    "l2_other_load.json",
+    "l3_2075_targets.json",
+    "l3_growth_exponents.json"
+  ],
+  "level_semantics": {
+    "fixed":  "Parameter held at its deterministic central value; no Monte Carlo draw.",
+    "low":    "Narrow evidence-anchored or decision-meaningful spread.",
+    "medium": "Paper-safe baseline spread; reproduces committed Monte Carlo ensemble.",
+    "high":   "Exploratory wider spread; not paper-safe; clearly labelled in UI."
+  },
+  "structural_shocks_note": "Structural shock parameters (grid_stall, ev_slowdown, hardware_supply_shock, policy_freeze, geopolitical_disruption) are NEVER represented in this registry because they are discrete labelled scenarios, not Monte Carlo priors. They live in scenarios/shocks/*.json and are invoked from the Structural Shocks panel only."
+}

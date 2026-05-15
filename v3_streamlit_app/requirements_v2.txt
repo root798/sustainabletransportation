@@ -1,0 +1,5 @@
+streamlit>=1.32.0
+pandas>=2.0.0
+numpy>=1.24.0
+plotly>=5.18.0
+# pathlib is part of Python standard library (Python 3.4+), no install needed

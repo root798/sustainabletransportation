@@ -1,0 +1,11 @@
+{
+    "schema_version": "v6.0",
+    "description": "Named milestone years at which v6 extracts conditional marginal distributions from the nested-MC table. Each year is reported as a histogram + violin in the Benchmark-Year Distributions dashboard view and as a p05/p25/p50/p75/p95 row in the validation CSV.",
+    "years": [
+        {"year": 2030, "label": "Near-term (6 years out)",       "paper_facing": true,  "notes": "Within quantitative regime; fleet response to announced policy."},
+        {"year": 2035, "label": "Mid-term (EV sales targets)",   "paper_facing": true,  "notes": "CARB / US EPA 2035 milestones."},
+        {"year": 2045, "label": "California carbon-neutral target", "paper_facing": true, "notes": "CA AB 1279 statewide carbon neutrality."},
+        {"year": 2055, "label": "Post-neutrality maturity",      "paper_facing": false, "notes": "Scenario-envelope territory; report as conditional marginal."},
+        {"year": 2075, "label": "CAV/STI target-reach year",     "paper_facing": true,  "notes": "Target-reach definition from footprint_model (linear ramp to 2075)."}
+    ]
+}

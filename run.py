@@ -19,20 +19,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def check_configs_exist():
-    """Check if required configuration files exist in the configs directory."""
-    config_dir = Path("configs")
-    required_configs = ["california.json", "ohio.json", "us_average.json"]
-    
-    if not config_dir.exists():
-        logger.error(f"Config directory '{config_dir}' does not exist.")
-        return False
-    
-    missing = [cfg for cfg in required_configs if not (config_dir / cfg).exists()]
+    """Verify that scenario / config files exist for each required region.
+
+    Canonical source: scenarios/{region}/scenario.json (per-region folder).
+    Legacy fallback:  configs/{region}.json.
+    A region is considered satisfied if EITHER file is present.
+    """
+    scenarios_dir = Path("scenarios")
+    configs_dir = Path("configs")
+    required_regions = ["california", "ohio", "us_average"]
+
+    missing = []
+    for region in required_regions:
+        canonical = scenarios_dir / region / "scenario.json"
+        legacy = configs_dir / f"{region}.json"
+        if not canonical.exists() and not legacy.exists():
+            missing.append(region)
+
     if missing:
-        logger.error(f"Missing configuration files: {', '.join(missing)}")
+        logger.error(
+            "Missing scenario files (tried scenarios/{region}/scenario.json and "
+            f"configs/{{region}}.json) for regions: {', '.join(missing)}"
+        )
         return False
-    
-    logger.info("All required configuration files found.")
+
+    logger.info("All required scenario files found (canonical scenarios/ or legacy configs/).")
     return True
 
 def run_model(mc: int = 0, policy: str = "baseline", seed: int = 0, scenarios: Optional[List[str]] = None, years: Optional[int] = None):

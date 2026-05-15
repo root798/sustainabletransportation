@@ -108,24 +108,42 @@ def schedule_cache_cleanup():
 cleanup_thread = threading.Thread(target=schedule_cache_cleanup, daemon=True)
 cleanup_thread.start()
 
-# Get valid states by checking configs directory
+# Get valid states by discovering canonical scenario files
 def get_valid_states():
-    """Get list of valid states by checking config files in configs directory."""
-    configs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs')
-    valid_states = []
-    
+    """Get list of valid states.
+
+    Canonical source: scenarios/{region}/scenario.json (one folder per region).
+    Legacy fallback:  configs/{region}.json (pre-reorg layout).
+
+    Both sources are consulted so the Flask app keeps working if either
+    folder is missing. Results are de-duplicated and sorted.
+    """
+    repo_root = os.path.dirname(os.path.abspath(__file__))
+    scenarios_dir = os.path.join(repo_root, 'scenarios')
+    configs_dir = os.path.join(repo_root, 'configs')
+    valid_states = set()
+
     try:
-        for filename in os.listdir(configs_dir):
-            if filename.endswith('.json'):
-                # Remove .json extension to get state name
-                state_name = filename[:-5]  # len('.json') == 5
-                valid_states.append(state_name)
+        if os.path.isdir(scenarios_dir):
+            for entry in os.listdir(scenarios_dir):
+                scenario_path = os.path.join(scenarios_dir, entry, 'scenario.json')
+                if os.path.isfile(scenario_path):
+                    valid_states.add(entry)
+    except Exception as e:
+        print(f"Error reading scenarios directory: {str(e)}")
+
+    try:
+        if os.path.isdir(configs_dir):
+            for filename in os.listdir(configs_dir):
+                if filename.endswith('.json'):
+                    valid_states.add(filename[:-5])
     except Exception as e:
         print(f"Error reading configs directory: {str(e)}")
-        # Fallback to default states if there's an error
-        valid_states = ['california', 'ohio', 'us_average']
-    
-    return valid_states
+
+    if not valid_states:
+        valid_states = {'california', 'ohio', 'us_average'}
+
+    return sorted(valid_states)
 
 # Load data from CSV files
 def load_data():

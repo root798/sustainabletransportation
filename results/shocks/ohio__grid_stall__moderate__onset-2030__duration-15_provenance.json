@@ -1,0 +1,24 @@
+{
+  "region": "ohio",
+  "shock_name": "grid_stall",
+  "severity": "moderate",
+  "onset_year": 2030,
+  "duration_years": 15,
+  "base_year": 2024,
+  "target_year": 2075,
+  "horizon_years": 68,
+  "registry_file": "scenarios/shocks/grid_stall.json",
+  "baseline_scenario_file": "scenarios/ohio/scenario.json",
+  "policy": "baseline",
+  "mc_samples": 1,
+  "seed": 0,
+  "quarantined": false,
+  "perturbations_applied": {
+    "2030": {
+      "clean_growth_rate": 0.0
+    },
+    "2045": {
+      "clean_growth_rate": 0.05
+    }
+  }
+}

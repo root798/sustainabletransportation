@@ -1,0 +1,58 @@
+{
+  "group_id": "l2_other_load",
+  "layer": "L2",
+  "group_label": "Other load-model parameters",
+  "help": "ICECAV overhead, cohort decay, and vehicle service life. F20 allows fixed/low (medium would inflate without evidence); F21 is hidden-internal-only because its effect vanishes by 2036; F22 retains fixed/low/medium.",
+  "parameters": [
+    {
+      "param_id": "F20",
+      "config_path": "consumption_rates.icecav_power_factor",
+      "label": "ICECAV power overhead factor",
+      "physical_meaning": "Multiplier on CAV electronic power for ICE-driven CAVs. Reflects the alternator/idle overhead of powering AV electronics from an ICE drivetrain vs direct battery power.",
+      "citation": "Alternator efficiency typically <50% (MDPI Machines 2022, doi:10.3390/machines10060478). ICE thermal efficiency ~30% with turbocharger (Springer, doi:10.1007/978-981-16-1582-5_6).",
+      "affects": ["level"],
+      "allowed_levels": ["fixed", "low"],
+      "default_level": "low",
+      "paper_safe_level": "low",
+      "levels": {
+        "fixed": {"fixed_to": 1.6},
+        "low":   {"dist": "triangular", "low": 1.45, "mode": 1.6, "high": 1.8}
+      },
+      "why_default_free": "Alternator-overhead range is small but directly visible in ICECAV emissions.",
+      "why_medium_rejected": "Previous MEDIUM triangular (1.3, 1.6, 2.0) extended beyond documented alternator-overhead range and inflated 2030 W/M by 0.25 without adding evidence.",
+      "duplicates": null
+    },
+    {
+      "param_id": "F21",
+      "config_path": "consumption_rates.cohort_decay_factor",
+      "label": "Pre-2024 cohort age weight",
+      "physical_meaning": "Base multiplier on pre-2024 cohort power; cohort exits the fleet by year 12.",
+      "affects": ["early_horizon_only"],
+      "allowed_levels": ["fixed"],
+      "default_level": "fixed",
+      "paper_safe_level": "fixed",
+      "levels": {"fixed": {"fixed_to": 0.7}},
+      "why_fixed_only": "Pre-2024 cohort decays out of fleet by 2036 under retire_year default. Variance has no effect on any reported post-2036 metric. Classified hidden / fixed-only per the final-design rules.",
+      "duplicates": null
+    },
+    {
+      "param_id": "F22",
+      "config_path": "growth_rates.retire_year",
+      "label": "Vehicle retire year",
+      "physical_meaning": "Integer vehicle service life in years; controls cohort rotation and the turning-year metric. Light-duty vehicle median lifetime is ~12 years in the US (IHS Markit / S&P Global Mobility).",
+      "citation": "IHS Markit (now S&P Global Mobility), Average Age of Vehicles in the US. FHWA Highway Statistics, Table MV-1.",
+      "affects": ["turning_year"],
+      "allowed_levels": ["fixed", "low", "medium"],
+      "default_level": "low",
+      "paper_safe_level": "medium",
+      "levels": {
+        "fixed":  {"fixed_to": 12},
+        "low":    {"dist": "triangular", "low": 10, "mode": 12, "high": 15, "integer": true},
+        "medium": {"dist": "triangular", "low": 8,  "mode": 12, "high": 18, "integer": true}
+      },
+      "why_default_free": "Evidence-anchored service life; directly controls turning year metric.",
+      "why_high_rejected": "MEDIUM triangular (8, 12, 18) already spans documented light-duty service-life range (8-20 years).",
+      "duplicates": null
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "preset_id": "l3_medium",
+  "layer": "L3",
+  "label": "L3 Medium (paper-safe baseline)",
+  "description": "Baseline trajectory priors as committed in scenarios/california/scenario.json and scenarios/ohio/scenario.json. Reproduces the MEDIUM L3 component of the paper-safe Monte Carlo ensemble. For US Average, the centred triangulars in scenarios/us_average/scenario.json are honored; this preset only names the shape and width.",
+  "paper_safe": true,
+  "data_uncertainty": {
+    "growth_rates": {
+      "cav":              {"dist": "triangular", "low": 0.25, "mode": 0.45, "high": 0.70, "semantic": "2075_target_fraction"},
+      "sti":              {"dist": "triangular", "low": 0.25, "mode": 0.50, "high": 0.75, "semantic": "2075_target_fraction"},
+      "ev":               {"dist": "normal",     "mean": 0.07,  "sd": 0.015, "min": 0.02,  "max": 0.15,  "semantic": "annual_growth_exponent"},
+      "clean_energy":     {"dist": "normal",     "mean": 0.05,  "sd": 0.012, "min": 0.01,  "max": 0.10,  "semantic": "annual_growth_exponent"},
+      "efficiency_doubling": {"dist": "triangular", "low": 1.5, "mode": 2.8, "high": 5.0},
+      "total_car_increase": {"dist": "normal", "mean": 0.002, "sd": 0.001, "min": -0.005, "max": 0.010}
+    }
+  },
+  "notes": {
+    "paper_reference": "Methods M2",
+    "us_average_fallback": "if the region is us_average, the scenario file's cav/sti/total_car_increase centres are used unchanged; only sigmas/supports mirror CA/OH defaults."
+  }
+}

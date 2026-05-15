@@ -1,10 +1,45 @@
-﻿__pycache__/
+# ---- Python ----
+__pycache__/
 *.py[cod]
+*.so
 
-cache/
-*.json
-
+# ---- Environments ----
 .venv/
 venv/
 env/
+
+# ---- OS junk ----
 .DS_Store
+__MACOSX/
+**/__MACOSX/
+
+# ---- IDE / editor ----
+.idea/
+.vscode/
+*.swp
+
+# ---- Claude Code local state ----
+.claude/
+memory/
+
+# ---- Runtime caches (note: NOT *.json — configs/scenarios are tracked) ----
+cache/
+**/cache/
+
+# ---- Nested duplicate of the repo (legacy archive) ----
+CLEAR_ATS/
+
+# ---- Personal / private documents ----
+Annual Review Form*.pdf
+*Annual Review*.pdf
+
+# ---- Large draft / manuscript PDFs (regenerate when needed) ----
+Traffic_Autonomy_Expansion_Shifts_Marginal_Energy_Costs*.pdf
+
+# ---- Notebook checkpoints ----
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ---- Backups ----
+*.bak
+*.bak.*

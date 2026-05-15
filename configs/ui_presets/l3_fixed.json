@@ -1,0 +1,14 @@
+{
+  "preset_id": "l3_fixed",
+  "layer": "L3",
+  "label": "L3 Fixed (no trajectory uncertainty)",
+  "description": "Freezes every L3 (trajectory) growth parameter at its mode/mean. No draws on 2075 CAV/STI targets, on the EV-share or low-carbon-electricity growth exponents, on the efficiency doubling time, or on the fleet-stock growth exponent. Useful to see how narrow the uncertainty band becomes when all trajectory divergence is removed (isolates L1+L2 contribution).",
+  "paper_safe": true,
+  "data_uncertainty": {
+    "growth_rates": {}
+  },
+  "notes": {
+    "retire_year_excluded": "retire_year is an L2 parameter and is not frozen by this L3 preset.",
+    "scope": "Fixes all truly trajectory-shaping parameters: 2075 CAV target, 2075 STI target, ev growth, clean_energy growth, efficiency_doubling, total_car_increase."
+  }
+}
