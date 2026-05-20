@@ -750,6 +750,43 @@ def per_unit_l5_annual_utility_kwh(
     return float(df.loc[year, "ECAV Power (kWh)"])
 
 
+def run_simulation_v11_deterministic(cfg: dict[str, Any],
+                                     years: int = DEFAULT_HORIZON) -> pd.DataFrame:
+    """Run the v11 deterministic trajectory under the SAME energy model
+    used by the residual / scenario-envelope Monte Carlo.
+
+    Without this helper the Scenario Explorer renders the deterministic
+    line via ``v4_core.run_simulation`` (which falls back to the v9
+    ``FixedTableEnergyModel``) while the band MC uses the v11
+    ``ComponentRegistryEnergyModel``. Because the two energy models
+    produce different per-unit annual energies, the band can drift away
+    from the deterministic line — the symptom the Scenario Explorer
+    showed where the deterministic trajectory sat well below the
+    residual p05-p95 ribbon.
+
+    This function rebuilds the deterministic run with the v11 energy
+    model, NO Monte Carlo sampling (no power overrides, no duty-hour
+    sampling, no config-prior sampling, no weather Dirichlet draw) so it
+    is exactly the centre of the band MC sample distribution.
+    """
+    variants = cfg.get("model_variants") or []
+    variant = variants[0] if isinstance(variants, list) and variants else (variants or {})
+    if not isinstance(variant, dict):
+        variant = {"type": str(variant), "name": str(variant)}
+    model = _TransportModel(
+        cfg["initial_data"],
+        cfg["growth_rates"],
+        cfg["consumption_rates"],
+        cfg["emission_factors"],
+        model_variants=variant or None,
+        energy_model=_CRModel(),
+    )
+    buf = _io.StringIO()
+    with _redirect_stdout(buf):
+        model.run_simulation(years=int(years))
+    return pd.DataFrame(list(model.results))
+
+
 def compute_scenario_envelope_band(
     cfg: dict[str, Any],
     region: str,
@@ -801,6 +838,29 @@ def compute_scenario_envelope_band(
                                       n_samples=n_samples, seed=seed,
                                       metric=metric,
                                       return_trajectories=return_trajectories)
+
+
+# v11.2 — Slider-controlled scenario paths re-pinned to the deterministic
+# cfg value after each MC ``_sample_config()`` call. These mirror the
+# CONTROL_SPECS path tuples in v4_streamlit_app/core.py: every slider in
+# the Scenario Explorer writes to exactly one of these (section, key)
+# pairs, and the residual MC must respect that override or the band
+# leaves the deterministic trajectory whenever the user drags a slider
+# off the published-prior centre.
+_SLIDER_CONTROLLED_PATHS: tuple[tuple[str, str], ...] = (
+    ("growth_rates",  "cav"),
+    ("growth_rates",  "sti"),
+    ("growth_rates",  "ev"),
+    ("growth_rates",  "clean_energy"),
+    ("growth_rates",  "total_car_increase"),
+    ("growth_rates",  "efficiency_doubling"),
+    ("growth_rates",  "hardware_deployment_lag_years"),
+    ("growth_rates",  "retire_year"),
+    ("initial_data",  "f_clean"),
+    ("initial_data",  "total_ev"),
+    ("initial_data",  "total_cars"),
+    ("initial_data",  "total_intersections"),
+)
 
 
 def compute_live_residual_band(
@@ -868,6 +928,19 @@ def compute_live_residual_band(
             sampled = cfg
         else:
             sampled = _sample_config(cfg, rng)
+            # v11.2 — Re-pin slider-controlled scenario fields back to the
+            # user's cfg values after _sample_config has re-sampled them
+            # from the published Block-4 priors. Without this step the
+            # MC ignored slider moves outside the prior support (e.g.
+            # clean-energy growth set to 0.10 while the published prior
+            # is centred on ~0.04) and the residual band drifted entirely
+            # off the deterministic trajectory. Sticking these slider
+            # values keeps the band centred on the user's chosen
+            # scenario; the residual MC still varies every NON-slider
+            # parameter, so band width is preserved.
+            for _section, _key in _SLIDER_CONTROLLED_PATHS:
+                if _section in sampled and _key in cfg.get(_section, {}):
+                    sampled[_section][_key] = cfg[_section][_key]
         # v11: perturb the *physical* component parameters (per-component power,
         # CAV duty hours) and run with the bottom-up registry model. The legacy
         # flat-table scale-factor priors in sampled["consumption_rates"] are
@@ -995,6 +1068,7 @@ __all__ = [
     "bundle_mc_sample_count",
     "compute_live_residual_band",
     "compute_scenario_envelope_band",
+    "run_simulation_v11_deterministic",
     "cumulative_band_from_mc_runs",
     "per_unit_l5_annual_utility_kwh",
     "PARAMETER_HIDDEN_REASON",
