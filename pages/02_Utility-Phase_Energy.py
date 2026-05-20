@@ -12,6 +12,7 @@ for p in (_HERE, _HERE / "v4_streamlit_app", _HERE / "src",
         sys.path.insert(0, str(p))
 
 runpy.run_path(
-    str(_HERE / "v11_streamlit_app" / "pages" / "02_Utility_Phase_Energy.py"),
+    str(_HERE / "v11_streamlit_app" / "pages"
+        / "02_Utility-Phase_Energy.py"),
     run_name="__main__",
 )
