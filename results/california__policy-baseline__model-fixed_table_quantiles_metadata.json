@@ -1,0 +1,26 @@
+{
+  "start_year": 2027,
+  "relative_tol": 1e-06,
+  "fields": {
+    "ATS Total Power (kWh)": {
+      "first_saturation_year": null,
+      "reason": "no_saturation_detected",
+      "max_width": 16104113317.210602
+    },
+    "ATS Emissions (kg CO2)": {
+      "first_saturation_year": null,
+      "reason": "no_saturation_detected",
+      "max_width": 19259686944.530716
+    },
+    "Clean Energy Fraction": {
+      "first_saturation_year": 2035,
+      "reason": "band_collapsed_to_zero",
+      "max_width": 0.10642365898019457
+    },
+    "EV Fraction": {
+      "first_saturation_year": null,
+      "reason": "no_saturation_detected",
+      "max_width": 0.18181532980473764
+    }
+  }
+}

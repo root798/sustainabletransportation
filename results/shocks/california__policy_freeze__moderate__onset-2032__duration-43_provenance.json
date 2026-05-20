@@ -1,0 +1,22 @@
+{
+  "region": "california",
+  "shock_name": "policy_freeze",
+  "severity": "moderate",
+  "onset_year": 2032,
+  "duration_years": 43,
+  "base_year": 2024,
+  "target_year": 2075,
+  "horizon_years": 68,
+  "registry_file": "scenarios/shocks/policy_freeze.json",
+  "baseline_scenario_file": "scenarios/california/scenario.json",
+  "policy": "baseline",
+  "mc_samples": 1,
+  "seed": 0,
+  "quarantined": false,
+  "perturbations_applied": {
+    "2032": {
+      "cav_target_fraction": 0.225,
+      "sti_target_fraction": 0.25
+    }
+  }
+}

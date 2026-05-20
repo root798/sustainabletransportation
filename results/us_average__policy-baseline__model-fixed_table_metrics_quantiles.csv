@@ -1,0 +1,16 @@
+metric,quantile,value,n_runs_total,n_runs_used,achieved_fraction
+peak_emissions,0.05,8397876089.638876,200,200,1.0
+peak_emissions,0.5,17797838036.692368,200,200,1.0
+peak_emissions,0.95,39862313507.11698,200,200,1.0
+peak_year,0.05,2046.95,200,200,1.0
+peak_year,0.5,2060.5,200,200,1.0
+peak_year,0.95,2080.05,200,200,1.0
+cumulative_emissions,0.05,221296978589.00867,200,200,1.0
+cumulative_emissions,0.5,605698679905.2986,200,200,1.0
+cumulative_emissions,0.95,1621817295786.3203,200,200,1.0
+turning_year,0.05,2057.0,200,177,0.885
+turning_year,0.5,2071.0,200,177,0.885
+turning_year,0.95,2089.0,200,177,0.885
+turning_year_rule,0.05,,200,0,0.0
+turning_year_rule,0.5,,200,0,0.0
+turning_year_rule,0.95,,200,0,0.0

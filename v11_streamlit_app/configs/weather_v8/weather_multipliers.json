@@ -1,0 +1,59 @@
+{
+  "classes": ["clear", "cloudy", "adverse"],
+  "derivation": {
+    "cav_source": "Manuscript CAV adverse-weather table, per-level Sunny/Clear vs Adverse power (W). L3/L4/L5 sensing Sunny: 26.28 / 61.64 / 108.58. L3/L4/L5 sensing Adverse: 35.60 / 83.17 / 148.70. L3/L4/L5 computing Sunny: 3538.97 / 6616.18 / 10206.97. L3/L4/L5 computing Adverse: 4693.14 / 8486.64 / 13083.12. Communication shows no weather sensitivity (ratio 1.000).",
+    "sti_source": "Manuscript STI adverse-weather table, per-level Sunny/Clear vs Adverse for Basic/Semi/Highly automated STI. Same perception-stack physics as CAV at three automation tiers. STI Basic/Semi/Highly adverse ratios map to the CAV L3/L4/L5 per-level ratios; communication shows no weather sensitivity. This replaces the placeholder (1.20, 1.20, 1.00) used in the prior single-layer weather module.",
+    "cloudy_rule": "clear = 1.0; cloudy = 1 + 0.35 * (adverse - 1); adverse = manuscript-derived level-specific ratio. Applied separately for each level and subsystem."
+  },
+  "ecav": {
+    "l3": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1241, "adverse": 1.3546},
+      "computing":     {"clear": 1.0, "cloudy": 1.1141, "adverse": 1.3261},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "l4": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1223, "adverse": 1.3493},
+      "computing":     {"clear": 1.0, "cloudy": 1.0990, "adverse": 1.2827},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "l5": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1293, "adverse": 1.3695},
+      "computing":     {"clear": 1.0, "cloudy": 1.0986, "adverse": 1.2818},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    }
+  },
+  "icecav": {
+    "l3": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1241, "adverse": 1.3546},
+      "computing":     {"clear": 1.0, "cloudy": 1.1141, "adverse": 1.3261},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "l4": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1223, "adverse": 1.3493},
+      "computing":     {"clear": 1.0, "cloudy": 1.0990, "adverse": 1.2827},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "l5": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1293, "adverse": 1.3695},
+      "computing":     {"clear": 1.0, "cloudy": 1.0986, "adverse": 1.2818},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    }
+  },
+  "sti": {
+    "basic": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1241, "adverse": 1.3546},
+      "computing":     {"clear": 1.0, "cloudy": 1.1141, "adverse": 1.3261},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "semi": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1223, "adverse": 1.3493},
+      "computing":     {"clear": 1.0, "cloudy": 1.0990, "adverse": 1.2827},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    },
+    "highly": {
+      "sensing":       {"clear": 1.0, "cloudy": 1.1293, "adverse": 1.3695},
+      "computing":     {"clear": 1.0, "cloudy": 1.0986, "adverse": 1.2818},
+      "communication": {"clear": 1.0, "cloudy": 1.0,    "adverse": 1.0}
+    }
+  }
+}

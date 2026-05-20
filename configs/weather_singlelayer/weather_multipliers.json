@@ -1,0 +1,33 @@
+{
+  "classes": ["clear", "cloudy", "adverse"],
+  "notes": [
+    "Subsystem-level utility-phase energy multipliers under each weather class.",
+    "Clear is the reference (1.0).",
+    "Adverse ratios derived from the manuscript's utility-phase CAV table:",
+    "    Adverse/Sunny-Clear averaged across L3/L4/L5.",
+    "      Sensing : (35.60+83.17+148.70)/(26.28+61.64+108.58) = 1.354",
+    "      Computing : (4693.14+8486.64+13083.12)/(3538.97+6616.18+10206.97) = 1.283",
+    "      Communication : 1.000 (table shows no weather sensitivity).",
+    "  Rounded to 1.35 and 1.30 respectively. Applied to both ECAV and ICECAV",
+    "  because the manuscript table is CAV-level rather than ICE/EV-specific.",
+    "STI adverse multipliers are set conservatively (1.20 sensing, 1.20 computing,",
+    "  1.00 communication) until the manuscript's STI weather table is wired in;",
+    "  update here if the tables provide STI-specific ratios.",
+    "Cloudy is an intermediate: clear + 0.35 * (adverse - clear)."
+  ],
+  "ECAV": {
+    "sensing":       {"clear": 1.00, "cloudy": 1.1225, "adverse": 1.35},
+    "computing":     {"clear": 1.00, "cloudy": 1.1050, "adverse": 1.30},
+    "communication": {"clear": 1.00, "cloudy": 1.0000, "adverse": 1.00}
+  },
+  "ICECAV": {
+    "sensing":       {"clear": 1.00, "cloudy": 1.1225, "adverse": 1.35},
+    "computing":     {"clear": 1.00, "cloudy": 1.1050, "adverse": 1.30},
+    "communication": {"clear": 1.00, "cloudy": 1.0000, "adverse": 1.00}
+  },
+  "STI": {
+    "sensing":       {"clear": 1.00, "cloudy": 1.0700, "adverse": 1.20},
+    "computing":     {"clear": 1.00, "cloudy": 1.0700, "adverse": 1.20},
+    "communication": {"clear": 1.00, "cloudy": 1.0000, "adverse": 1.00}
+  }
+}

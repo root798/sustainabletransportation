@@ -1,0 +1,13 @@
+metric,quantile,value
+peak_emissions,0.05,10320600491.621063
+peak_emissions,0.5,10320600491.621063
+peak_emissions,0.95,10320600491.621063
+peak_year,0.05,2055.0
+peak_year,0.5,2055.0
+peak_year,0.95,2055.0
+cumulative_emissions,0.05,309909351350.5573
+cumulative_emissions,0.5,309909351350.5573
+cumulative_emissions,0.95,309909351350.5573
+turning_year,0.05,2056.0
+turning_year,0.5,2056.0
+turning_year,0.95,2056.0

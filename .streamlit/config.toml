@@ -1,0 +1,31 @@
+# Streamlit runtime config for the CLEAR-ATS v11 dashboard.
+# Streamlit Community Cloud reads this file automatically when it sits
+# at <repo-root>/.streamlit/config.toml.
+
+[server]
+# Hide the "made with Streamlit" badge so the published dashboard looks
+# clean. (Optional — drop this line if you want the badge back.)
+headless = true
+# Allow up to 200 MB uploads; the dashboard itself does not accept
+# uploads, but bumping this prevents Cloud from rejecting heavy figure
+# previews if you ever attach one.
+maxUploadSize = 200
+
+[browser]
+# Don't phone home — the dashboard is a data visualisation tool, no
+# need for usage stats from a hosted instance.
+gatherUsageStats = false
+
+[theme]
+# Match the Nature-style palette used throughout the figures.
+base = "light"
+primaryColor          = "#0F4C81"   # NATURE_CATEGORICAL.primary (slate blue)
+backgroundColor       = "#FFFFFF"
+secondaryBackgroundColor = "#F5F6FA"
+textColor             = "#333333"
+font                  = "sans serif"
+
+[client]
+# Don't show internal stack traces to dashboard visitors.
+showErrorDetails = false
+toolbarMode      = "viewer"
