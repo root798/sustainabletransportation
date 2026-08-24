@@ -1,0 +1,73 @@
+name: Keep CLEAR-ATS dashboard awake
+
+# Streamlit Community Cloud hibernates an app after 12 h without traffic, and a
+# hibernating app greets visitors with "This app has gone to sleep". Reviewers
+# following the link in the manuscript must never see that page, so this job
+# visits the dashboard with a real headless browser every 6 hours (2x margin)
+# and wakes it if needed.
+#
+# HTTP pings do not work here: the URL returns 200 with a static SPA shell even
+# while the Python process is down. Only a browser that runs JS and opens the
+# /_stcore/stream WebSocket counts as traffic.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'      # 04:17, 10:17, 16:17, 22:17 UTC (off-peak minute)
+  workflow_dispatch:            # manual "wake it now"
+
+concurrency:
+  group: keep-dashboard-awake
+  cancel-in-progress: false
+
+permissions:
+  contents: write               # only for the ~monthly heartbeat commit
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright + Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund --silent playwright
+          npx playwright install --with-deps chromium
+
+      - name: Visit the dashboard and wake it if asleep
+        env:
+          APP_URL: https://sustainabletransportation-ta2vkd4inpjxjphbjc57dm.streamlit.app/
+        run: node .github/workflows/wake_streamlit.js
+
+      # GitHub disables scheduled workflows after 60 days without repository
+      # activity, which would silently kill this job during a long review cycle.
+      # Commit a heartbeat only when the previous one is older than 30 days, so
+      # the timer is reset without flooding the history.
+      - name: Heartbeat commit (at most monthly)
+        if: github.event_name == 'schedule'
+        run: |
+          set -euo pipefail
+          STAMP=.github/LAST_KEEPALIVE
+          NOW=$(date -u +%s)
+          if [ -f "$STAMP" ]; then
+            PREV=$(cut -d' ' -f1 "$STAMP" 2>/dev/null || echo 0)
+            case "$PREV" in ''|*[!0-9]*) PREV=0 ;; esac
+          else
+            PREV=0
+          fi
+          AGE=$(( NOW - PREV ))
+          if [ "$AGE" -lt 2592000 ]; then
+            echo "last heartbeat ${AGE}s ago (<30 d); skipping commit"
+            exit 0
+          fi
+          echo "$NOW $(date -u +%Y-%m-%dT%H:%M:%SZ) dashboard keep-alive" > "$STAMP"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$STAMP"
+          git diff --staged --quiet || git commit -m "chore: dashboard keep-alive heartbeat [skip ci]"
+          git push
