@@ -78,3 +78,5 @@ def main() -> None:
     st.session_state["_clearats_page_registry"] = registered
     page = st.navigation(list(registered.values()))
     page.run()
+    with st.sidebar:
+        st.caption("Interface · 2026.09.28.3")

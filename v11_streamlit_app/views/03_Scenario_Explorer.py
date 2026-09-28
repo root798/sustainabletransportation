@@ -537,12 +537,14 @@ with st.sidebar:
                    _mit_help(region, "hardware_deployment_lag_years"),
                    container=st)
 
-    if st.button("Reset to state defaults", key="expv5_btn_reset_mit",
-                 use_container_width=True):
+    def _reset_mitigation_controls():
+        # Callbacks run before the next script renders the slider widgets.
         for sk, mk in _MIT_KEY_MAP.items():
             st.session_state[f"expv5_cv_{sk}"] = _mit.get(mk, _cv.get(sk))
         _invalidate_bands()
-        st.rerun()
+
+    st.button("Reset to state defaults", key="expv5_btn_reset_mit",
+              use_container_width=True, on_click=_reset_mitigation_controls)
 
     st.markdown("---")
     st.caption(
@@ -1419,6 +1421,7 @@ else:
         accent = NATURE_CATEGORICAL["accent"]
         neutral = NATURE_CATEGORICAL["neutral"]
 
+        _hover_unit = unit.replace(" yr⁻¹", "").replace("/yr", "") if _is_cumulative else unit
         fig = go.Figure()
         by = ib.get("boundary_year")
         # Only shade the scenario-envelope region if the IB falls
@@ -1460,12 +1463,16 @@ else:
         fig.add_trace(go.Scatter(
             x=qf_display.index, y=p50s, mode="lines",
             name=median_name,
+            hovertemplate=(median_name + "<br>Year %{x}<br>%{y:,.3f} "
+                           + _hover_unit + "<extra></extra>"),
             line=dict(color=primary, width=1.4, dash=median_dash),
         ))
         if _det_em is not None:
             fig.add_trace(go.Scatter(
                 x=_det_em.index, y=_det_em.values, mode="lines",
                 name="Live deterministic trajectory",
+                hovertemplate=("Live deterministic trajectory<br>Year %{x}<br>"
+                               "%{y:,.3f} " + _hover_unit + "<extra></extra>"),
                 line=dict(color=neutral, width=1.8),
             ))
 
@@ -1496,11 +1503,14 @@ else:
                     name=(f"{band_mode} band · "
                            f"{'energy' if 'energy' in _sec_label.lower() else 'emissions'}"),
                     yaxis="y2",
+                    hoverinfo="skip",
                 ))
             # Secondary median.
             fig.add_trace(go.Scatter(
                 x=qf_display.index, y=_sec_p50, mode="lines",
                 name=f"{_sec_label} ({_sec_unit})",
+                hovertemplate=(_sec_label + "<br>Year %{x}<br>%{y:,.3f} "
+                               + _sec_unit + "<extra></extra>"),
                 line=dict(color=sec_color, width=1.4, dash="dashdot"),
                 yaxis="y2",
             ))
@@ -1509,6 +1519,8 @@ else:
                 fig.add_trace(go.Scatter(
                     x=_sec_det.index, y=_sec_det.values, mode="lines",
                     name=("Live deterministic (secondary)"),
+                    hovertemplate=("Live deterministic trajectory<br>Year %{x}<br>"
+                                   "%{y:,.3f} " + _sec_unit + "<extra></extra>"),
                     line=dict(color=neutral, width=1.2, dash="dot"),
                     yaxis="y2",
                 ))
@@ -2073,6 +2085,7 @@ try:
         _sd_fig.add_trace(_sd_go.Scatter(
             x=_sd_det_df["Year"], y=_sd_det_df[_col] / 1e9,
             mode="lines", name=_label, stackgroup="one",
+            hovertemplate=(_label + "<br>Year %{x}<br>%{y:,.3f} TWh / yr<extra></extra>"),
             line=dict(color=_color if not str(_color).startswith("rgba") else NATURE_CATEGORICAL["neutral"], width=0.5),
             fillcolor=_color if str(_color).startswith("rgba") else rgba(_color, 0.75),
         ))
@@ -2081,6 +2094,7 @@ try:
         _sd_fig.add_trace(_sd_go.Scatter(
             x=_sd_det_df["Year"], y=_sd_det_df["ATS Total Power (kWh)"] / 1e9,
             mode="lines", name="ATS total",
+            hovertemplate="ATS total<br>Year %{x}<br>%{y:,.3f} TWh / yr<extra></extra>",
             line=dict(color=NATURE_CATEGORICAL["neutral"], width=1.5, dash="dash"),
         ))
 
@@ -2088,7 +2102,7 @@ try:
     _sd_layout.update({
         "height": 420,
         "title": dict(
-            text=f"<b>Subsystem energy demand — {REGION_LABELS[region]} / {policy}</b>",
+            text=f"<b>Subsystem energy demand</b><br>{REGION_LABELS[region]} · {policy}",
             x=0.0, xanchor="left",
             font=dict(size=14, color=NATURE_CATEGORICAL["neutral"])),
     })

@@ -391,6 +391,20 @@ div[data-baseweb="base-input"] > div,
   [class*="st-key-turning_point_map"][data-testid="stElementContainer"] {
     flex: 0 0 300px !important;
   }
+  /* Advanced metric maps need the same phone-height canvas as the primary
+     map, rather than a 660px frame with hundreds of pixels of empty space. */
+  [class*="st-key-national_map_"][data-testid="stElementContainer"],
+  [class*="st-key-national_map_"] [data-testid="stFullScreenFrame"],
+  [class*="st-key-national_map_"] [data-testid="stPlotlyChart"],
+  [class*="st-key-national_map_"] .js-plotly-plot,
+  [class*="st-key-national_map_"] .plot-container,
+  [class*="st-key-national_map_"] .svg-container {
+    height: 330px !important;
+    min-height: 330px !important;
+  }
+  [class*="st-key-national_map_"][data-testid="stElementContainer"] {
+    flex: 0 0 330px !important;
+  }
 }
 
 @media (max-width: 540px) {

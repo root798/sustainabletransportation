@@ -183,9 +183,11 @@ with c1:
     )
 with c2:
     prop_ice = st.number_input("ICE propulsion (kWh / yr)",
-                                value=PROP_ICE_KWH_YR, step=500.0, format="%.0f")
+                                min_value=0.0, value=PROP_ICE_KWH_YR,
+                                step=500.0, format="%.0f")
     prop_bev = st.number_input("BEV propulsion (kWh / yr)",
-                                value=PROP_BEV_KWH_YR, step=250.0, format="%.0f")
+                                min_value=0.0, value=PROP_BEV_KWH_YR,
+                                step=250.0, format="%.0f")
 
 _ef = _load_region_emission_factors(region_for_ef)
 _cav_hours = (ACTIVE_HOURS_PER_DAY["CAV_personal_baseline"]["median"]
@@ -270,11 +272,7 @@ apply_clearats_layout(
     barmode="stack",
 )
 fig1.update_layout(
-    title=dict(
-        text="<b>Annual running energy per vehicle, by propulsion and autonomy level</b>",
-        x=0.0, xanchor="left",
-        font=dict(size=14, color=NATURE_CATEGORICAL["neutral"]),
-    ),
+    margin=dict(l=70, r=115),
 )
 fig1.update_yaxes(autorange="reversed")
 st.plotly_chart(fig1, width="stretch",
@@ -341,8 +339,9 @@ def _render_av_fig(df: pd.DataFrame, title_text: str, height: int):
         barmode="stack",
         height=height,
     )
-    fig.update_layout(title=dict(
+    fig.update_layout(margin=dict(t=70, l=85, r=45), title=dict(
         text=title_text, x=0.0, xanchor="left",
+        y=0.9, yanchor="top",
         font=dict(size=13, color=NATURE_CATEGORICAL["neutral"]),
     ))
     fig.update_yaxes(autorange="reversed")
@@ -353,14 +352,14 @@ _av_col_cav, _av_col_sti = st.columns(2)
 with _av_col_cav:
     st.plotly_chart(
         _render_av_fig(cav_df,
-                       "<b>CAV units — annual AV subsystem energy</b>",
+                       "<b>Annual CAV subsystem energy</b>",
                        height=380),
         width="stretch",
     )
 with _av_col_sti:
     st.plotly_chart(
         _render_av_fig(sti_df,
-                       "<b>STI levels — annual AV subsystem energy</b>",
+                       "<b>Annual STI subsystem energy</b>",
                        height=380),
         width="stretch",
     )

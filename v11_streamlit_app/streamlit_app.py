@@ -6,6 +6,9 @@ _REPO_DIR = Path(__file__).resolve().parent.parent
 if str(_REPO_DIR) not in sys.path:
     sys.path.insert(0, str(_REPO_DIR))
 
+from dashboard_runtime import prepare_ui_release
+
+prepare_ui_release("2026.09.28.3")
 from dashboard_navigation import main
 
 main()

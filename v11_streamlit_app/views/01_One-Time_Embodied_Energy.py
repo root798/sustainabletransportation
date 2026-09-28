@@ -393,11 +393,12 @@ apply_clearats_layout(
     fig_b,
     kind="hbar",
     num_rows=len(unit_rows),
-    x_title="One-time energy per unit (kWh) — production + logistics",
+    x_title="One-time energy per unit (kWh)<br>Production + logistics",
     max_x=max(r["total"] for r in unit_rows),
     barmode="stack",
 )
 fig_b.update_yaxes(showgrid=False)
+fig_b.update_layout(margin=dict(l=85, r=65))
 st.plotly_chart(fig_b, width="stretch",
                 config={"displaylogo": False})
 
@@ -636,7 +637,7 @@ if _fig_c_view == "Total counts only":
 else:
     layout_c["barmode"] = "stack"
 layout_c["xaxis"]["title"] = {
-    "text": "Autonomy level (CAV) · Coverage tier (STI)",
+    "text": "Autonomy level (CAV)<br>Coverage tier (STI)",
     "font": {"size": 12},
 }
 layout_c["xaxis"]["tickfont"] = {"size": 11}
@@ -645,16 +646,17 @@ layout_c["yaxis"]["title"] = {"text": "Marginal components per unit",
 layout_c["yaxis"]["tickfont"] = {"size": 11}
 _y_max = max(_totals) * 1.22
 layout_c["yaxis"]["range"] = [0, _y_max]
-layout_c["height"] = 460
+layout_c["height"] = 680
 layout_c["legend"] = {
-    "orientation": "v",
-    "yanchor": "top", "y": 1.0,
-    "xanchor": "left", "x": 1.02,
+    "orientation": "h",
+    "yanchor": "top", "y": -0.28,
+    "xanchor": "left", "x": 0.0,
+    "maxheight": 180,
     "bgcolor": "rgba(255,255,255,0)",
     "bordercolor": "rgba(0,0,0,0)",
     "font": {"size": 10},
 }
-layout_c["margin"] = {"t": 60, "b": 70, "l": 72, "r": 240}
+layout_c["margin"] = {"t": 60, "b": 240, "l": 72, "r": 24}
 fig_c.update_layout(**layout_c)
 st.plotly_chart(fig_c, width="stretch")
 
@@ -950,9 +952,10 @@ with inv_left:
         textposition="inside",
         insidetextorientation="horizontal",
         direction="clockwise", sort=False,
+        hovertemplate="<b>%{label}</b><br>%{value:,.1f} kWh<br>%{percent:.1%}<extra></extra>",
     ))
     prod_donut.update_layout(
-        title=dict(text="L5 CAV production + logistics share",
+        title=dict(text="L5 CAV production + logistics",
                    x=0.5, xanchor="center", font=dict(size=13)),
         showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=-0.15,
@@ -999,9 +1002,10 @@ with inv_right:
         textposition="inside",
         insidetextorientation="horizontal",
         direction="clockwise", sort=False,
+        hovertemplate="<b>%{label}</b><br>%{value:,.1f} kWh / yr<br>%{percent:.1%}<extra></extra>",
     ))
     util_donut.update_layout(
-        title=dict(text="L5 CAV utility-phase autonomy split (v10 registry)",
+        title=dict(text="L5 CAV utility-phase subsystems",
                    x=0.5, xanchor="center", font=dict(size=13)),
         showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=-0.15,
@@ -1098,6 +1102,11 @@ tornado_rows.sort(key=lambda r: abs(r[2] - r[1]), reverse=True)
 # Suppress labels for |Δ| < 0.5 % to avoid the "+0.0%" clutter.
 fig_t = go.Figure()
 labels   = [r[0] for r in tornado_rows]
+import textwrap as _textwrap
+_bound_hover = ["<br>".join(_textwrap.wrap(label.replace("\n", " "), 32))
+                for label in labels]
+_lever_ticks = ["<br>".join(_textwrap.wrap(label.split("\n")[0], 22))
+                for label in labels]
 low_vals = [r[1] for r in tornado_rows]
 hi_vals  = [r[2] for r in tornado_rows]
 
@@ -1122,9 +1131,12 @@ fig_t.add_trace(go.Bar(
     name="Design action at its lower bound",
     marker=dict(color=low_colors, opacity=0.85),
     text=[_fmt_pct(v) for v in low_vals],
-    textposition="outside",
+    textposition=["inside" if value < 0 else "outside" for value in low_vals],
+    insidetextanchor="middle", constraintext="inside",
+    insidetextfont=dict(size=11, color="#183326"),
     cliponaxis=False,
-    hovertemplate=("<b>%{y}</b><br>Design action at its lower bound<br>"
+    customdata=_bound_hover,
+    hovertemplate=("<b>%{customdata}</b><br>Design action at its lower bound<br>"
                    "Δ vs baseline: %{x:+.2f}%<extra></extra>"),
 ))
 fig_t.add_trace(go.Bar(
@@ -1132,9 +1144,12 @@ fig_t.add_trace(go.Bar(
     name="Design action at its upper bound",
     marker=dict(color=hi_colors, opacity=0.85),
     text=[_fmt_pct(v) for v in hi_vals],
-    textposition="outside",
+    textposition=["inside" if value < 0 else "outside" for value in hi_vals],
+    insidetextanchor="middle", constraintext="inside",
+    insidetextfont=dict(size=11, color="#183326"),
     cliponaxis=False,
-    hovertemplate=("<b>%{y}</b><br>Design action at its upper bound<br>"
+    customdata=_bound_hover,
+    hovertemplate=("<b>%{customdata}</b><br>Design action at its upper bound<br>"
                    "Δ vs baseline: %{x:+.2f}%<extra></extra>"),
 ))
 # Vertical zero line so the sign-direction is unambiguous.
@@ -1143,37 +1158,39 @@ fig_t.add_vline(x=0, line=dict(color=NATURE_CATEGORICAL["neutral"],
 
 layout_t = plotly_layout_defaults()
 layout_t["barmode"] = "group"
+layout_t["uniformtext"] = {"minsize": 11, "mode": "hide"}
 layout_t["title"] = {
-    "text": ("End-of-life leverage — change in fleet one-time energy "
-             "from moving each design action to its bound"),
+    "text": "End-of-life design leverage",
     "x": 0.0, "xanchor": "left", "font": {"size": 14},
     "pad": {"l": 8, "t": 8},
 }
 layout_t["xaxis"]["title"] = {
-    "text": "Δ in fleet one-time energy vs default settings (%)",
+    "text": "Δ in fleet one-time energy (%)<br>Relative to default settings",
     "font": {"size": 12}
 }
 layout_t["xaxis"]["tickfont"] = {"size": 11}
 # Pad x-range so outside-positioned labels do not get clipped.
-_xmax = max(max(hi_vals), 0) * 1.15 + 5
-_xmin = min(min(low_vals), 0) * 1.15 - 5
+_all_bound_values = low_vals + hi_vals
+_xmax = max(max(_all_bound_values), 0) * 1.15 + 5
+_xmin = min(min(_all_bound_values), 0) * 1.15 - 5
 layout_t["xaxis"]["range"] = [_xmin, _xmax]
 layout_t["yaxis"]["title"] = {"text": ""}
 layout_t["yaxis"]["showgrid"] = False
 layout_t["yaxis"]["tickfont"] = {"size": 11}
 layout_t["yaxis"]["automargin"] = True
+layout_t["yaxis"].update(tickmode="array", tickvals=labels, ticktext=_lever_ticks)
 layout_t["height"] = 460
 # Stack legend ABOVE the plot so it cannot collide with the x-axis label
 # or the caption text below the chart.
 layout_t["legend"] = {
     "orientation": "h",
-    "yanchor": "bottom", "y": 1.06,
+    "yanchor": "bottom", "y": 1.02,
     "xanchor": "left", "x": 0.0,
     "bgcolor": "rgba(255,255,255,0)",
     "bordercolor": "rgba(0,0,0,0)",
     "font": {"size": 11},
 }
-layout_t["margin"] = {"t": 90, "b": 80, "l": 280, "r": 60}
+layout_t["margin"] = {"t": 110, "b": 85, "l": 135, "r": 35}
 fig_t.update_layout(**layout_t)
 st.plotly_chart(fig_t, width="stretch")
 st.caption(

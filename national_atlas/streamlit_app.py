@@ -428,7 +428,7 @@ policy_turning_frame = policy_central_turning_map_frame(policy_central)
 market_turning_frame = market_central_turning_map_frame(market_central)
 expert_turning_frame = expert_central_turning_map_frame(expert_central)
 turning_frame = expert_turning_frame
-st.caption("Central scenario · actual fleet · 2025–2075 · not a forecast")
+st.caption("Delivered central · actual fleet · 2025–2075 · not a forecast")
 with st.container(key="atlas_map_overview"):
     map_col, map_detail_col = st.columns([2.15, 1], gap="large", vertical_alignment="top")
     # Render the picker first so keyboard selection and map clicks update both
@@ -448,7 +448,7 @@ with st.container(key="atlas_map_overview"):
         st.markdown(
             '<div class="atlas-state-facts" aria-live="polite">'
             '<div class="atlas-state-metric">'
-            '<div class="atlas-fact-label">Turning point</div>'
+            '<div class="atlas-fact-label">Turning point · delivered central</div>'
             f'<div class="atlas-fact-value">{escape(map_onset)}</div>'
             '</div><div class="atlas-state-metric">'
             '<div class="atlas-fact-label">Carbon emissions · 2050</div>'
@@ -465,7 +465,14 @@ with st.container(key="atlas_map_overview"):
         )
         if selected_state == "DC":
             st.caption("DC is supplemental; excluded from 50-state summaries.")
-        st.caption("Central scenario. Explore this state's pathways below.")
+        with st.expander("Turning points in other scenarios", expanded=False):
+            for scenario_label, scenario_frame in (
+                ("Policy-registered", policy_turning_frame),
+                ("Market-trend upper bound", market_turning_frame),
+            ):
+                other = scenario_frame.loc[scenario_frame["state"] == selected_state].iloc[0]
+                st.markdown(f"**{scenario_label}:** {turning_point_display(other['onset_year'])}")
+            st.caption("Separate equal-size scenarios. The map remains on the delivered central.")
 
     with map_col:
         turning_map = make_turning_point_map(
@@ -502,6 +509,18 @@ st.caption(
     f"{EXPERT_TURNING_POINT_RANGE[0]}–{EXPERT_TURNING_POINT_RANGE[1]}. "
     f"{EXPERT_NO_TURNING_POINT_COUNT_PHRASE}: none by 2075."
 )
+
+with st.expander("Turning-point years · delivered central", expanded=False):
+    identified = turning_frame.loc[turning_frame["has_turning_point"], ["state_name", "onset_year"]].copy()
+    identified["onset_year"] = identified["onset_year"].astype(int)
+    st.dataframe(
+        identified.sort_values(["onset_year", "state_name"]).rename(
+            columns={"state_name": "State / DC", "onset_year": "Turning point year"}
+        ),
+        hide_index=True, width="stretch",
+        column_config={"Turning point year": st.column_config.NumberColumn(format="%d")},
+    )
+    st.caption("Only identified years are listed; the remaining entries do not reach a turning point through 2075 in this scenario.")
 
 with st.expander("Turning-point definition and scenario assumptions", expanded=False):
     st.markdown(
@@ -881,7 +900,7 @@ with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · Hi
     st.markdown('<div class="clearats-eyebrow">National comparison</div>', unsafe_allow_html=True)
     # A1: this expander draws the uniform MEDIUM comparator bundle at 2050,
     # whose turning-point years (2049-2055) are a different object from the
-    # recommended-central landing map (2036-2059, with 44 of the 51 entries not
+    # delivered-central landing map (2034-2060, with 42 of the 51 entries not
     # turning at all).  The two domains OVERLAP, so the view title carries
     # weight: the scenario is named in it so the years cannot read as a
     # contradiction.

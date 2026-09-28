@@ -12,6 +12,7 @@ from pathlib import Path
 import sys
 import unittest
 
+import pandas as pd
 from streamlit.testing.v1 import AppTest
 
 
@@ -25,7 +26,11 @@ for directory in (ATLAS_DIR, ROOT / "src", ROOT):
 from atlas_io import (  # noqa: E402
     expert_central_turning_map_frame,
     load_expert_central,
+    load_market_central,
+    load_policy_central,
     load_state_scaled,
+    market_central_turning_map_frame,
+    policy_central_turning_map_frame,
     state_scaled_annual_row,
 )
 from charts import make_turning_point_map  # noqa: E402
@@ -38,6 +43,86 @@ def plot_key(plot) -> str:
 
 
 class AtlasLandingUITests(unittest.TestCase):
+    def test_delivered_turning_points_recompute_from_annual_series(self):
+        """Recompute the published endpoint without using an onset helper."""
+        annual = pd.read_csv(
+            ATLAS_DIR / "data" / "expert_central_v33_annual.state_scaled.csv",
+            float_precision="round_trip",
+        )
+        delivered = pd.read_csv(
+            ATLAS_DIR / "data" / "expert_central_v33_turning.state_scaled.csv",
+            float_precision="round_trip",
+        )
+        self.assertEqual(len(annual), 51 * 51)
+        self.assertEqual(annual[["state", "year"]].duplicated().sum(), 0)
+        self.assertEqual(annual["state"].nunique(), 51)
+
+        # Definition fixed by the delivered v3.3 analysis: the first year
+        # followed by at least five modelled years for which every subsequent
+        # annual change in direct CO2 is non-positive (within 1e-7 kg).
+        independently_computed = {}
+        for state, rows in annual.groupby("state", sort=True):
+            rows = rows.sort_values("year")
+            years = rows["year"].astype(int).tolist()
+            values = rows["normalized_bundle_direct_co2_kg"].astype(float).tolist()
+            self.assertEqual(years, list(range(2025, 2076)), state)
+            onset = None
+            for index, year in enumerate(years):
+                if len(years) - 1 - index < 5:
+                    break
+                if all(
+                    values[later + 1] - values[later] <= 1e-7
+                    for later in range(index, len(values) - 1)
+                ):
+                    onset = year
+                    break
+            independently_computed[state] = onset
+
+        expected_identified = {
+            "CA": 2038,
+            "CO": 2060,
+            "DC": 2035,
+            "NM": 2060,
+            "NY": 2036,
+            "OR": 2039,
+            "RI": 2035,
+            "VT": 2034,
+            "WA": 2041,
+        }
+        self.assertEqual(
+            {state: year for state, year in independently_computed.items() if year is not None},
+            expected_identified,
+        )
+        self.assertIsNone(independently_computed["SD"])
+        self.assertEqual(independently_computed["CA"], 2038)
+
+        delivered_by_state = delivered.set_index("state")
+        map_by_state = expert_central_turning_map_frame(
+            load_expert_central()
+        ).set_index("state")
+        self.assertEqual(set(independently_computed), set(delivered_by_state.index))
+        self.assertEqual(set(independently_computed), set(map_by_state.index))
+        for state, onset in independently_computed.items():
+            with self.subTest(state=state):
+                table_row = delivered_by_state.loc[state]
+                map_row = map_by_state.loc[state]
+                if onset is None:
+                    self.assertEqual(
+                        table_row["turning_status"], "RIGHT_CENSORED_THROUGH_2075"
+                    )
+                    self.assertTrue(pd.isna(table_row["sustained_nonincrease_onset_year"]))
+                    self.assertFalse(bool(map_row["has_turning_point"]))
+                    self.assertTrue(pd.isna(map_row["onset_year"]))
+                    self.assertEqual(map_row["onset_label"], "none by 2075")
+                else:
+                    self.assertEqual(table_row["turning_status"], "IDENTIFIED")
+                    self.assertEqual(
+                        int(table_row["sustained_nonincrease_onset_year"]), onset
+                    )
+                    self.assertTrue(bool(map_row["has_turning_point"]))
+                    self.assertEqual(int(map_row["onset_year"]), onset)
+                    self.assertEqual(map_row["onset_label"], str(onset))
+
     def test_comparison_basis_note_is_wrapped_and_matches_its_scope(self):
         expert = load_expert_central()
         scaled = load_state_scaled()
@@ -78,6 +163,50 @@ class AtlasLandingUITests(unittest.TestCase):
                 self.assertNotIn("vehicle policy", template.lower())
                 self.assertNotIn("grid policy", template.lower())
                 self.assertIn("Turning point:", template)
+
+    def test_turning_map_hover_contract_across_colours_and_scenarios(self):
+        expert_frame = expert_central_turning_map_frame(load_expert_central())
+        policy_frame = policy_central_turning_map_frame(load_policy_central())
+        market_frame = market_central_turning_map_frame(load_market_central())
+        cases = (
+            (expert_frame, "turning_point", "expert", "Delivered central"),
+            (expert_frame, "vehicle", "expert", "Delivered central"),
+            (expert_frame, "grid", "expert", "Delivered central"),
+            (policy_frame, "vehicle", "policy", "Policy-registered"),
+            (market_frame, "grid", "market", "Market-trend"),
+        )
+        for frame, color_by, scenario, scenario_label in cases:
+            with self.subTest(color_by=color_by, scenario=scenario):
+                figure = make_turning_point_map(
+                    frame, color_by, "CA", scenario=scenario
+                )
+                hover_rows = {}
+                for trace in figure.data:
+                    if trace.name == "Selected state":
+                        continue
+                    template = str(trace.hovertemplate)
+                    self.assertLessEqual(len(template), 160, template)
+                    self.assertIn("Turning point:", template)
+                    self.assertIn(scenario_label, template)
+                    self.assertNotIn("vehicle policy", template.lower())
+                    self.assertNotIn("grid policy", template.lower())
+                    self.assertIsNotNone(trace.customdata)
+                    for location, row in zip(trace.locations, trace.customdata):
+                        # Only the two values actually rendered by the hover
+                        # are allowed; policy classifications must not leak
+                        # into Plotly's client-side payload.
+                        self.assertEqual(len(row), 2, (location, row))
+                        self.assertLessEqual(len(str(row[0])), 32)
+                        self.assertLessEqual(len(str(row[1])), len("none by 2075"))
+                        hover_rows[str(location)] = tuple(str(value) for value in row)
+                self.assertEqual(len(hover_rows), 51)
+
+                if scenario == "expert":
+                    self.assertEqual(hover_rows["CA"][1], "2038")
+                    self.assertEqual(hover_rows["SD"][1], "none by 2075")
+                elif scenario == "market":
+                    self.assertEqual(hover_rows["CA"][1], "2036")
+                    self.assertEqual(hover_rows["OH"][1], "none by 2075")
 
     def test_state_picker_updates_map_card_and_lower_pathways(self):
         app = AppTest.from_file(

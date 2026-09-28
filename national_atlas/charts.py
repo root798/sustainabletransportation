@@ -447,8 +447,6 @@ def make_turning_point_map(
             [
                 piece["state_name"],
                 piece["_onset_label"],
-                piece["vehicle_class_label"],
-                piece["grid_class_label"],
             ]
         )
         fig.add_trace(
@@ -463,7 +461,7 @@ def make_turning_point_map(
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
                     "<br>Turning point: %{customdata[1]}"
-                    "<br><span style='color:#64625d'>Click to select</span>"
+                    f"<br>{_turning_scenario_label(scenario)}"
                     "<extra></extra>"
                 ),
                 name=class_labels[class_key],
@@ -502,6 +500,13 @@ def make_turning_point_map(
     )
     fig.update_layout(**layout)
     return fig
+
+
+def _turning_scenario_label(scenario: str) -> str:
+    return {
+        "expert": "Delivered central", "policy": "Policy-registered",
+        "market": "Market-trend", "noaccii": "No ACC II comparison",
+    }.get(scenario, "Selected scenario")
 
 
 def _make_turning_point_year_map(
@@ -581,14 +586,12 @@ def _make_turning_point_year_map(
                     [
                         turns["state_name"],
                         turns["onset_label"],
-                        turns["vehicle_class_label"],
-                        turns["grid_class_label"],
                     ]
                 ),
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
                     "<br>Turning point: %{customdata[1]}"
-                    "<br><span style='color:#64625d'>Click to select</span>"
+                    f"<br>{_turning_scenario_label(scenario)}"
                     "<extra></extra>"
                 ),
                 name="Turning point year",
@@ -606,14 +609,13 @@ def _make_turning_point_year_map(
                 customdata=np.column_stack(
                     [
                         none_by["state_name"],
-                        none_by["vehicle_class_label"],
-                        none_by["grid_class_label"],
+                        none_by["onset_label"],
                     ]
                 ),
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
-                    f"<br>Turning point: {TURNING_POINT_NONE_TOKEN}"
-                    "<br><span style='color:#64625d'>Click to select</span>"
+                    "<br>Turning point: %{customdata[1]}"
+                    f"<br>{_turning_scenario_label(scenario)}"
                     "<extra></extra>"
                 ),
                 name=TURNING_POINT_NONE_LABEL,
@@ -717,12 +719,12 @@ def make_ranking(frame: pd.DataFrame, metric_key: str, selected_state: str) -> g
         span = max(abs(float(zmax)), 1.0) * 0.02
     pad_low = span * 0.08
     pad_high = span * 0.45
-    layout = _base_layout(980, margin={"l": 42, "r": 16, "t": 10, "b": 64})
+    layout = _base_layout(1020, margin={"l": 42, "r": 16, "t": 10, "b": 104})
     layout.update(
         {
             "showlegend": False,
             "xaxis": {
-                **_axis(spec.unit),
+                **_axis(_hover_unit_lines(spec.unit)),
                 "range": [zmin - pad_low, zmax + pad_high],
                 "showgrid": True,
             },
