@@ -12,14 +12,21 @@ class UIReleaseTests(unittest.TestCase):
     def test_changed_release_refreshes_only_owned_presentation_modules(self):
         charts = types.ModuleType("charts")
         charts.__file__ = str(runtime.ROOT / "national_atlas/charts.py")
+        atlas_io = types.ModuleType("atlas_io")
+        atlas_io.__file__ = str(runtime.ROOT / "national_atlas/atlas_io.py")
         model = types.ModuleType("core")
         model.__file__ = str(runtime.ROOT / "v11_streamlit_app/core.py")
-        with patch.dict(sys.modules, {"charts": charts, "core": model}), patch.object(runtime, "_release", "old"):
+        with patch.dict(
+            sys.modules, {"atlas_io": atlas_io, "charts": charts, "core": model}
+        ), patch.object(runtime, "_release", "old"):
             runtime.prepare_ui_release("new")
+            self.assertNotIn("atlas_io", sys.modules)
             self.assertNotIn("charts", sys.modules)
             self.assertIs(sys.modules["core"], model)
+            sys.modules["atlas_io"] = atlas_io
             sys.modules["charts"] = charts
             runtime.prepare_ui_release("new")
+            self.assertIs(sys.modules["atlas_io"], atlas_io)
             self.assertIs(sys.modules["charts"], charts)
 
     def test_foreign_module_with_same_name_is_not_evicted(self):
@@ -31,7 +38,7 @@ class UIReleaseTests(unittest.TestCase):
 
     def test_entrypoints_and_visible_release_agree(self):
         for path in ("streamlit_app.py", "v11_streamlit_app/streamlit_app.py", "dashboard_navigation.py"):
-            self.assertIn("2026.09.28.6", (runtime.ROOT / path).read_text())
+            self.assertIn("2026.09.28.7", (runtime.ROOT / path).read_text())
 
 
 if __name__ == "__main__":

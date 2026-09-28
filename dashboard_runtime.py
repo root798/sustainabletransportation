@@ -11,6 +11,10 @@ _lock = Lock()
 _UI_MODULES = {
     "dashboard_navigation": "dashboard_navigation.py",
     "dashboard_ui": "dashboard_ui.py",
+    # atlas_io contains the registered panel-to-interval mapping as well as
+    # loaders.  Keeping an older import across a Cloud hot reload can otherwise
+    # pair new chart code with a stale metric mapping.
+    "atlas_io": "national_atlas/atlas_io.py",
     "charts": "national_atlas/charts.py",
     "pathway_charts": "national_atlas/pathway_charts.py",
     "style": "national_atlas/style.py",
