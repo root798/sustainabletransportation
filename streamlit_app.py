@@ -1,12 +1,10 @@
-"""Top-level Streamlit entry point for the CLEAR-ATS v11 dashboard.
+"""Top-level Streamlit entry point for the CLEAR-ATS dashboard.
 
 Streamlit Community Cloud and most other Streamlit hosts auto-detect a
-file named ``streamlit_app.py`` at the repository root. This shim sets
-up ``sys.path`` so the v11 dashboard finds all of its dependencies and
-then executes the v11 Overview page (which Streamlit's multi-page
-navigation extends with ``pages/01_One_Time_Energy.py``,
-``pages/02_Utility_Phase_Energy.py``, and
-``pages/03_Scenario_Explorer.py``).
+file named ``streamlit_app.py`` at the repository root. This shim makes
+the 50-state + District of Columbia National Atlas the landing page.
+Streamlit's legacy multi-page navigation keeps the existing v11 pages
+unchanged and adds the former uncertainty-framework landing page last.
 
 Required deploy tree on GitHub (see ``.gitignore`` whitelist):
 
@@ -17,7 +15,8 @@ Required deploy tree on GitHub (see ``.gitignore`` whitelist):
   configs/                    <- state JSON + UI presets
   scenarios/                  <- per-state scenario trees
   v4_streamlit_app/           <- v4 core (v11/core.py loads it dynamically)
-  v11_streamlit_app/          <- the dashboard
+  national_atlas/             <- National Atlas landing page + reviewed data
+  v11_streamlit_app/          <- existing dashboard pages
   src/clearats/               <- band plumbing for the Scenario Explorer
   results/*_quantiles.csv     <- cached MC quantiles (offline fallback)
 
@@ -43,23 +42,19 @@ from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent
 
-# Order matters: prepend in REVERSE priority so the v11 dashboard's
-# package takes precedence, with the repo root (where ``footprint_model.py``
-# lives), the v4 folder (for the dynamic load), and ``src`` (for
-# ``clearats``) all reachable for downstream imports.
+# The National Atlas is deliberately isolated in its own directory so its
+# chart/style modules cannot shadow the existing v11 page modules.
 _PATHS = [
-    _HERE,                          # repo root  -> footprint_model
-    _HERE / "v4_streamlit_app",     # v4 core    -> dynamically loaded by v11
-    _HERE / "src",                  # clearats   -> band plumbing
-    _HERE / "v11_streamlit_app",    # v11 first  -> the dashboard
+    _HERE,
+    _HERE / "national_atlas",
 ]
 for p in _PATHS:
     if p.exists() and str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-# Hand off to the v11 Overview page. Streamlit's multi-page UI picks
-# up the sibling ``pages/`` folder automatically.
+# Hand off to the National Atlas landing page. Streamlit's multi-page UI
+# continues to pick up the existing sibling ``pages/`` folder automatically.
 runpy.run_path(
-    str(_HERE / "v11_streamlit_app" / "streamlit_app.py"),
+    str(_HERE / "national_atlas" / "streamlit_app.py"),
     run_name="__main__",
 )

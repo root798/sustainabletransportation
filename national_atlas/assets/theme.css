@@ -1,0 +1,363 @@
+:root {
+  --paper: #fcfcfa;
+  --paper-soft: #f4f3ef;
+  --ink: #151515;
+  --muted: #64625d;
+  --hairline: #deddd7;
+  --blue: #1f5e8c;
+  --blue-dark: #123b5a;
+  --orange: #d85d2a;
+  --serif: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+  --sans: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html, body, [class*="css"], .stApp {
+  font-family: var(--sans);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.stApp { background: var(--paper); }
+
+h1, h2, h3, .clearats-serif {
+  font-family: var(--serif) !important;
+  color: var(--ink);
+  letter-spacing: -0.018em;
+}
+
+h1 { font-size: clamp(2.15rem, 3.8vw, 3.65rem) !important; line-height: 0.98 !important; }
+h2 { font-size: clamp(1.45rem, 2vw, 2rem) !important; line-height: 1.12 !important; }
+h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
+
+/* A3: the translucent 60px sticky header veiled the first 8.8px of every
+   page kicker at scrollTop=0 on every page, at 1440 and 800. The header is
+   now opaque (content passing under it is occluded cleanly, not ghosted)
+   and the main block starts below it. */
+[data-testid="stHeader"] { background: var(--paper, #fcfcfa); }
+[data-testid="stToolbar"] { right: 0.6rem; }
+[data-testid="stSidebar"] { background: #f6f5f1; border-right: 1px solid var(--hairline); }
+[data-testid="stSidebarNav"] span { font-family: var(--sans); }
+.block-container { max-width: 1500px; padding-top: 3.4rem; padding-bottom: 4rem; }
+[data-testid="stHorizontalBlock"] > div,
+[data-testid="stMarkdownContainer"] { min-width: 0; }
+
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.2rem;
+}
+
+[data-testid="stMarkdownContainer"] code,
+.clearats-footer {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.clearats-kicker {
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.clearats-deck {
+  color: #45433f;
+  font-family: var(--serif);
+  font-size: clamp(1.02rem, 1.25vw, 1.28rem);
+  line-height: 1.48;
+  max-width: 72rem;
+  margin: 0.25rem 0 1.15rem;
+}
+
+.clearats-status {
+  display: grid;
+  grid-template-columns: 0.62rem 1fr;
+  gap: 0.7rem;
+  align-items: start;
+  border: 1px solid #e0b69f;
+  border-radius: 3px;
+  background: #fff8f3;
+  color: #553226;
+  padding: 0.78rem 0.9rem;
+  margin: 0.65rem 0 1.15rem;
+  font-size: 0.89rem;
+  line-height: 1.42;
+}
+
+.clearats-status-dot {
+  width: 0.52rem;
+  height: 0.52rem;
+  background: var(--orange);
+  border-radius: 50%;
+  margin-top: 0.32rem;
+}
+
+.clearats-rule { border-top: 1px solid var(--hairline); margin: 0.9rem 0 1.1rem; }
+
+.clearats-eyebrow {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+}
+
+.clearats-panel-title {
+  font-family: var(--serif);
+  font-size: 1.34rem;
+  font-weight: 650;
+  line-height: 1.12;
+  margin: 0.12rem 0 0.25rem;
+}
+
+.clearats-state-line { display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem; }
+.clearats-state-code { color: var(--muted); font-family: var(--sans); font-size: 0.92rem; font-weight: 600; }
+.clearats-badge {
+  display: inline-flex;
+  max-width: 100%;
+  border: 1px solid #efb08f;
+  background: #fff5ef;
+  color: #a63d12;
+  border-radius: 999px;
+  padding: 0.12rem 0.52rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.clearats-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 0.8rem 0 0.9rem;
+}
+
+.clearats-metric-card {
+  min-height: 6.4rem;
+  border-top: 2px solid var(--blue-dark);
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(255,255,255,0.38);
+  padding: 0.72rem 0.15rem 0.62rem;
+}
+
+.clearats-metric-label { color: var(--muted); font-size: 0.75rem; font-weight: 650; line-height: 1.25; }
+.clearats-metric-value { color: var(--ink); font-family: var(--serif); font-size: 1.65rem; font-weight: 650; line-height: 1.08; margin-top: 0.3rem; }
+.clearats-metric-unit { color: var(--muted); font-size: 0.75rem; line-height: 1.3; margin-top: 0.22rem; }
+
+.clearats-chip-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.55rem 0 0.85rem; }
+.clearats-chip {
+  border: 1px solid #d5d3cc;
+  border-radius: 999px;
+  background: #f8f7f4;
+  color: #393835;
+  padding: 0.25rem 0.58rem;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.clearats-note {
+  border-left: 2px solid #9aaebb;
+  color: #56544f;
+  font-size: 0.8125rem;
+  line-height: 1.48;
+  padding-left: 0.72rem;
+  margin: 0.55rem 0 0.8rem;
+}
+
+.clearats-map-key {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  margin: 0.35rem 0 0.7rem;
+}
+
+.clearats-flow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0.9rem 0 1.4rem;
+}
+
+.clearats-flow-step {
+  border-top: 3px solid var(--blue);
+  background: #f7f6f2;
+  padding: 0.78rem;
+  min-height: 8.1rem;
+}
+.clearats-flow-n { color: var(--blue); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; }
+.clearats-flow-h { font-family: var(--serif); font-size: 1rem; font-weight: 650; margin: 0.35rem 0; }
+.clearats-flow-p { color: #55534e; font-size: 0.8125rem; line-height: 1.42; }
+
+.clearats-footer {
+  border-top: 1px solid var(--hairline);
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin-top: 1.8rem;
+  padding-top: 0.8rem;
+}
+
+.clearats-framework-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  background: #fff;
+  padding: 0.4rem;
+}
+
+.clearats-framework-scroll img,
+.clearats-framework-scroll svg {
+  display: block;
+  width: 100%;
+  min-width: 900px;
+  height: auto;
+}
+
+/* X7: every data frame keeps a visible horizontal scroll affordance so a
+   cut-off prose column is discoverable rather than silently truncated. */
+div[data-testid="stDataFrame"] { overflow-x: auto; }
+div[data-testid="stDataFrame"]::-webkit-scrollbar { height: 9px; }
+div[data-testid="stDataFrame"]::-webkit-scrollbar-thumb {
+  background: #c6c4bd;
+  border-radius: 5px;
+}
+
+div[data-testid="stPlotlyChart"] { border-top: 1px solid var(--hairline); padding-top: 0.25rem; }
+div[data-testid="stVerticalBlockBorderWrapper"] { border-color: var(--hairline) !important; border-radius: 3px !important; }
+
+[data-testid="stMetric"] {
+  border-top: 2px solid #8fa7b7;
+  border-bottom: 1px solid var(--hairline);
+  padding: 0.58rem 0.12rem 0.5rem;
+}
+[data-testid="stMetricLabel"] { color: var(--muted); font-size: 0.75rem; font-weight: 650; }
+[data-testid="stMetricValue"] { font-family: var(--serif); letter-spacing: -0.02em; }
+
+.stButton button, .stDownloadButton button {
+  border-radius: 2px;
+  border-color: #b8b6af;
+  font-family: var(--sans);
+  font-weight: 600;
+  min-height: 44px;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #005fcc !important;
+  outline-offset: 2px !important;
+}
+
+div[data-baseweb="select"] > div,
+div[data-baseweb="base-input"] > div,
+[data-testid="stSelectSlider"] div { border-radius: 2px !important; }
+
+@media (max-width: 1150px) {
+  .clearats-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1050px) {
+  /* Keep long summary values and navigation labels intact on tablets. */
+  .st-key-atlas_top_metrics [data-testid="stHorizontalBlock"],
+  .st-key-atlas_navigation [data-testid="stHorizontalBlock"] {
+    flex-wrap: wrap !important;
+    gap: 0.7rem !important;
+  }
+  .st-key-atlas_top_metrics [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  .st-key-atlas_navigation [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 calc(50% - 0.35rem) !important;
+    width: calc(50% - 0.35rem) !important;
+    min-width: calc(50% - 0.35rem) !important;
+  }
+  /* At tablet widths only the equation grids need early stacking.  Other
+     analytical comparisons keep their useful side-by-side relationship. */
+  .st-key-framework_primary_formulas [data-testid="stHorizontalBlock"],
+  .st-key-framework_secondary_formulas [data-testid="stHorizontalBlock"] {
+    flex-direction: column !important;
+    gap: 0.7rem !important;
+  }
+  .st-key-framework_primary_formulas [data-testid="stHorizontalBlock"] > [data-testid="stColumn"],
+  .st-key-framework_secondary_formulas [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .block-container { padding-left: 1rem; padding-right: 1rem; padding-top: 2.7rem; }
+  .clearats-flow { grid-template-columns: 1fr; }
+  .clearats-flow-step { min-height: 0; }
+
+  /* Streamlit does not reliably collapse nested st.columns at phone widths. */
+  [data-testid="stHorizontalBlock"] {
+    flex-direction: column !important;
+    gap: 0.7rem !important;
+  }
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+  .st-key-atlas_top_metrics [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 calc(50% - 0.35rem) !important;
+    width: calc(50% - 0.35rem) !important;
+    min-width: calc(50% - 0.35rem) !important;
+  }
+  .st-key-atlas_navigation [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  /* The US Albers map must not retain a desktop-height Plotly canvas on a
+     phone; that creates a large blank block below the geography.
+     (Cherry-picked from the publish_ready mobile pass, 2026-09-03; v5 keys
+     the map dynamically, so match the stable key prefix.) */
+  [class*="st-key-turning_point_map"][data-testid="stElementContainer"],
+  [class*="st-key-turning_point_map"] [data-testid="stFullScreenFrame"],
+  [class*="st-key-turning_point_map"] div[data-testid="stPlotlyChart"],
+  [class*="st-key-turning_point_map"] .js-plotly-plot,
+  [class*="st-key-turning_point_map"] .plot-container,
+  [class*="st-key-turning_point_map"] .svg-container {
+    height: 300px !important;
+    min-height: 300px !important;
+  }
+  [class*="st-key-turning_point_map"][data-testid="stElementContainer"] {
+    flex: 0 0 300px !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .clearats-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  h1 { font-size: 2.25rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* X4: named sidebar navigation replacing Streamlit's filename-derived nav. */
+.clearats-nav-title {
+  color: var(--blue);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 0.2rem 0 0.6rem;
+}

@@ -1,0 +1,95 @@
+{
+  "status": "PASS_MARKET_CENTRAL_DASHBOARD_BUNDLE",
+  "built_on": "2026-09-02",
+  "role": "MARKET_CALIBRATED_CENTRAL_V2: observed-trend counterpart to the owner-approved policy-central; state paths differ by design. v1 is the policy-registered central (what enacted policies imply); v2 is the market-calibrated central (what observed 2016-2025 market trends imply, with policy entering only as a floor or retained statutory/target anchors); neither is a forecast \u2014 they bracket whether the turning is policy-driven or already latent in observed market motion.",
+  "scenario_bundle": "market_central_v2",
+  "counts": {
+    "annual_rows": 2601,
+    "turning_rows": 51,
+    "assignment_rows": 51,
+    "turning_identified": 27,
+    "turning_right_censored": 24
+  },
+  "asserts": {
+    "annual_lattice_51x51": true,
+    "turning_table_complete_one_row_per_jurisdiction": true,
+    "onset_ca": 2036,
+    "oh_right_censored_through_2075": true,
+    "onset_histogram": {
+      "2035": 1,
+      "2036": 12,
+      "2037": 6,
+      "2055": 2,
+      "2059": 1,
+      "2060": 1,
+      "2067": 1,
+      "2069": 1,
+      "2070": 2
+    },
+    "v1_reference_onsets_match_packaged_policy_central": true,
+    "conservation_residual_tolerance": 0.0001
+  },
+  "right_censoring": {
+    "policy": "REPORTED_NEVER_IMPUTED: 24 jurisdictions have no sustained-nonincrease onset by 2075 under observed market trends; their onset years are packaged as NaN (displayed '>2075'), never filled with 2075, and they are excluded from onset summaries.",
+    "right_censored_states": [
+      "AK",
+      "AL",
+      "AR",
+      "AZ",
+      "DE",
+      "FL",
+      "ID",
+      "IN",
+      "KY",
+      "LA",
+      "MD",
+      "MO",
+      "MS",
+      "MT",
+      "ND",
+      "NH",
+      "NJ",
+      "OH",
+      "PA",
+      "SC",
+      "TN",
+      "UT",
+      "WI",
+      "WV"
+    ]
+  },
+  "conditional_band": {
+    "band_version": null,
+    "note": "No conditional prediction band is registered for the market-calibrated central; bands remain registered for the policy-central line only and are not transferred or fabricated here."
+  },
+  "framing_vs_policy_central": "v1 is the policy-registered central (what enacted policies imply); v2 is the market-calibrated central (what observed 2016-2025 market trends imply, with policy entering only as a floor or retained statutory/target anchors); neither is a forecast \u2014 they bracket whether the turning is policy-driven or already latent in observed market motion.",
+  "boundary_strings_stamped_from_atlas": {
+    "grid_boundary": "eGRID2023 state generation attributional direct CO2; not delivered-electricity mix, marginal emissions, or a forecast",
+    "carrier_input_estimand": "annual operational ATS-incremental carrier input for the normalized reference bundle; propulsion and conventional signal-core energy excluded",
+    "direct_co2_estimand": "scope-matched operational direct CO2: eGRID state total-output attributional electricity CO2 plus EPA gasoline tailpipe CO2; upstream, non-CO2 and embodied terms excluded",
+    "claim_boundary": "deterministic comparative scenarios, not empirical forecasts, causal policy effects, city or urban-rural estimands, carbon-neutrality dates, or cumulative payback dates"
+  },
+  "sources": {
+    "annual": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/market_central_v2/market_central_annual_v2.csv",
+      "sha256": "4a98b34034ea338520914c055b9a8e243fbe3d1d2a250e5e27802516991d90ed",
+      "bytes": 1454538
+    },
+    "turning": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/market_central_v2/market_central_turning_v2.csv",
+      "sha256": "56458187e550372c8bf3e4518efe913730d5676abba59cce7306e00de4fa0e0d",
+      "bytes": 10775
+    },
+    "assignment": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/market_central_v2/market_central_assignment_v2.csv",
+      "sha256": "dbc0c3136d0c48c5ac91140902b6c84fdee590826fb85374543549256b7999aa",
+      "bytes": 11026
+    },
+    "validation": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/market_central_v2/market_central_validation_v2.json",
+      "sha256": "4280221bd4db290ec5e57ba15c61a35da4c110a1ae9b00a873668e6d75667f61",
+      "bytes": 17005
+    }
+  },
+  "claim_boundary": "Market-calibrated deterministic scenarios for normalized synthetic reference bundles; registered extrapolations of observed 2016-2025 trends, not empirical forecasts, probability intervals, causal policy effects, actual state totals, carbon-neutrality dates, or cumulative payback dates."
+}

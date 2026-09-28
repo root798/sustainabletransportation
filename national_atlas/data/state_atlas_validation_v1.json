@@ -1,0 +1,31 @@
+{
+  "status": "PASS_NORMALIZED_STATE_ATLAS_INTERNAL_VALIDATION",
+  "checks": {
+    "annual_row_count_7803": true,
+    "endpoint_row_count_765": true,
+    "turning_row_count_153": true,
+    "urbanicity_row_count_51": true,
+    "unique_annual_keys": true,
+    "exact_state_bundle_year_lattice": true,
+    "exact_endpoint_subset": true,
+    "fifty_primary_plus_dc": true,
+    "dc_is_only_supplemental_jurisdiction": true,
+    "normalized_capacity_fixed": true,
+    "no_absolute_state_total_claim": true,
+    "stock_conservation": true,
+    "stock_carrier_and_cohort_conservation": true,
+    "carrier_conservation": true,
+    "co2_conservation": true,
+    "bounded_fractions": true,
+    "nonnegative_energy_and_co2": true,
+    "common_engineering_cav_dc_invariant_across_states": true,
+    "common_engineering_sti_energy_invariant_across_states": true,
+    "ca_oh_present": true,
+    "protected_ca_oh_and_figure7_assets_unchanged": true,
+    "active_model_dependencies_unchanged": true
+  },
+  "annual_rows": 7803,
+  "endpoint_rows": 765,
+  "turning_rows": 153,
+  "urbanicity_rows": 51
+}

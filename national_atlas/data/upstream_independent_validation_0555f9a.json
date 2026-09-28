@@ -1,0 +1,50 @@
+{
+  "status": "PASS_NORMALIZED_STATE_ATLAS_VALIDATION",
+  "validation_date": "2026-08-31",
+  "manuscript_authority_commit": "0555f9a3252a990fec174e01352586875555b0d8",
+  "authority_alignment": "PROTECTED_PAPER_ROSTER_ALIGNED_TO_ACTIVE_CLOUD_INCLUDE_GRAPH",
+  "command": "/opt/miniconda3/envs/NIPS_Linshen/bin/python -B scripts/validate_state_atlas.py",
+  "annual_rows": 7803,
+  "endpoint_rows": 765,
+  "turning_rows": 153,
+  "urbanicity_rows": 51,
+  "primary_state_count": 50,
+  "supplemental_jurisdictions": [
+    "DC"
+  ],
+  "scenario_registry_rows": 3,
+  "atlas_source_hashes_verified": 20,
+  "atlas_code_hashes_verified": 2,
+  "atlas_output_hashes_verified": 10,
+  "prefill_raw_source_hashes_verified": 22,
+  "prefill_output_hashes_verified": 17,
+  "bundle_order_pattern_counts_all_state_years": {
+    "low<medium<high": 2601
+  },
+  "bundle_crossing_events_detected": 0,
+  "turning_status_counts": {
+    "IDENTIFIED": 102,
+    "RIGHT_CENSORED_THROUGH_2075": 51
+  },
+  "numerical_outputs_byte_identical_to_pre_alignment_snapshot": true,
+  "byte_identical_products": [
+    "state_atlas_annual_v1.csv",
+    "state_atlas_endpoints_v1.csv",
+    "state_atlas_scenario_registry_v1.csv",
+    "state_atlas_summary_v1.json",
+    "state_atlas_turning_v1.csv",
+    "state_atlas_urbanicity_input_v1.csv",
+    "state_atlas_validation_v1.json",
+    "README.md"
+  ],
+  "governance_artifacts_updated": [
+    "state_atlas_source_manifest_v1.csv",
+    "state_atlas_code_manifest_v1.csv",
+    "state_atlas_output_manifest_v1.csv"
+  ],
+  "scenario_contract_status": "PROVISIONAL_RECOMMENDED_COMMON_SCENARIO_REQUIRES_OWNER_APPROVAL_BEFORE_MANUSCRIPT_USE",
+  "manuscript_use_authorized": false,
+  "active_pipeline_status_at_build": "FAIL_PAPER_AUTHORITY_CONTRACT",
+  "release_interpretation": "ATLAS_VALIDATION_PASSES; PUBLIC_OR_MANUSCRIPT_USE_REMAINS_PROVISIONAL_PENDING_OWNER_APPROVALS_AND_ACTIVE_PIPELINE_AUTHORITY_RECONCILIATION"
+}
+

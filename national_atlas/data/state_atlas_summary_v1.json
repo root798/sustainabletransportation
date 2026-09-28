@@ -1,0 +1,56 @@
+{
+  "status": "PASS_ISOLATED_NORMALIZED_STATE_ATLAS_BUILD",
+  "scenario_contract_status": "PROVISIONAL_RECOMMENDED_COMMON_SCENARIO_REQUIRES_OWNER_APPROVAL_BEFORE_MANUSCRIPT_USE",
+  "manuscript_use_authorized": false,
+  "jurisdictions": 51,
+  "primary_states": 50,
+  "supplemental_jurisdictions": [
+    "DC"
+  ],
+  "annual_rows": 7803,
+  "endpoint_rows": 765,
+  "turning_rows": 153,
+  "urbanicity_rows": 51,
+  "reference_bundle": {
+    "registered_automobile_capacity": 1000000,
+    "signalized_site_capacity": 1000,
+    "cav_reporting_unit": "per 1,000,000 registered automobiles",
+    "sti_reporting_unit": "per 1,000 standardized reference-site equivalents",
+    "standardized_site_definition": "One identical CLEAR-ATS STI retrofit BOM reference-site equivalent from the frozen STI unit ledger; it is not an observed intersection, controller, ownership-complete inventory, or infrastructure-density estimate.",
+    "combined_reporting_unit": "one author-defined synthetic reference bundle: 1,000,000 registered automobiles plus 1,000 standardized reference-site equivalents",
+    "absolute_state_total_status": "NOT_ESTIMATED_IN_NATIONAL_ATLAS",
+    "reason": "Ownership-complete statewide signal inventories do not exist on a comparable national basis. CA/OH absolute registered-scope case studies remain separate."
+  },
+  "main_endpoint_year": 2050,
+  "tail_endpoint_year": 2075,
+  "medium_2050_lowest_direct_co2_states": [
+    "VT",
+    "WA",
+    "NH",
+    "ME",
+    "ID"
+  ],
+  "medium_2050_highest_direct_co2_states": [
+    "WV",
+    "WY",
+    "KY",
+    "IN",
+    "MO"
+  ],
+  "ca_oh_medium_2050": {
+    "CA": {
+      "carrier_input_mwh_eq": 41105.51591873121,
+      "direct_co2_metric_tonnes": 5709.366996566472,
+      "note": "normalized common scenario; not the absolute CA/OH case-study value"
+    },
+    "OH": {
+      "carrier_input_mwh_eq": 41604.67746259466,
+      "direct_co2_metric_tonnes": 7768.207061000115,
+      "note": "normalized common scenario; not the absolute CA/OH case-study value"
+    }
+  },
+  "active_pipeline_status_at_build": "FAIL_PAPER_AUTHORITY_CONTRACT",
+  "active_pipeline_calculation_complete_at_build": false,
+  "integration_status": "ISOLATED; ACTIVE PIPELINE AND OVERLEAF NOT MODIFIED",
+  "claim_boundary": "deterministic comparative scenarios, not empirical forecasts, causal policy effects, city or urban-rural estimands, carbon-neutrality dates, or cumulative payback dates"
+}

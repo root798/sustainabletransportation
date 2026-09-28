@@ -1,0 +1,171 @@
+{
+  "status": "PASS_POLICY_CENTRAL_DASHBOARD_BUNDLE",
+  "built_on": "2026-09-02",
+  "role": "OWNER_APPROVED_CENTRAL_SCENARIO: policy-central (bridge v1.1) is the dashboard default; uniform low/medium/high atlas bundles are comparators.",
+  "scenario_bundle": "policy_central_v1",
+  "counts": {
+    "annual_rows": 2601,
+    "turning_rows": 51,
+    "bridge_rows": 51,
+    "weather_annual_rows": 2601,
+    "weather_turning_rows": 51,
+    "band_transferred_rows": 7803,
+    "band_ca_oh_rows": 612,
+    "band_exact_rows": 7803
+  },
+  "asserts": {
+    "turning_all_identified": true,
+    "onset_ca": 2057,
+    "onset_oh": 2069,
+    "onset_histogram": {
+      "2057": 9,
+      "2060": 1,
+      "2062": 3,
+      "2069": 14,
+      "2070": 24
+    },
+    "conservation_residual_tolerance": 0.0001,
+    "band_central_equals_policy_central_line": true,
+    "band_exact_v2_central_equals_policy_central_line_all_three_metrics": true,
+    "band_exact_v2_under_50pct_everywhere": true
+  },
+  "conditional_band": {
+    "band_version": "v2_exact",
+    "display_file": "policy_central_band_exact.v2.csv",
+    "definition_source": "conditional_bands_v2/BAND_REGISTRY_V2.md (estimand and boundary quoted verbatim from \u00a71 and \u00a76)",
+    "estimand": "exact per-state conditional prediction band \u2014 registered load-model parameter uncertainty propagated per state, conditional on the policy-central pathway; author-model band, not frequentist coverage.",
+    "boundary": "Author-model conditional band: registered evidence-bounded parameter distributions through the author's load model, conditional on the registered policy-central pathway. Not a frequentist prediction interval; no repeated-sampling coverage. Outside the band by construction: pathway/policy choice (bridge classes, scenarios), L1 state-condition uncertainty (fixed at central here; <=2.75% marginal, see Section 3), structural model error, and the fixed vehicle/STI inventory scope.",
+    "layer": "pure L2 exact per-state propagation (L1 fixed at central), p05/p95 of 200 raw draws, seed 42, no recentering, no envelope transfer",
+    "method": "EXACT_PER_STATE_REGISTERED_L2_PROPAGATION",
+    "per_metric_max_relative_halfwidth": {
+      "direct_co2_kg": 0.3474055954450882,
+      "energy_kwh_eq": 0.2964760894601845,
+      "intensity_kg_per_kwh_eq": 0.1987112877182254
+    },
+    "intensity_exact_for_all_51": true,
+    "v1_transfer_rule_retired_from_display": "conditional_bands_v1's CA/OH mean-relative-envelope transfer and its DIAGNOSTIC_ONLY intensity carve-out are retired from display and from all numeric claims; the v1 files are packaged unchanged for audit only",
+    "anchor_backtest_note": "v2-vs-v1 anchor raw gate worst 4.65pp is the documented cumulative-L1+L2 vs pure-L2 estimand difference; like-for-like pure-L2 agreement is <=1.01pp (BAND_REGISTRY_V2.md \u00a73)",
+    "v2_validation_gates_required_and_passed": [
+      "draw_reproduction_exact",
+      "complete_51x3x51",
+      "no_nan",
+      "monotone_p05_p50_p95",
+      "positive_bounds",
+      "band_brackets_central",
+      "like_for_like_within_3pp",
+      "under_50pct_all_cells"
+    ]
+  },
+  "conditional_band_v1_audit": {
+    "role": "AUDIT_ONLY_NOT_DISPLAYED",
+    "files": [
+      "policy_central_band_transferred.v1.csv",
+      "policy_central_band_ca_oh.v1.csv"
+    ],
+    "definition_source": "conditional_bands_v1/BAND_REGISTRY_V1.md (quoted verbatim)",
+    "estimand": "a conditional prediction band \u2014 author-model load uncertainty (per-vehicle compute/sensing/communication lognormal scales, efficiency-path and conversion-efficiency parameters) combined with state-condition uncertainty (grid fossil factor, weather, initialization shares), conditional on the registered deployment and trajectory pathway.",
+    "boundary": "It quantifies how far the outcome could plausibly sit from the central estimate if the registered pathway is realized; it is not a frequentist coverage interval, and no repeated-sampling coverage claim is attached to the 5-95 range. Pathway (L3) uncertainty is communicated separately by discrete scenario trajectories, not by this band.",
+    "layer": "L2 cumulative (L1 + L2 active), p05/p95 of 200 raw draws, no recentering",
+    "per_metric_max_relative_halfwidth": {
+      "direct_co2_kg": 0.344543420699644,
+      "energy_kwh_eq": 0.2929955666147885,
+      "intensity_kg_per_kwh_eq": 0.1979826424183532
+    },
+    "transfer_statuses": {
+      "TRANSFERRED": 4998,
+      "DIAGNOSTIC_ONLY": 2499,
+      "SELF_LEDGER": 306
+    }
+  },
+  "weather_variant": {
+    "workload_multiplier_range": [
+      1.01635375,
+      1.07971325
+    ],
+    "co2_level_delta_2050_pct_range": [
+      1.6197083531883871,
+      7.894353433374479
+    ],
+    "onset_delta_years": 0,
+    "interpretation": "named deterministic variant, never a probability band"
+  },
+  "boundary_strings_stamped_from_atlas": {
+    "grid_boundary": "eGRID2023 state generation attributional direct CO2; not delivered-electricity mix, marginal emissions, or a forecast",
+    "carrier_input_estimand": "annual operational ATS-incremental carrier input for the normalized reference bundle; propulsion and conventional signal-core energy excluded",
+    "direct_co2_estimand": "scope-matched operational direct CO2: eGRID state total-output attributional electricity CO2 plus EPA gasoline tailpipe CO2; upstream, non-CO2 and embodied terms excluded",
+    "claim_boundary": "deterministic comparative scenarios, not empirical forecasts, causal policy effects, city or urban-rural estimands, carbon-neutrality dates, or cumulative payback dates"
+  },
+  "sources": {
+    "annual": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/policy_central_annual_v1.csv",
+      "sha256": "625ab153b389c3584d335cb22bee05a7a831907229fbd471b2d2125d0999e0e4",
+      "bytes": 1334508
+    },
+    "turning": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/policy_central_turning_v1.csv",
+      "sha256": "b747bb2228cdb8d8ca6840a65ef2c0e0a399ef30379049ce9849573a708cd0db",
+      "bytes": 9590
+    },
+    "bridge": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/bridge_assignment_v1.csv",
+      "sha256": "efe1ab426cf58d2d357378028fe0cfbf918d74b8423a0e0ad89d3c7dc46d96fa",
+      "bytes": 24910
+    },
+    "validation": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/policy_central_validation_v1.json",
+      "sha256": "85cf3d1b763465944853cd9c1ca57b7a699781f590ff782ce9a97b25d085697f",
+      "bytes": 13496
+    },
+    "weather_annual": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/weather_v2/policy_central_weather_variant_annual_v1.csv",
+      "sha256": "da4116de135fdb806ee48b2a515b1fba3a32f696c457c26ceca79f2a87a384e3",
+      "bytes": 1253519
+    },
+    "weather_turning": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/weather_v2/policy_central_weather_variant_turning_v1.csv",
+      "sha256": "b83f35d1b882c9d285aff065d0e3ae99533549b992d50d4c51df851e18c885e4",
+      "bytes": 11566
+    },
+    "weather_vs_central": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/weather_v2/policy_central_weather_variant_vs_central_v1.csv",
+      "sha256": "dd7d4fb1e5ea9ba32b642639e515ca4d0134090ad4c397564f52dd80307b5b67",
+      "bytes": 3403
+    },
+    "band_transferred": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v1/transferred_band_51_v1.csv",
+      "sha256": "4b35ef95ccb55c249ddfeb822125f411f2465ac15bb551dd6f82fd790586b519",
+      "bytes": 1204148
+    },
+    "band_ca_oh": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v1/conditional_band_ca_oh_v1.csv",
+      "sha256": "4ec44c716320d46325f6212e470b220d701c67982a3105855d45d8394fe2165d",
+      "bytes": 125830
+    },
+    "band_registry": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v1/BAND_REGISTRY_V1.md",
+      "sha256": "fdea37a3b42de12d2d46c1ef8cc3e1b3b20856d58d709866627ede96f2c6e20b",
+      "bytes": 8010
+    },
+    "band_validation": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v1/conditional_bands_validation_v1.json",
+      "sha256": "eb98ee3b9da3f82681af0e06cf667f8474bab38e6b245218008a7139a1cc27c8",
+      "bytes": 3619
+    },
+    "band_exact_v2": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v2/exact_conditional_band_51_v2.csv",
+      "sha256": "223feda1ba3c3cb776ee0edea957909e3e8ea4f8a9e353304a13ea51e2b4b842",
+      "bytes": 1863055
+    },
+    "band_registry_v2": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v2/BAND_REGISTRY_V2.md",
+      "sha256": "643052a8cbce381912733120a43f6051b8fa493e6e2930d7b2cc8d86a1bc6647",
+      "bytes": 9479
+    },
+    "band_validation_v2": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/policy_central_v1/conditional_bands_v2/exact_conditional_bands_validation_v2.json",
+      "sha256": "8fb42593df19801dec42739d306497baaba44e3d00c001ef906719b1c2cdb6a6",
+      "bytes": 9615
+    }
+  },
+  "claim_boundary": "Policy-conditioned deterministic scenarios for normalized synthetic reference bundles; not empirical forecasts, probability intervals, causal policy effects, actual state totals, carbon-neutrality dates, or cumulative payback dates."
+}

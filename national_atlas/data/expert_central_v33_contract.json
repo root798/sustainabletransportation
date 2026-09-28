@@ -1,0 +1,926 @@
+{
+ "archived_superseded": {
+  "expert_central_v31c_annual.equal_size.csv": "expert_central_v31c_annual.equal_size_superseded_by_v33.csv",
+  "expert_central_v31c_annual.state_scaled.csv": "expert_central_v31c_annual.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_assignment.csv": "expert_central_v31c_assignment_superseded_by_v33.csv",
+  "expert_central_v31c_band_j2000.equal_size.csv": "expert_central_v31c_band_j2000.equal_size_superseded_by_v33.csv",
+  "expert_central_v31c_band_j2000.state_scaled.csv": "expert_central_v31c_band_j2000.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_band_median_width_by_year.csv": "expert_central_v31c_band_median_width_by_year_superseded_by_v33.csv",
+  "expert_central_v31c_band_summary.json": "expert_central_v31c_band_summary_superseded_by_v33.json",
+  "expert_central_v31c_bound_baseline_national_aggregates.csv": "expert_central_v31c_bound_baseline_national_aggregates_superseded_by_v33.csv",
+  "expert_central_v31c_bound_baseline_turning.csv": "expert_central_v31c_bound_baseline_turning_superseded_by_v33.csv",
+  "expert_central_v31c_bound_targets_annual.state_scaled.csv": "expert_central_v31c_bound_targets_annual.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_bound_targets_turning.csv": "expert_central_v31c_bound_targets_turning_superseded_by_v33.csv",
+  "expert_central_v31c_capacity_sti_v2.csv": "expert_central_v31c_capacity_sti_v2_superseded_by_v33.csv",
+  "expert_central_v31c_capacity_vehicles_mv1.csv": "expert_central_v31c_capacity_vehicles_mv1_superseded_by_v33.csv",
+  "expert_central_v31c_case_comparison_per_entry.csv": "expert_central_v31c_case_comparison_per_entry_superseded_by_v33.csv",
+  "expert_central_v31c_contract.json": "expert_central_v31c_contract_superseded_by_v33.json",
+  "expert_central_v31c_key_numbers.csv": "expert_central_v31c_key_numbers_superseded_by_v33.csv",
+  "expert_central_v31c_national_aggregates.csv": "expert_central_v31c_national_aggregates_superseded_by_v33.csv",
+  "expert_central_v31c_national_band_j2000.csv": "expert_central_v31c_national_band_j2000_superseded_by_v33.csv",
+  "expert_central_v31c_new_vehicle_share_by_group.csv": "expert_central_v31c_new_vehicle_share_by_group_superseded_by_v33.csv",
+  "expert_central_v31c_per_vehicle_burden.csv": "expert_central_v31c_per_vehicle_burden_superseded_by_v33.csv",
+  "expert_central_v31c_robustness_family_levels.csv": "expert_central_v31c_robustness_family_levels_superseded_by_v33.csv",
+  "expert_central_v31c_robustness_scenarios.csv": "expert_central_v31c_robustness_scenarios_superseded_by_v33.csv",
+  "expert_central_v31c_robustness_summary.json": "expert_central_v31c_robustness_summary_superseded_by_v33.json",
+  "expert_central_v31c_statute_register.csv": "expert_central_v31c_statute_register_superseded_by_v33.csv",
+  "expert_central_v31c_tail_annual.GRID_FROZEN.state_scaled.csv": "expert_central_v31c_tail_annual.GRID_FROZEN.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_tail_annual.GRID_STATUTE.state_scaled.csv": "expert_central_v31c_tail_annual.GRID_STATUTE.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_tail_annual.VEHICLE_FROZEN.state_scaled.csv": "expert_central_v31c_tail_annual.VEHICLE_FROZEN.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_tail_turning.csv": "expert_central_v31c_tail_turning_superseded_by_v33.csv",
+  "expert_central_v31c_turning.equal_size.csv": "expert_central_v31c_turning.equal_size_superseded_by_v33.csv",
+  "expert_central_v31c_turning.state_scaled.csv": "expert_central_v31c_turning.state_scaled_superseded_by_v33.csv",
+  "expert_central_v31c_turning_histogram.csv": "expert_central_v31c_turning_histogram_superseded_by_v33.csv",
+  "expert_central_v31c_turning_shifts.csv": "expert_central_v31c_turning_shifts_superseded_by_v33.csv",
+  "expert_central_v31c_vehicle_rule_register.csv": "expert_central_v31c_vehicle_rule_register_superseded_by_v33.csv",
+  "publication_display_contract_v31c.json": "publication_display_contract_v31c_superseded_by_v33.json",
+  "state_scaled_annual.v31c.csv": "state_scaled_annual.v31c_superseded_by_v33.csv",
+  "state_scaled_capacity.v31c.csv": "state_scaled_capacity.v31c_superseded_by_v33.csv",
+  "state_scaled_contract.v31c.json": "state_scaled_contract.v31c_superseded_by_v33.json"
+ },
+ "attributional_sentence": "The electricity term is an attributional footprint: annual electricity consumption multiplied by a generation-side average carbon intensity for the state. It answers what share of the state's average generation emissions goes with this load, not what emissions would be induced by adding it; the consequential question requires a long-run marginal emission rate, which is reported separately and never inside one interval with the attributional central.",
+ "bounds": {
+  "enforceable_standard": {
+   "annual_file": "expert_central_v33_bound_enforceable_standard_annual.state_scaled.csv",
+   "california": {
+    "cumulative_kg_on_the_delivered_central": 604689220.7020154,
+    "cumulative_kg_under_this_bound": 2637198287.330861,
+    "floor_honoured": "0.90 2035, 0.95 2040, 1.00 2045",
+    "floor_under_this_bound": "0.44 2024, 0.52 2027, 0.60 2030",
+    "turning_year_on_the_delivered_central": 2038,
+    "turns_on_the_delivered_central": true,
+    "turns_under_this_bound": false
+   },
+   "continuation_rule_of_this_bound": {
+    "electricity": "FROZEN",
+    "vehicle": "TREND"
+   },
+   "entries_with_a_turning_point": 7,
+   "name": "the enforceable-standard reading",
+   "turning_file": "expert_central_v33_bound_enforceable_standard_turning.csv",
+   "what_it_is": "the registered bound in which a clean-electricity floor is applied only where a statute is enforceable against a retail seller. It is not retired, it is delivered in full, and neither reading may be quoted without naming which one it is."
+  },
+  "policy_vintage": {
+   "entries_with_a_turning_point": 39,
+   "name": "the published Counterfactual Baseline case",
+   "status": "INHERITED_NOT_RE_MEASURED",
+   "turning_file": "expert_central_v33_bound_baseline_turning.csv",
+   "what_it_is": "a policy-vintage bound -- what such a state would look like if the repealed federal light-duty tailpipe greenhouse-gas standard for model year 2027 and later were still in force (repealed effective 2026-04-20, 91 FR 7686). It is never called current federal policy.",
+   "why_inherited": "the v3.3 build's bounds directory is empty: the Counterfactual Baseline case is not rebuilt on the asymptotic continuation, and four rows of the number table that quote it read INHERITED_NOT_RE_MEASURED for the same reason. The interval carries the case beside it as a named line computed by its own harness."
+  }
+ },
+ "built_on": "2026-09-06",
+ "carried_input_file_sha256": {
+  "bounds/policy_vintage_CB2026/expert_central_v31_turning.csv": {
+   "bytes": 60914,
+   "sha256": "8a9f0d81a1d352f50b21bb9b9b85826580ff662a239b1ab879d0fdee9761c800"
+  },
+  "expert_central_v32_annual.csv": {
+   "bytes": 6773697,
+   "sha256": "909d03fb29fc4fae3ccf10aed03a81c5231cb77786a112adb2bb675306fc546c"
+  },
+  "expert_central_v32_turning.csv": {
+   "bytes": 59514,
+   "sha256": "225d90916a41b3bb43bb092d72708658ffa520010abd70f61909996cb3e85dad"
+  },
+  "inputs/statute_register_v31c_targets.csv": {
+   "bytes": 73358,
+   "sha256": "afee8862505ae0736538870b8ecae2154f4ec5db0249a8381d14b9cbb065e79a"
+  },
+  "inputs/sti_capacity_v2.csv": {
+   "bytes": 33758,
+   "sha256": "3aca811700d2766c0f2cbe84f84153dac76ad01b1d26ce8fc67a523caac35c66"
+  },
+  "inputs/vehicle_capacity_mv1_2024.csv": {
+   "bytes": 9448,
+   "sha256": "8fc9611bcdceb20209226bcb6f62eaa729c4fc9d8ec4317c798cc1427cc5ba8c"
+  },
+  "inputs/vehicle_rule_register_v31c.csv": {
+   "bytes": 18219,
+   "sha256": "dbb8789f592aa710a4f5edf4d5eb5270f96c1c0df73c46239bb2f6f116b57579"
+  }
+ },
+ "carried_input_tree": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v32_final",
+ "counts": {
+  "annual_rows": 2601,
+  "annual_rows_companion": 2601,
+  "assignment_rows": 51,
+  "band_rows": 7803,
+  "band_rows_companion": 7803,
+  "capacity_sti_rows": 51,
+  "capacity_vehicle_rows": 51,
+  "named_line_rows": 3978,
+  "national_band_rows": 306,
+  "robustness_families": 14,
+  "robustness_scenario_rows": 28,
+  "state_scaled_annual_rows": 2601,
+  "state_scaled_capacity_rows": 51,
+  "states": 50,
+  "supplemental": 1,
+  "tail_turning_rows": 306,
+  "turning_rows": 51,
+  "turning_rows_companion": 51,
+  "universe": "all 50 states and the District of Columbia"
+ },
+ "deleted_invariants": [
+  {
+   "as_v31c_froze_it": 180,
+   "invariant": "entry-years of exactly zero total direct CO2",
+   "measured_on_v33": 0,
+   "note": "Do not write \"0 entry-years of exactly zero\": the quantity is no longer a feature of the model. A survival-weighted stock always keeps a remnant.",
+   "ruling": "D2",
+   "successor": null
+  },
+  {
+   "as_v31c_froze_it": 10,
+   "invariant": "entries at an electric stock share of exactly 1.0",
+   "measured_on_v33": 0,
+   "note": "The largest delivered share is 0.9999965921179218. A threshold statement is a different quantity and is not offered as a successor.",
+   "ruling": "D2",
+   "successor": null
+  },
+  {
+   "as_v31c_froze_it": 10,
+   "invariant": "the full-schedule group's gasoline share of direct CO2 exactly zero at 2050",
+   "measured_on_v33": 0,
+   "note": "The smallest in the group is 0.07921783441439535.",
+   "ruling": "D2",
+   "successor": null
+  },
+  {
+   "as_v31c_froze_it": "a length in years",
+   "invariant": "the service-life LENGTH axis",
+   "measured_on_v33": "the survival SHAPE family",
+   "note": "A length in years is not a shape.",
+   "ruling": "D2",
+   "successor": "the survival shape family"
+  },
+  {
+   "as_v31c_froze_it": 4,
+   "invariant": "entries with no statute carried to a clean share of one by the linear post-2050 extension",
+   "measured_on_v33": 0,
+   "note": "It was an artefact of the clip.",
+   "ruling": "D6",
+   "successor": null
+  },
+  {
+   "as_v31c_froze_it": 6,
+   "invariant": "entries whose central direct CO2 is exactly zero and are excluded from the relative-width medians",
+   "measured_on_v33": 0,
+   "note": "The medians run over all 51 entries on this central, so the exclusion sentence has no successor.",
+   "ruling": "D2",
+   "successor": null
+  }
+ ],
+ "deployment_scale": {
+  "companion": {
+   "annual_file": "expert_central_v33_annual.equal_size.csv",
+   "band_file": "expert_central_v33_band_j2000.equal_size.csv",
+   "capacity_basis": "EQUAL_SIZE_COMPARISON_1000000_VEHICLES_AT_THE_MEASURED_NATIONAL_RATIO_2988_STI_UNITS_PER_MILLION_VEHICLES",
+   "key": "equal_size",
+   "reader_facing_name": "Equal-size comparison (1M automobiles + 2,988 STI units)",
+   "turning_file": "expert_central_v33_turning.equal_size.csv"
+  },
+  "primary": {
+   "annual_file": "expert_central_v33_annual.state_scaled.csv",
+   "band_file": "expert_central_v33_band_j2000.state_scaled.csv",
+   "capacity_basis": "REAL_CAPACITY_FHWA_MV1_2024_REGISTERED_AUTOMOBILES_AND_STI_V2_INTERSECTIONS",
+   "key": "state_scaled",
+   "reader_facing_name": "State-scaled (actual fleet)",
+   "turning_file": "expert_central_v33_turning.state_scaled.csv"
+  }
+ },
+ "estimand_conditional_on": "REGISTERED_STATUTORY_SCHEDULE_FLOOR_OVER_PUBLISHED_NO_ADDITIONAL_POLICY_MARKET_PROJECTION_ON_AN_AGE_SPECIFIC_SURVIVAL_WEIGHTED_VEHICLE_STOCK",
+ "grid": {
+  "classes": {
+   "AK_RAILBELT_PUBLISHED_SCENARIO": 1,
+   "CAMBIUM_BA_STATE_PATH": 20,
+   "CAMBIUM_BA_STATE_PATH_WITH_REGISTERED_STATUTORY_FLOOR": 29,
+   "HI_STATUTE_MINUS_REGISTERED_FIRM_BIOFUEL": 1
+  },
+  "continuation_displayed": "ASYMPTOTIC",
+  "continuations_available": [
+   "ASYMPTOTIC",
+   "TREND",
+   "FROZEN",
+   "STATUTE"
+  ],
+  "floor_reading": "STATUTORY_TARGETS_HONOURED",
+  "floor_reading_bound": "ENFORCEABLE_STANDARD",
+  "plot_shading_rule": "SHADE_2051_2075_AUTHOR_CONTINUATION",
+  "post_2050_status": "AUTHOR_POST_CAMBIUM_ASYMPTOTIC_CONTINUATION_NOT_CAMBIUM",
+  "source": "a published national grid projection (NREL Cambium 2024, mid case), balancing-area annual values rolled up to each state and rebased on the state's own registered starting clean share",
+  "statutory_floor_rule": "every enacted statutory clean-electricity target a state expresses as a share of retail sales or of generation is honoured as a floor at its own stated level and in its own stated year; capacity targets, peak-demand targets, reductions measured against a baseline, executive orders, utility board resolutions and repealed statutes are not honoured"
+ },
+ "interval": {
+  "boundary": "Author-model conditional interval: registered evidence-bounded parameter distributions, the fuel-to-direct-current conversion coefficient drawn triangular on its declared list, a registered prior on the statutory compliance level with an atom at the statutory value of one, one registered electricity scenario at equal weight and one registered survival shape at equal weight, propagated through the author's load model. Not a frequentist prediction interval.",
+  "conversion_coefficient_central": 0.21,
+  "conversion_coefficient_declared_list": [
+   0.17,
+   0.21,
+   0.2744
+  ],
+  "definition_source": "expert_central_v33_final/{KEY_NUMBERS_V33.csv, band_j33/band_summary.json, band_j33/KEY_NUMBERS_BAND_J33.csv, V33_REGISTRY.md}",
+  "deployment_scale_named_lines": {
+   "and_the_scale_is_kept_out_of_the_draws": true,
+   "central_held_in_every_draw": 0.3,
+   "declared_range": [
+    0.15,
+    0.45
+   ],
+   "lines": {
+    "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT": 0.45,
+    "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT": 0.15
+   },
+   "the_model_is_exactly_linear_in_this_scale": "every entry starts from a deployed stock of exactly zero, so each year's deployed stock is the declared scale times a fixed path, every load is that stock times a per-unit quantity, and a carbon intensity does not depend on the scale at all.  Each named line is therefore the central rescaled by the level over 0.30.  The equality is not assumed: the harness is RUN at the declared level and compared with the central rescaled, cell by cell, in gates.named_lines"
+  },
+  "disclosed_upstream_label_defect": {
+   "labels_read_off_the_delivered_rows": {
+    "grid_tail_rule": [
+     "ASYMPTOTIC"
+    ],
+    "grid_tail_rule_basis_names_ruling_D6": true,
+    "vehicle_tail_rule": [
+     "ASYMPTOTIC"
+    ]
+   },
+   "proof_max_abs_deviation_of_the_interval_central_from_the_delivered_central": 0.0,
+   "status": "CLOSED UPSTREAM on 2026-09-06 by the product-hygiene pass",
+   "upstream_file": "expert_central_v33_final/band_j33/band_51_v33_j2000_real_capacity.csv",
+   "what": "the delivered interval product carries grid_tail_rule = ['ASYMPTOTIC'], vehicle_tail_rule = ['ASYMPTOTIC'] and a grid_tail_rule_basis naming ruling D6, which IS this build's continuation rule; the superseded ruling-D4 FROZEN and TREND labels these rows used to carry are gone",
+   "what_is_true": "the interval is reported against the ASYMPTOTIC central on both axes; band_summary.json says so and the interval's own central column is bitwise the delivered asymptotic central",
+   "what_this_repository_does": "no display surface reads grid_tail_rule or grid_tail_rule_basis off the interval product; the continuation rule is read from the delivered annual table and from band_summary.json. The upstream tree is read-only and was not edited."
+  },
+  "electricity_members": [
+   "CAMBIUM24_HighDemandGrowth",
+   "CAMBIUM24_HighNGPrice",
+   "CAMBIUM24_HighRECost",
+   "CAMBIUM24_HighRECost_LowNGPrice",
+   "CAMBIUM24_LowNGPrice",
+   "CAMBIUM24_LowRECost",
+   "CAMBIUM24_LowRECost_HighNGPrice",
+   "CAMBIUM24_MidCase",
+   "EPA_IPM_2025RC",
+   "SS2024_Mid_Case",
+   "SS2024_Mid_Case_No_IRA"
+  ],
+  "energy_interval_disclaimer": "The electricity-scenario axis changes the carbon content of a kilowatt hour, not the number of kilowatt hours.  Its contribution to the energy interval is therefore exactly zero, and an energy figure must not be captioned as though the electricity axis were inside it.  The same holds for the post-2050 continuation rule ON THAT AXIS and for the reading of the statutory floor: the delivered central, the two electricity-axis continuation lines and the enforceable-standard line carry the same energy in every entry and in every year, bitwise, and they part company only in carbon.  The two VEHICLE-axis continuation lines are a different object and are not covered by this sentence: a rule on that axis moves how much of the deployed stock is electric, so it moves the kilowatt hours as well as the carbon, and the movement is reported rather than gated.",
+  "interval_name": "5th-95th percentile interval",
+  "interval_version": "v33_j2000_asymptotic_targets_honoured",
+  "layer": "L2_plus_compliance_level_prior_plus_survival_shape_plus_electricity_member",
+  "measured_load_anchor_w": 446.7,
+  "median_relative_halfwidth_pct": {
+   "containment_status": "DIAGNOSTIC_NOT_A_VALIDATION",
+   "containment_why": "the draws are centred on the central, so containment of the central by its own draws is close to a tautology; it is reported because a reader who does not see it will ask, and it establishes nothing about calibration",
+   "direct_co2_kg": {
+    "2050": {
+     "median_relative_halfwidth_pct": 24.50204157157711,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    },
+    "2075": {
+     "median_relative_halfwidth_pct": 24.34828764295072,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    }
+   },
+   "energy_kwh_eq": {
+    "2050": {
+     "median_relative_halfwidth_pct": 23.733640382897864,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    },
+    "2075": {
+     "median_relative_halfwidth_pct": 23.119376970408254,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    }
+   },
+   "entries_in_the_median": 51,
+   "entry_years_with_the_central_outside_its_own_interval": 0
+  },
+  "method": "EXACT_PER_ENTRY_PAIRED_L2_PLUS_TRIANGULAR_CONVERSION_COEFFICIENT_PLUS_STATUTORY_COMPLIANCE_LEVEL_WITH_AN_ATOM_AT_ONE_PLUS_ELECTRICITY_MEMBER_PLUS_SURVIVAL_SHAPE",
+  "metrics": [
+   "energy_kwh_eq",
+   "direct_co2_kg",
+   "grid_intensity_kg_per_kwh"
+  ],
+  "n_draws": 2000,
+  "named_lines": [
+   "NAMED_LINE_CB2026",
+   "NAMED_LINE_ELECTRNP",
+   "NAMED_LINE_ETA_HIGH_BRANCH_0p2744",
+   "NAMED_LINE_ETA_LOW_BRANCH_0p17",
+   "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT",
+   "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT",
+   "NAMED_LINE_POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS",
+   "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS",
+   "NAMED_LINE_POST_2050_TREND_CONTINUATION_VEHICLE_AXIS",
+   "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS",
+   "NAMED_LINE_ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR",
+   "NAMED_LINE_MEASURED_LOAD_ANCHOR"
+  ],
+  "not_priced_sentence": "Not priced by this interval: the deployment scale, held at 30 per cent of registered automobiles and 30 per cent of signalized intersections by 2075 in every draw, against its own declared range of 15 to 45 per cent -- the model is exactly linear in that scale, so the two declared levels are delivered beside the interval as named lines, each of them the central rescaled, and never as width; the reading of the statutory floor itself, held at the statutory-targets-honoured reading in every draw, with the enforceable-standard reading delivered beside the interval as a named line rather than as width; the vehicle load model, held at the inherited one, with the single paired dynamometer measurement in the build's own precedent table delivered beside the interval as a named measured-load line; the computing workload growth of 2 per cent a year and the hardware efficiency floor of 0.25, neither of which is drawn or varied anywhere in this build; and the published market case, held at the policy state the interval is conditional on and carried as a named line.  The post-2050 continuation rule IS inside this interval: every electricity member continues along its own 2045-2050 slope at a decreasing rate after 2050 with the enacted statutory floors applied on top, and the linear trend and frozen continuations are delivered beside the interval as named lines.  The fuel-to-direct-current conversion coefficient IS priced here: it is drawn triangular on the declared list, support 0.17 to 0.2744 with its mode at the delivered central 0.21, so the two registered branches are the endpoints of the support this interval samples rather than values outside it, and each of them is also delivered as a named line.",
+  "seeds": {
+   "compliance_level": 424242,
+   "compliance_level_atom": 42424242,
+   "electricity_member": 4242424242,
+   "load": 42,
+   "published_market_case": 4242,
+   "survival_shape": 424242424242
+  },
+  "survival_shape_members": [
+   "MOVES5_LIGHT_DUTY_TRUCK",
+   "MOVES5_PASSENGER_CAR",
+   "NHTSA_2006_PASSENGER_CAR"
+  ],
+  "what_this_interval_does_not_produce": "Turning points.  This product is a distribution over annual quantities on one policy state; the entry-level turning-point count is a property of the CENTRAL and is carried in the central's own products.  On the asymptotic continuation this interval is reported against, the census by 2075 reads 9 of 51, 8 states and the District of Columbia, which is two numbers because the District of Columbia is not a state.  The four-row disclosure that must travel with any such count is delivered in full beside this field, and so is the qualifier that names the entries whose count rests on an authored extension.  Nothing in this interval bears on any of those counts.",
+  "width_quotation_rule": "Width is quoted relative to the same-year central value, as half of the 5th-95th percentile interval over that central, and it is reported as the MEDIAN across the 51 entries. On each entry's real deployment scale the median relative half-width is 23.733640 % for energy consumption in 2050 and 23.119377 % in 2075, and 24.502042 % for direct CO2 emissions in 2050 and 24.348288 % in 2075. No entry's central direct CO2 is exactly zero at either year, so no entry is excluded from either median and the v3.1c exclusion of six entries has no successor. There is no quotable window and no year past which a width may not be quoted."
+ },
+ "law_registers": {
+  "statute_register": {
+   "entries": 51,
+   "entries_carrying_an_enforceable_floor": 26,
+   "entries_whose_stated_target_is_honoured": 11,
+   "file": "expert_central_v33_statute_register.csv",
+   "read_first_hand": 38
+  },
+  "vehicle_rule_register": {
+   "file": "expert_central_v33_vehicle_rule_register.csv",
+   "rows": 14
+  }
+ },
+ "mechanism": {
+  "entries_reaching_one": [
+   "CA",
+   "CO",
+   "CT",
+   "DC",
+   "IL",
+   "ME",
+   "MI",
+   "MN",
+   "NC",
+   "NM",
+   "NV",
+   "NY",
+   "OR",
+   "RI",
+   "VA",
+   "VT",
+   "WA"
+  ],
+  "entries_whose_clean_share_reaches_one": 17,
+  "entries_with_a_vehicle_rule": 13,
+  "entries_with_no_vehicle_rule": 38,
+  "no_vehicle_rule_reaching_one": 8,
+  "no_vehicle_rule_reaching_one_with_a_turning_point": 0,
+  "no_vehicle_rule_with_a_turning_point": 0,
+  "with_a_rule_reaching_one_equals_with_a_rule_turning": true,
+  "with_a_vehicle_rule_reaching_one": 9,
+  "with_a_vehicle_rule_with_a_turning_point": 9,
+  "with_a_vehicle_rule_without_a_turning_point": 4
+ },
+ "must_not_be_quoted": [
+  "a count of entries with a turning point without its continuation rule, without its floor reading, and without the R3 table",
+  "7 as this build's census; that is the enforceable-standard reading's count",
+  "the three R3 rows as inherited numbers; all four are measured on this central",
+  "2.29, 2.5212354021055234 or 10.995727154969705 as Ohio over California on this central",
+  "a California number without its reading",
+  "any number from band_j321 beside a v3.3 number",
+  "frozen at 2050 as a statement about this central",
+  "extrapolated linearly as a description of this central",
+  "the three v3.1c exactly-zero and exactly-one censuses",
+  "0.2744 as this build's central coefficient; it is the registered HIGH branch"
+ ],
+ "packaged_file_sha256": {
+  "expert_central_v33_annual.equal_size.csv": {
+   "bytes": 11434870,
+   "sha256": "1814561477792fbfa2afbc3567dab33b00c5b4d043513745bfa6dd08f3603254"
+  },
+  "expert_central_v33_annual.state_scaled.csv": {
+   "bytes": 11235774,
+   "sha256": "a3962632947c7657cf115d827a1a0965321ae1394a69b4143e11cdbb903f4c75"
+  },
+  "expert_central_v33_assignment.csv": {
+   "bytes": 218851,
+   "sha256": "38891d6e3c662e02f876bd1c902b12edc2f5bca81104f46f21275c3280c82dfa"
+  },
+  "expert_central_v33_band_containment.csv": {
+   "bytes": 5020,
+   "sha256": "6010aca45fe3a078bb336380ea2c99773f6be9170ee15034fe0db8641e4dce78"
+  },
+  "expert_central_v33_band_halfwidth_by_group.csv": {
+   "bytes": 243414,
+   "sha256": "b4b0885cb7d696cbd526a41812cc866a4860673a609eeebaee71b0cdebff98d0"
+  },
+  "expert_central_v33_band_j2000.equal_size.csv": {
+   "bytes": 27947779,
+   "sha256": "2d548b0659fc644f89d2d9d5a15c3c5d701fb0e0c6227bb127a0da808cd3e95d"
+  },
+  "expert_central_v33_band_j2000.state_scaled.csv": {
+   "bytes": 27713304,
+   "sha256": "7b5b5c7dc745c62be6215cb8322bb5e9b6e1f9273d2bc1be82a2e0988368e009"
+  },
+  "expert_central_v33_band_j2000_parity_certificate.equal_size.csv": {
+   "bytes": 24685310,
+   "sha256": "71d265cc28f872c50de59391980c40ac07f7b36c5c0291b4fb87c4e9e6fbb6de"
+  },
+  "expert_central_v33_band_j2000_parity_certificate.state_scaled.csv": {
+   "bytes": 24450935,
+   "sha256": "f3fd963b2728f74403e96fe954618b4a9697db1c64a77c2d46581a56707059f3"
+  },
+  "expert_central_v33_band_key_numbers.csv": {
+   "bytes": 261371,
+   "sha256": "39b6a31f53ea206b9d427cbf9dc5d6cb4b6cc009a74830ce738ac8d6418e6567"
+  },
+  "expert_central_v33_band_median_width_by_year.csv": {
+   "bytes": 324254,
+   "sha256": "68c8d9c2dfafca36129840eac63a69cd9041f43cafe4dcef0f66d90ad9189504"
+  },
+  "expert_central_v33_band_named_lines.csv": {
+   "bytes": 5169510,
+   "sha256": "62762962119448cf85474895a1f2127d1af47491f1386e5280a6293a151120d6"
+  },
+  "expert_central_v33_band_summary.json": {
+   "bytes": 89999,
+   "sha256": "ee15120ffc55d47b0daa6ae4d84c0f478d1ad483e39cf056a751d016e6d681d8"
+  },
+  "expert_central_v33_band_width_decomposition.csv": {
+   "bytes": 22503,
+   "sha256": "e8365fa880f65da7f9f6c2d7ce955e9ba34f0d14177745ba2d2d2282926862bc"
+  },
+  "expert_central_v33_bound_baseline_national_aggregates.csv": {
+   "bytes": 66317,
+   "sha256": "d6e06621a712e7fa4e380af07d7cd284be4bef82edddccbb85fb9691945eebf3"
+  },
+  "expert_central_v33_bound_baseline_turning.csv": {
+   "bytes": 61478,
+   "sha256": "6b6f87ca72c9cdf7c378c8d2b23138f3a98beb35ca885ee69a59dbbade7622bd"
+  },
+  "expert_central_v33_bound_enforceable_standard_annual.state_scaled.csv": {
+   "bytes": 10924886,
+   "sha256": "cea1140fd92f6403fab9a127f0a75b289d2d53cab58bcedaa25f63403fec1d6a"
+  },
+  "expert_central_v33_bound_enforceable_standard_turning.csv": {
+   "bytes": 59710,
+   "sha256": "70ef9df50f5f73634e6d6ca7c80448f9981bb235fce200e93c47e1e249c0c612"
+  },
+  "expert_central_v33_capacity_sti_v2.csv": {
+   "bytes": 33758,
+   "sha256": "3aca811700d2766c0f2cbe84f84153dac76ad01b1d26ce8fc67a523caac35c66"
+  },
+  "expert_central_v33_capacity_vehicles_mv1.csv": {
+   "bytes": 9448,
+   "sha256": "8fc9611bcdceb20209226bcb6f62eaa729c4fc9d8ec4317c798cc1427cc5ba8c"
+  },
+  "expert_central_v33_key_numbers.csv": {
+   "bytes": 53504,
+   "sha256": "413713815cac0ebad0adead4c66afe14f326dc351c03870f492b4feb246845d2"
+  },
+  "expert_central_v33_national_aggregates.csv": {
+   "bytes": 87754,
+   "sha256": "0f0cda21679d6470290974c8d272e30f3997d2555469a34d6023bd2a434b20b8"
+  },
+  "expert_central_v33_national_band_j2000.csv": {
+   "bytes": 880133,
+   "sha256": "3b2f8c3efdcfb586cf593b0eade0a2815fec31a418028ca0544c3a88c5860b73"
+  },
+  "expert_central_v33_new_vehicle_share_by_group.csv": {
+   "bytes": 3560,
+   "sha256": "0ee55244c2b812108bd840cc4c4f16e18a8ea0b5df68c74cdae445be3cf6b22c"
+  },
+  "expert_central_v33_per_vehicle_burden.csv": {
+   "bytes": 5087,
+   "sha256": "63c99dd138e37f40597fbb4d50dcae28ba5f211cc7118c4dbac2abaf3837c569"
+  },
+  "expert_central_v33_r3_turning_count_disclosure.csv": {
+   "bytes": 2460,
+   "sha256": "e615bac410b01d6193d0b9c657eeaf638ca126f686e84c36302ad9416c585ec6"
+  },
+  "expert_central_v33_reader_paragraph.md": {
+   "bytes": 11504,
+   "sha256": "99e963f0381d77f61ef80447f0cf0c425308682ed199525466905d13c57daabf"
+  },
+  "expert_central_v33_registry_measurements.json": {
+   "bytes": 36449,
+   "sha256": "0b989db611477b475b122cd5cc5c330a16d6da72d3ec8905979ab1a92eed2675"
+  },
+  "expert_central_v33_robustness_family_levels.csv": {
+   "bytes": 1483,
+   "sha256": "f0a7458ecbb6b26dd4c9308a0ef4d0e612f86733aceb85c25a267e8e269bd08d"
+  },
+  "expert_central_v33_robustness_scenarios.csv": {
+   "bytes": 6694,
+   "sha256": "a1f1504b8b80c15cff623e8a2244910d6bdc9484bc20f2a25532a26c24c2dcb7"
+  },
+  "expert_central_v33_robustness_summary.json": {
+   "bytes": 42484,
+   "sha256": "74be2565efcbd4a2b214a5935d09f14c24eec34f47a9e1dbb1cd8652fc1f25a0"
+  },
+  "expert_central_v33_robustness_turning_census.csv": {
+   "bytes": 86851,
+   "sha256": "1e82497859005376e2836ab4534153f20187d1394bcc61f60ee8ad7898d1574f"
+  },
+  "expert_central_v33_statute_register.csv": {
+   "bytes": 71178,
+   "sha256": "ada75fa43db0bab19e5cf6f58dfbef0c3e7c92ee318a0b0f46a17143cc469e36"
+  },
+  "expert_central_v33_statutory_floor_binding_years.csv": {
+   "bytes": 187783,
+   "sha256": "709f3f0833745dd63e1013fe4ce157ee549fa4beb7b7a19f4cea13351e325cdf"
+  },
+  "expert_central_v33_tail_annual.GRID_FROZEN.state_scaled.csv": {
+   "bytes": 11089174,
+   "sha256": "309cc04246f6bf10d61b8b591696ccb33d4c99496fd51c227872e1aa9402dc27"
+  },
+  "expert_central_v33_tail_annual.GRID_STATUTE.state_scaled.csv": {
+   "bytes": 11143501,
+   "sha256": "41fa926d2b348e6df3b58d15a3e025af848bc7d3ef8673020f9e24d283b9b069"
+  },
+  "expert_central_v33_tail_annual.GRID_TREND.state_scaled.csv": {
+   "bytes": 11107064,
+   "sha256": "47bbf124fc2dbf98df58bc524028742b71ca16ca9cc4c32f5961223a00ff7bb3"
+  },
+  "expert_central_v33_tail_annual.VEHICLE_FROZEN.state_scaled.csv": {
+   "bytes": 11277713,
+   "sha256": "341f6999b0c894d160d1fe879c8d52b8ff5480a3d16f3e40ce8e9fccbbc6ebef"
+  },
+  "expert_central_v33_tail_annual.VEHICLE_TREND.state_scaled.csv": {
+   "bytes": 11272156,
+   "sha256": "4172eff0516b489a5d589e6039d45064cc97b18651eea0bbe8178667aa08d136"
+  },
+  "expert_central_v33_tail_turning.csv": {
+   "bytes": 49641,
+   "sha256": "3261bf90b54346a3ea17afbb7eefe676adf38d544ae6a68ba3ff677f8af1e8a1"
+  },
+  "expert_central_v33_turning.equal_size.csv": {
+   "bytes": 44235,
+   "sha256": "f499864f190f376060aa2576fd7667ce3f8b76376999c75e66c5dd15ee3063ac"
+  },
+  "expert_central_v33_turning.state_scaled.csv": {
+   "bytes": 70084,
+   "sha256": "f5d92ea7ba80215de8bf108542b88ccc4ddffe15b9d8d24ecf6c16657766b2ca"
+  },
+  "expert_central_v33_turning_histogram.csv": {
+   "bytes": 690,
+   "sha256": "c3276c1a7be53b0dae17ef20b00e7a513480cb256074c6302a805ae80e377f2c"
+  },
+  "expert_central_v33_turning_shifts.csv": {
+   "bytes": 8251,
+   "sha256": "afc12e26015e074ed3c0e67c9ea66466aa38df88563bad9978c4a01685ea1799"
+  },
+  "expert_central_v33_vehicle_rule_register.csv": {
+   "bytes": 16853,
+   "sha256": "e699ab74215591f1f16a77a85fabd9ef04c59a31509bf5818ea8f118b34c62a5"
+  },
+  "state_scaled_annual.v33.csv": {
+   "bytes": 4159264,
+   "sha256": "9eb02a4e8d2a97a9703a9d239071d70e05f7046dd79c0491fb40fb056324083f"
+  },
+  "state_scaled_capacity.v33.csv": {
+   "bytes": 44698,
+   "sha256": "cedaa5fe4db3c8ac6140b1ad6271e5e59012f50c09492fdce4c5d0a9d517d759"
+  }
+ },
+ "policy_groups": {
+  "Advanced Clean Cars II policy + 100% clean electricity policy": 7,
+  "Advanced Clean Cars II policy + Partial clean electricity policy": 3,
+  "Advanced Clean Cars II policy through 2032 + 100% clean electricity policy": 2,
+  "Advanced Clean Cars II policy through 2032 + Partial clean electricity policy": 1,
+  "No state policy": 21,
+  "No state vehicle policy + 100% clean electricity policy": 8,
+  "No state vehicle policy + Partial clean electricity policy": 9
+ },
+ "post_2050_continuation": {
+  "axes": [
+   "electricity",
+   "vehicle"
+  ],
+  "entries_whose_2050_value_is_held_on_the_electricity_axis": 29,
+  "forbidden_descriptions": [
+   "frozen at 2050",
+   "extrapolated linearly"
+  ],
+  "formula": "x(t) = 1 - (1 - x(2050)) * exp(-k (t - 2050)), with k = s(2050) / (1 - x(2050)) and s(2050) the axis's own published terminal slope",
+  "named_bounds": [
+   "TREND",
+   "FROZEN"
+  ],
+  "rule": "ASYMPTOTIC",
+  "sentence": "After 2050 each published series continues along its own 2045-2050 slope at a decreasing rate, approaching but never reaching 100 per cent, and the enacted statutory floors still apply."
+ },
+ "published_market_case": "ALTTRNP",
+ "r3_disclosure": {
+  "all_four_rows_measured_on_this_central": true,
+  "file": "expert_central_v33_r3_turning_count_disclosure.csv",
+  "r4_qualifier": "A turning count must travel with this qualifier.  Colorado is in the central census; New Mexico is in the central census.  Each of them rests on an authored extension of the vehicle schedule past model year 2032: their rule reaches 0.82 of new vehicles in 2032 and the schedule beyond that year is the build own, not the regulation own.",
+  "rows": 4,
+  "rows_detail": [
+   {
+    "cumulative_pct_change_vs_central": 0.0,
+    "entries_and_years": "CA 2038; CO 2060; DC 2035; NM 2060; NY 2036; OR 2039; RI 2035; VT 2034; WA 2041",
+    "entries_with_a_turning_point": 9,
+    "of_51": "9 of 51",
+    "reading_of_the_vehicle_rule": "the central: the schedule met in full, entirely with battery-electric vehicles",
+    "row": "central",
+    "two_number_count": "8 states and the District of Columbia"
+   },
+   {
+    "cumulative_pct_change_vs_central": 11.149481934420514,
+    "entries_and_years": "none",
+    "entries_with_a_turning_point": 0,
+    "of_51": "0 of 51",
+    "reading_of_the_vehicle_rule": "the plug-in-hybrid allowance the regulation itself grants, 20 per cent of the annual requirement",
+    "row": "compliance_level_PHEV_20PCT_CAP",
+    "two_number_count": "no state and no District of Columbia entry"
+   },
+   {
+    "cumulative_pct_change_vs_central": 41.66267643538244,
+    "entries_and_years": "none",
+    "entries_with_a_turning_point": 0,
+    "of_51": "0 of 51",
+    "reading_of_the_vehicle_rule": "the rule is not enforced, which is its legal status after the federal disapproval",
+    "row": "regulation_not_enforced",
+    "two_number_count": "no state and no District of Columbia entry"
+   },
+   {
+    "cumulative_pct_change_vs_central": 0.3489042887016902,
+    "entries_and_years": "CA 2038; DC 2035; NY 2036; OR 2039; RI 2035; VT 2034; WA 2041",
+    "entries_with_a_turning_point": 7,
+    "of_51": "7 of 51",
+    "reading_of_the_vehicle_rule": "the three entries whose rule stops at 82 per cent are held there instead of carrying the authored extension",
+    "row": "post_regulatory_FROZEN_82",
+    "two_number_count": "6 states and the District of Columbia"
+   }
+  ],
+  "travels_with": "every count of entries with a turning point"
+ },
+ "role": "THE DELIVERED CENTRAL: the published Alternative Transportation case, with each entry's own vehicle rule applied as a floor over that projection, every enacted statutory clean-electricity target expressed as a share honoured as a floor at its own stated level and in its own stated year, and both axes continued after 2050 along their own published terminal slope at a decreasing rate. The DISPLAYED deployment scale is each state's real fleet (FHWA MV-1 2024 registered automobiles and STI v2 intersections); the equal-size comparison is packaged as the companion.",
+ "scenario_bundle": "expert_central_v33",
+ "scenario_definition": "ENACTED_STATE_LAW_AS_WRITTEN_OVER_PUBLISHED_NO_ADDITIONAL_POLICY_PROJECTION__ACCII_FEDERAL_WAIVER_DISAPPROVED_PUBL_119_16__NOT_ENFORCEABLE_2026_09_05",
+ "source_tree": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v33_final",
+ "status": "PASS_EXPERT_CENTRAL_V33_DASHBOARD_BUNDLE",
+ "turning": {
+  "equal_size": {
+   "by_policy_group": {
+    "Advanced Clean Cars II policy + 100% clean electricity policy": {
+     "entries": 7,
+     "with_a_turning_point": 7
+    },
+    "Advanced Clean Cars II policy + Partial clean electricity policy": {
+     "entries": 3,
+     "with_a_turning_point": 0
+    },
+    "Advanced Clean Cars II policy through 2032 + 100% clean electricity policy": {
+     "entries": 2,
+     "with_a_turning_point": 2
+    },
+    "Advanced Clean Cars II policy through 2032 + Partial clean electricity policy": {
+     "entries": 1,
+     "with_a_turning_point": 0
+    },
+    "No state policy": {
+     "entries": 21,
+     "with_a_turning_point": 0
+    },
+    "No state vehicle policy + 100% clean electricity policy": {
+     "entries": 8,
+     "with_a_turning_point": 0
+    },
+    "No state vehicle policy + Partial clean electricity policy": {
+     "entries": 9,
+     "with_a_turning_point": 0
+    }
+   },
+   "by_vehicle_group": {
+    "CAPPED_82_MY2032_3": {
+     "entries": 3,
+     "with_a_turning_point": 2
+    },
+    "FULL_SCHEDULE_10": {
+     "entries": 10,
+     "with_a_turning_point": 7
+    },
+    "NO_VEHICLE_RULE_38": {
+     "entries": 38,
+     "with_a_turning_point": 0
+    }
+   },
+   "california_has_a_turning_point": true,
+   "dc_has_a_turning_point": true,
+   "entries_with_a_turning_point": 9,
+   "ohio_has_no_turning_point_before_2075": true,
+   "ohio_ratio_2075_over_peak": 1.0,
+   "states_only_with_a_turning_point": 8,
+   "states_with_a_turning_point": 9,
+   "states_with_no_turning_point_before_2075": 42,
+   "turning_point_by_entry": {
+    "CA": 2038,
+    "CO": 2060,
+    "DC": 2035,
+    "NM": 2060,
+    "NY": 2036,
+    "OR": 2039,
+    "RI": 2035,
+    "VT": 2034,
+    "WA": 2041
+   },
+   "turning_point_histogram": {
+    "2034": 1,
+    "2035": 2,
+    "2036": 1,
+    "2038": 1,
+    "2039": 1,
+    "2041": 1,
+    "2060": 2
+   },
+   "turning_point_range": [
+    2034,
+    2060
+   ]
+  },
+  "state_scaled": {
+   "by_policy_group": {
+    "Advanced Clean Cars II policy + 100% clean electricity policy": {
+     "entries": 7,
+     "with_a_turning_point": 7
+    },
+    "Advanced Clean Cars II policy + Partial clean electricity policy": {
+     "entries": 3,
+     "with_a_turning_point": 0
+    },
+    "Advanced Clean Cars II policy through 2032 + 100% clean electricity policy": {
+     "entries": 2,
+     "with_a_turning_point": 2
+    },
+    "Advanced Clean Cars II policy through 2032 + Partial clean electricity policy": {
+     "entries": 1,
+     "with_a_turning_point": 0
+    },
+    "No state policy": {
+     "entries": 21,
+     "with_a_turning_point": 0
+    },
+    "No state vehicle policy + 100% clean electricity policy": {
+     "entries": 8,
+     "with_a_turning_point": 0
+    },
+    "No state vehicle policy + Partial clean electricity policy": {
+     "entries": 9,
+     "with_a_turning_point": 0
+    }
+   },
+   "by_vehicle_group": {
+    "CAPPED_82_MY2032_3": {
+     "entries": 3,
+     "with_a_turning_point": 2
+    },
+    "FULL_SCHEDULE_10": {
+     "entries": 10,
+     "with_a_turning_point": 7
+    },
+    "NO_VEHICLE_RULE_38": {
+     "entries": 38,
+     "with_a_turning_point": 0
+    }
+   },
+   "california_has_a_turning_point": true,
+   "dc_has_a_turning_point": true,
+   "entries_with_a_turning_point": 9,
+   "ohio_has_no_turning_point_before_2075": true,
+   "ohio_ratio_2075_over_peak": 1.0,
+   "states_only_with_a_turning_point": 8,
+   "states_with_a_turning_point": 9,
+   "states_with_no_turning_point_before_2075": 42,
+   "turning_point_by_entry": {
+    "CA": 2038,
+    "CO": 2060,
+    "DC": 2035,
+    "NM": 2060,
+    "NY": 2036,
+    "OR": 2039,
+    "RI": 2035,
+    "VT": 2034,
+    "WA": 2041
+   },
+   "turning_point_histogram": {
+    "2034": 1,
+    "2035": 2,
+    "2036": 1,
+    "2038": 1,
+    "2039": 1,
+    "2041": 1,
+    "2060": 2
+   },
+   "turning_point_range": [
+    2034,
+    2060
+   ]
+  }
+ },
+ "turning_census_is_not_conditional_on_the_continuation_rule": {
+  "by_extension_rule": {
+   "grid ASYMPTOTIC / vehicle ASYMPTOTIC": 9,
+   "grid ASYMPTOTIC / vehicle FROZEN": 9,
+   "grid ASYMPTOTIC / vehicle TREND": 9,
+   "grid FROZEN / vehicle TREND": 9,
+   "grid STATUTE / vehicle TREND": 9,
+   "grid TREND / vehicle TREND": 9
+  },
+  "why": "every entry that reaches a clean-electricity share of one does so by 2050, inside the published window, where no continuation rule applies"
+ },
+ "upstream_file_sha256": {
+  "KEY_NUMBERS_V33.csv": {
+   "bytes": 53504,
+   "sha256": "413713815cac0ebad0adead4c66afe14f326dc351c03870f492b4feb246845d2"
+  },
+  "READER_PARAGRAPH_V33.md": {
+   "bytes": 11504,
+   "sha256": "99e963f0381d77f61ef80447f0cf0c425308682ed199525466905d13c57daabf"
+  },
+  "REGISTRY_MEASUREMENTS_V33.json": {
+   "bytes": 36449,
+   "sha256": "0b989db611477b475b122cd5cc5c330a16d6da72d3ec8905979ab1a92eed2675"
+  },
+  "V33_REGISTRY.md": {
+   "bytes": 50291,
+   "sha256": "a0cfc5a42be9352163a7b9b2b8e01d3cebefd669a61cf788b5cb8a01a032b44d"
+  },
+  "band_j33/KEY_NUMBERS_BAND_J33.csv": {
+   "bytes": 261371,
+   "sha256": "39b6a31f53ea206b9d427cbf9dc5d6cb4b6cc009a74830ce738ac8d6418e6567"
+  },
+  "band_j33/band_51_v33_j2000_equal_size_comparison.csv": {
+   "bytes": 52170661,
+   "sha256": "eb3729490e67f15893039ab702304fe0831828a30ba10e359b4be1e23ec78aef"
+  },
+  "band_j33/band_51_v33_j2000_real_capacity.csv": {
+   "bytes": 51701664,
+   "sha256": "59efe6c7e94293209f75cce32ed265504ea1cb1e34d64ed6496c58fa61f60dad"
+  },
+  "band_j33/band_summary.json": {
+   "bytes": 89999,
+   "sha256": "ee15120ffc55d47b0daa6ae4d84c0f478d1ad483e39cf056a751d016e6d681d8"
+  },
+  "band_j33/named_lines_v33_j2000.csv": {
+   "bytes": 5169510,
+   "sha256": "62762962119448cf85474895a1f2127d1af47491f1386e5280a6293a151120d6"
+  },
+  "companion/expert_central_v31_equal_size_comparison_annual.csv": {
+   "bytes": 7286580,
+   "sha256": "cd86b241332327c31ee3432bf166980477d16d4b5420340b62a7d1f950885d72"
+  },
+  "companion/expert_central_v31_equal_size_comparison_turning.csv": {
+   "bytes": 26540,
+   "sha256": "de84966300a38a2e59f9fccfcf8b0e9d4e667886227baf0704fce26e8212917e"
+  },
+  "disclosures/R3_TURNING_COUNT_DISCLOSURE.csv": {
+   "bytes": 2460,
+   "sha256": "e615bac410b01d6193d0b9c657eeaf638ca126f686e84c36302ad9416c585ec6"
+  },
+  "expert_central_v33_annual.csv": {
+   "bytes": 7087759,
+   "sha256": "34474cca28cb716dc0a62d9a05e24e3a3475e1f9f97830d563e4db5e3924c5f1"
+  },
+  "expert_central_v33_assignment.csv": {
+   "bytes": 218825,
+   "sha256": "b4110ae6fb5d23b41e3b291ad8e2905005491553d91c2495babe2257793d0354"
+  },
+  "expert_central_v33_turning.csv": {
+   "bytes": 61681,
+   "sha256": "2d6e1143baade2a102934d214a24a06d05a652ee4bb0149ca8ac3e1e50df66de"
+  },
+  "expert_central_v33_validation.json": {
+   "bytes": 54361,
+   "sha256": "8951d82fe85d5683eeda780e132331b3f608f67f85e44086451abee9824a4a09"
+  }
+ },
+ "upstream_scenario_bundle": "expert_central_v33_candidate_asymptotic_ALTTRNP",
+ "vehicle": {
+  "continuation_displayed": "ASYMPTOTIC",
+  "continuations_available": [
+   "ASYMPTOTIC",
+   "TREND",
+   "FROZEN"
+  ],
+  "enforceability_values": {
+   "ENACTED_STATE_RULE__FEDERAL_WAIVER_DISAPPROVED_PUBL_119_16__NOT_ENFORCEABLE_2026_09_05": 663,
+   "NO_STATE_VEHICLE_RULE": 1938
+  },
+  "federal_status": "The Advanced Clean Cars II waiver was disapproved by Pub. L. 119-16, signed 2025-06-12; no adopting entry is enforcing a zero-emission sales requirement today, and every delivered row carries an enforceability column naming the disapproval.",
+  "groups": {
+   "CAPPED_82_MY2032_3": 3,
+   "FULL_SCHEDULE_10": 10,
+   "NO_VEHICLE_RULE_38": 38
+  },
+  "methods": {
+   "POLICY_SCHEDULE_FLOOR_OVER_MARKET_PROJECTION": 13,
+   "PUBLISHED_MARKET_PROJECTION_REBASED": 38
+  },
+  "post_2050_status": "AUTHOR_POST_AEO_ASYMPTOTIC_CONTINUATION_NOT_AEO",
+  "post_regulatory_status": "AUTHOR_POST_REGULATORY_EXTENSION",
+  "source": "a published national market projection (AEO2026 Alternative Transportation case) rebased to the state's observed starting share, with each adopting entry's own regulation applied as a floor over it",
+  "there_is_no_ceiling": true
+ }
+}

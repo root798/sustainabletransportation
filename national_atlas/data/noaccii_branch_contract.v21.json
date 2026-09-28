@@ -1,0 +1,86 @@
+{
+  "status": "PASS_NOACCII_COUNTERFACTUAL_DASHBOARD_BUNDLE",
+  "built_on": "2026-09-02",
+  "role": "LABELED_COUNTERFACTUAL_NOT_A_CENTRAL: Labeled no-ACC II counterfactual (rollback complement of the expert central's stated-policy continuation): every state, the 13 ACC II adopters included, is re-fitted as an unconstrained no-mandate logistic capped by the fastest observed state path (NV, ratcheted monotone). COUNTERFACTUAL_NO_MANDATE_NOT_A_CENTRAL \u2014 a scenario complement, never a central, never a forecast; 19 entries -- 18 states and the District of Columbia -- have no turning point by 2075 (reported, never imputed).",
+  "scenario_bundle_annual": "noaccii_counterfactual_capNV",
+  "scenario_bundle_turning": "noaccii_counterfactual_branch",
+  "scenario_label": "COUNTERFACTUAL_NO_MANDATE_NOT_A_CENTRAL",
+  "counts": {
+    "annual_rows": 2601,
+    "turning_rows": 51,
+    "turning_identified": 32,
+    "turning_right_censored": 19
+  },
+  "asserts": {
+    "annual_lattice_51x51": true,
+    "turning_table_complete_one_row_per_jurisdiction": true,
+    "ca_right_censored": true,
+    "onset_histogram_identified_only": {
+      "2058": 1,
+      "2059": 1,
+      "2060": 1,
+      "2061": 3,
+      "2062": 1,
+      "2063": 4,
+      "2064": 21
+    },
+    "conservation_residual_tolerance": 0.0001
+  },
+  "right_censoring": {
+    "policy": "REPORTED_NEVER_IMPUTED: 19 entries -- 18 states and the District of Columbia -- have no sustained-nonincrease onset by 2075 under the no-mandate counterfactual; their onset years are packaged as NaN (displayed '>2075'), never filled with 2075.",
+    "right_censored_states": [
+      "CA",
+      "CT",
+      "DC",
+      "HI",
+      "IL",
+      "MA",
+      "ME",
+      "MI",
+      "MN",
+      "NC",
+      "NE",
+      "NM",
+      "NV",
+      "NY",
+      "OR",
+      "RI",
+      "VA",
+      "VT",
+      "WA"
+    ]
+  },
+  "conditional_band": {
+    "band_version": null,
+    "note": "No conditional prediction band is registered for the no-ACC II counterfactual; bands stay registered for the expert-central v2.2 and policy-central lines only and none is transferred or fabricated here."
+  },
+  "boundary_strings_stamped_from_atlas": {
+    "grid_boundary": "eGRID2023 state generation attributional direct CO2; not delivered-electricity mix, marginal emissions, or a forecast",
+    "carrier_input_estimand": "annual operational ATS-incremental carrier input for the normalized reference bundle; propulsion and conventional signal-core energy excluded",
+    "direct_co2_estimand": "scope-matched operational direct CO2: eGRID state total-output attributional electricity CO2 plus EPA gasoline tailpipe CO2; upstream, non-CO2 and embodied terms excluded",
+    "claim_boundary": "deterministic comparative scenarios, not empirical forecasts, causal policy effects, city or urban-rural estimands, carbon-neutrality dates, or cumulative payback dates"
+  },
+  "sources": {
+    "annual": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v21/robustness/noaccii_branch_annual.csv",
+      "sha256": "5765a66ae856d80876e0b23472f471ce5de10463edb7d13409208646772c2af0",
+      "bytes": 1563059
+    },
+    "turning": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v21/robustness/noaccii_branch_turning.csv",
+      "sha256": "9d656d3556401ee0ecdeffa88dfe0171bf4809ce75632fe655844f998fac1186",
+      "bytes": 15621
+    },
+    "assignment": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v21/robustness/noaccii_branch_assignment.csv",
+      "sha256": "0ec658c2f83a5606b36016909af628c59034cb0abba72ec3d17e70bf8abe7b14",
+      "bytes": 73425
+    },
+    "summary": {
+      "path": "/Users/yang/WorkSpace/Junyue/CLEAR_ATS_50state_expansion/expert_central_v21/robustness/noaccii_branch_summary.json",
+      "sha256": "1a2a74f7f9dd24d9e0597fbcfd0d5e86ae54d45327e997cc0b7e5a8d12a21a66",
+      "bytes": 6927
+    }
+  },
+  "claim_boundary": "Labeled counterfactual deterministic scenario for normalized synthetic reference bundles; a rollback complement to the expert central, never a central, never an empirical forecast, probability interval, causal policy effect, actual state total, carbon-neutrality date, or cumulative payback date."
+}

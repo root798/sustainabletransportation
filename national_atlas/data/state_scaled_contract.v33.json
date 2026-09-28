@@ -1,0 +1,82 @@
+{
+ "band_source": "RELATIVE_ENVELOPE_OF_THE_V33_J2000_INTERVAL_COMPUTED_ON_THE_SAME_REAL_CAPACITY_BASIS_TRANSPORTED_ONTO_EACH_LEG",
+ "built_on": "2026-09-06",
+ "cav_capacity_basis": "OFFICIAL_STATISTIC_FHWA_MV1_2024_REGISTERED_AUTOMOBILES",
+ "counts": {
+  "annual_rows": 2601,
+  "capacity_rows": 51,
+  "states": 50,
+  "supplemental": 1
+ },
+ "interval": {
+  "band_source": "RELATIVE_ENVELOPE_OF_THE_V33_J2000_INTERVAL_COMPUTED_ON_THE_SAME_REAL_CAPACITY_BASIS_TRANSPORTED_ONTO_EACH_LEG",
+  "energy_interval_disclaimer": "The electricity-scenario axis changes the carbon content of a kilowatt hour, not the number of kilowatt hours.  Its contribution to the energy interval is therefore exactly zero, and an energy figure must not be captioned as though the electricity axis were inside it.  The same holds for the post-2050 continuation rule ON THAT AXIS and for the reading of the statutory floor: the delivered central, the two electricity-axis continuation lines and the enforceable-standard line carry the same energy in every entry and in every year, bitwise, and they part company only in carbon.  The two VEHICLE-axis continuation lines are a different object and are not covered by this sentence: a rule on that axis moves how much of the deployed stock is electric, so it moves the kilowatt hours as well as the carbon, and the movement is reported rather than gated.",
+  "interval_name": "5th-95th percentile interval",
+  "interval_version": "v33_j2000_asymptotic_targets_honoured",
+  "median_relative_halfwidth_pct": {
+   "containment_status": "DIAGNOSTIC_NOT_A_VALIDATION",
+   "containment_why": "the draws are centred on the central, so containment of the central by its own draws is close to a tautology; it is reported because a reader who does not see it will ask, and it establishes nothing about calibration",
+   "direct_co2_kg": {
+    "2050": {
+     "median_relative_halfwidth_pct": 24.50204157157711,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    },
+    "2075": {
+     "median_relative_halfwidth_pct": 24.34828764295072,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    }
+   },
+   "energy_kwh_eq": {
+    "2050": {
+     "median_relative_halfwidth_pct": 23.733640382897864,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    },
+    "2075": {
+     "median_relative_halfwidth_pct": 23.119376970408254,
+     "note": "delivered v3.3 interval; 51 of 51 entries have a defined relative width  [read back from halfwidth_by_group_v33_j2000.csv]",
+     "verdict": "QUOTE_EXACT"
+    }
+   },
+   "entries_in_the_median": 51,
+   "entry_years_with_the_central_outside_its_own_interval": 0
+  },
+  "n_draws": 2000,
+  "not_priced_sentence": "Not priced by this interval: the deployment scale, held at 30 per cent of registered automobiles and 30 per cent of signalized intersections by 2075 in every draw, against its own declared range of 15 to 45 per cent -- the model is exactly linear in that scale, so the two declared levels are delivered beside the interval as named lines, each of them the central rescaled, and never as width; the reading of the statutory floor itself, held at the statutory-targets-honoured reading in every draw, with the enforceable-standard reading delivered beside the interval as a named line rather than as width; the vehicle load model, held at the inherited one, with the single paired dynamometer measurement in the build's own precedent table delivered beside the interval as a named measured-load line; the computing workload growth of 2 per cent a year and the hardware efficiency floor of 0.25, neither of which is drawn or varied anywhere in this build; and the published market case, held at the policy state the interval is conditional on and carried as a named line.  The post-2050 continuation rule IS inside this interval: every electricity member continues along its own 2045-2050 slope at a decreasing rate after 2050 with the enacted statutory floors applied on top, and the linear trend and frozen continuations are delivered beside the interval as named lines.  The fuel-to-direct-current conversion coefficient IS priced here: it is drawn triangular on the declared list, support 0.17 to 0.2744 with its mode at the delivered central 0.21, so the two registered branches are the endpoints of the support this interval samples rather than values outside it, and each of them is also delivered as a named line.",
+  "width_quotation_rule": "Width is quoted relative to the same-year central value, as half of the 5th-95th percentile interval over that central, and it is reported as the MEDIAN across the 51 entries. On each entry's real deployment scale the median relative half-width is 23.733640 % for energy consumption in 2050 and 23.119377 % in 2075, and 24.502042 % for direct CO2 emissions in 2050 and 24.348288 % in 2075. No entry's central direct CO2 is exactly zero at either year, so no entry is excluded from either median and the v3.1c exclusion of six entries has no successor. There is no quotable window and no year past which a width may not be quoted."
+ },
+ "packaged_file_sha256": {
+  "state_scaled_annual.v33.csv": {
+   "bytes": 4159264,
+   "sha256": "9eb02a4e8d2a97a9703a9d239071d70e05f7046dd79c0491fb40fb056324083f"
+  },
+  "state_scaled_capacity.v33.csv": {
+   "bytes": 44698,
+   "sha256": "cedaa5fe4db3c8ac6140b1ad6271e5e59012f50c09492fdce4c5d0a9d517d759"
+  }
+ },
+ "post_2050_continuation": {
+  "axes": [
+   "electricity",
+   "vehicle"
+  ],
+  "entries_whose_2050_value_is_held_on_the_electricity_axis": 29,
+  "forbidden_descriptions": [
+   "frozen at 2050",
+   "extrapolated linearly"
+  ],
+  "formula": "x(t) = 1 - (1 - x(2050)) * exp(-k (t - 2050)), with k = s(2050) / (1 - x(2050)) and s(2050) the axis's own published terminal slope",
+  "named_bounds": [
+   "TREND",
+   "FROZEN"
+  ],
+  "rule": "ASYMPTOTIC",
+  "sentence": "After 2050 each published series continues along its own 2045-2050 slope at a decreasing rate, approaching but never reaching 100 per cent, and the enacted statutory floors still apply."
+ },
+ "role": "The PRIMARY deployment scale, in the per-leg schema the state detail panels draw: CAV at the state's FHWA MV-1 2024 registered automobiles, STI at the state's STI v2 intersection count.",
+ "scenario_bundle": "expert_central_v33_state_scaled",
+ "status": "PASS_STATE_SCALED_V33_DASHBOARD_BUNDLE",
+ "sti_sites_basis": "STI_V2_CALIBRATED_MEASUREMENT_NOT_A_CENSUS"
+}

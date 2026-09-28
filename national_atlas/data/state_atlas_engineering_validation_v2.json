@@ -1,0 +1,19 @@
+{
+  "status": "PASS_EXHAUSTIVE_STATE_ENGINEERING_SENSITIVITY_V2",
+  "checks": {
+    "source_atlas_exact_lattice": true,
+    "range_exact_lattice": true,
+    "turning_exact_lattice": true,
+    "range_keys_unique": true,
+    "range_ordered": true,
+    "range_finite": true,
+    "no_probability_claim": true,
+    "right_censor_conserved": true,
+    "conditioned_display_max_side_below_15_percent": true
+  },
+  "range_rows": 140454,
+  "turning_rows": 306,
+  "maximum_conditioned_single_side_relative_to_central": 0.07131495218655548,
+  "probability_status": "NO_PROBABILITY_MODEL_IS_CLAIMED",
+  "scientific_boundary": "These exhaustive engineering supports supplement, but do not replace, deterministic Low/Medium/High scenarios. They are not Monte Carlo, confidence, credible, or prediction intervals."
+}

@@ -1,0 +1,814 @@
+{
+ "build": "v3.3 FINAL -- ruling D6 over ruling D5",
+ "run": "2026-09-06",
+ "python": "/opt/miniconda3/envs/NIPS_Linshen/bin/python",
+ "float_precision": "round_trip",
+ "counting_rule": "the District of Columbia is not a state; every count is two numbers.  The horizon reads 'by 2075'.",
+ "write_scope": "expert_central_v33_final/ only",
+ "products_read": {
+  "expert_central_v33_final/expert_central_v33_annual.csv": "34474cca28cb716dc0a62d9a05e24e3a3475e1f9f97830d563e4db5e3924c5f1",
+  "expert_central_v33_final/expert_central_v33_turning.csv": "2d6e1143baade2a102934d214a24a06d05a652ee4bb0149ca8ac3e1e50df66de",
+  "expert_central_v33_final/expert_central_v33_assignment.csv": "b4110ae6fb5d23b41e3b291ad8e2905005491553d91c2495babe2257793d0354",
+  "expert_central_v33_final/expert_central_v33_validation.json": "8951d82fe85d5683eeda780e132331b3f608f67f85e44086451abee9824a4a09",
+  "expert_central_v33_final/MEASUREMENTS_V33.json": "e36c84f55d2d9a4a6cbc443a2ed452888d464054677042d10c669ff1be18f512",
+  "expert_central_v33_final/parity/PARITY_AND_GATES_V33.json": "075e10a0727539d016b7f62b4132d6741153df35c6c74d048fa44391133e988f",
+  "expert_central_v33_final/FIXPOINT_V33.json": "a5ffc4855d5f1777050345a6af07e563b8d9161490d25f7b59b22a5ffff84f38",
+  "expert_central_v33_final/KEY_NUMBERS_V33.csv": "413713815cac0ebad0adead4c66afe14f326dc351c03870f492b4feb246845d2",
+  "expert_central_v33_final/impact/per_vehicle_burden_v31.csv": "63c99dd138e37f40597fbb4d50dcae28ba5f211cc7118c4dbac2abaf3837c569",
+  "expert_central_v33_final/disclosures/R3_TURNING_COUNT_DISCLOSURE.csv": "e615bac410b01d6193d0b9c657eeaf638ca126f686e84c36302ad9416c585ec6",
+  "expert_central_v33_final/inputs/grid_paths_v31.csv": "531cef558f690be7bbc57647467eef8093135548806d7ebb8edb26d653374d9d",
+  "expert_central_v32_final/registry/REGISTRY_MEASUREMENTS_V32.json": "4609c1f92461663d8ae72591d3128997bf5ed1b26ca430e1bb08f2cc717aae0d",
+  "expert_central_v32_final/expert_central_v32_annual.csv": "909d03fb29fc4fae3ccf10aed03a81c5231cb77786a112adb2bb675306fc546c",
+  "expert_central_v32_final/bounds/statutory_targets_honoured/expert_central_v31_annual.csv": "32ebf6d41b1e294e8f9602b3008620b492a8c1bac614f8ca001470d64c57810b"
+ },
+ "the_electricity_input": {
+  "v33_inputs_grid_paths_sha256": "531cef558f690be7bbc57647467eef8093135548806d7ebb8edb26d653374d9d",
+  "ruling_D5_product_inputs_grid_paths_sha256": "0c72f62caeeeaca81f74ee8fe5ea19f12f99844f114e70a0b55ceea076bbf7fa",
+  "identical": false,
+  "reading": "the electricity INPUT of the ruling-D5 product is not the v3.3 input: ruling D6 rewrites the 2051-2075 rows of it.  What is bitwise identical is the DELIVERED product through 2050, which the parity certificate carries"
+ },
+ "turning": {
+  "n_entries": 9,
+  "two_number_count": "8 states and the District of Columbia",
+  "by_entry": {
+   "CA": 2038,
+   "CO": 2060,
+   "DC": 2035,
+   "NM": 2060,
+   "NY": 2036,
+   "OR": 2039,
+   "RI": 2035,
+   "VT": 2034,
+   "WA": 2041
+  },
+  "earliest": 2034,
+  "latest": 2060,
+  "by_continuation_rule": {
+   "grid_ASYMPTOTIC": 9,
+   "grid_TREND": 9,
+   "grid_FROZEN": 9,
+   "grid_STATUTE": 9,
+   "vehicle_TREND": 9,
+   "vehicle_FROZEN": 9
+  },
+  "authored_extension_entries": [
+   "CO",
+   "NM"
+  ],
+  "authored_extension_two_number": "2 states and no District of Columbia entry"
+ },
+ "ruling_D5": {
+  "what_the_ruling_touches": "the electricity axis and nothing else",
+  "entries_whose_delivered_clean_share_moves": [
+   "CA",
+   "CO",
+   "NC",
+   "NV",
+   "UT"
+  ],
+  "entry_years_of_the_clean_share_that_move_2025_2050": 21,
+  "first_year_any_delivered_cell_moves": 2025,
+  "first_entry_that_moves": [
+   "UT"
+  ],
+  "measured_how": "the delivered clean-electricity share of this build against the read-only enforceable-standard product, years 2025-2050 only.  Ruling D6 touches no year at or before 2050, so this comparison isolates ruling D5",
+  "delivered_energy_cells_that_move": 0,
+  "delivered_gasoline_emission_cells_that_move": 0,
+  "target_status_counts": {
+   "NONE": 22,
+   "HONOURED": 11,
+   "NOT_A_SHARE": 6,
+   "ALREADY_A_MANDATE": 5,
+   "REPEALED": 4,
+   "NOT_A_STATUTE": 2,
+   "REGISTERED_SCENARIO": 1
+  },
+  "entry_years_of_the_clean_share_that_move_2025_2075_on_the_v322_products": 121,
+  "why_two_windows": "the v3.2.2 registry's figure is over 2025-2075 with BOTH sides on the frozen continuation, where a move at 2050 is held for twenty-five more years.  On this build the two sides do not share a continuation rule after 2050, so the only window in which the floor reading can be isolated is 2025-2050.  The two counts are two different measurements and neither corrects the other",
+  "entries_whose_delivered_clean_share_moves_two_number": "5 states and no District of Columbia entry",
+  "honoured_entries": [
+   "CA",
+   "CO",
+   "IL",
+   "IN",
+   "ME",
+   "NC",
+   "NM",
+   "NV",
+   "SD",
+   "UT",
+   "WI"
+  ],
+  "honoured_two_number": "11 states and no District of Columbia entry",
+  "honoured_table": [
+   {
+    "entry": "CA",
+    "entry_name": "California",
+    "schedule_honoured": {
+     "2035": 0.9,
+     "2040": 0.95,
+     "2045": 1.0
+    },
+    "schedule_already_registered": {
+     "2024": 0.44,
+     "2027": 0.52,
+     "2030": 0.6
+    },
+    "floor_changes": true,
+    "delivered_share_moves": true,
+    "turning_point_on_this_central": 2038,
+    "target_citation": "Cal. Pub. Util. Code 454.53(a): 'It is the policy of the state that eligible renewable energy resources and zero-carbon resources supply 90 percent of all retail sales of electricity to California end-use customers by December 31, 2035, 95 percent ... by December 31, 2040, [and] 100 percent ... by December 31, 2045.'  Subdivision (b)(4) disclaims any effect on enforcement against retail sellers, which is why the central does not carry it.",
+    "citation": "Cal. Pub. Util. Code 399.15(b)(2)(B) - retail sellers shall procure eligible renewable energy resources equal to 44 percent of retail sales by 2024-12-31, 52 percent by 2027-12-31, 60 percent by 2030-12-31, and 'not less than 60 percent of retail sales' in every subsequent compliance period; penalties under 399.15(b)(8). SEPARATELY Cal. Pub. Util. Code 454.53(a) states 90/95/100 percent by 2035/2040/2045 as 'the policy of the state', and 454.53(b)(4) provides that it does not affect the rules and requirements for enforcement against retail sellers under the Renewables Portfolio Standard Program."
+   },
+   {
+    "entry": "CO",
+    "entry_name": "Colorado",
+    "schedule_honoured": {
+     "2050": 1.0
+    },
+    "schedule_already_registered": {
+     "2020": 0.3
+    },
+    "floor_changes": true,
+    "delivered_share_moves": true,
+    "turning_point_on_this_central": 2060,
+    "target_citation": "C.R.S. 40-2-125.5(3)(a)(II): for 2050 and thereafter a qualifying retail utility 'shall seek to achieve the goal' of 100 percent clean energy 'so long as doing so is technically and economically feasible, in the public interest'.  The section is captioned 'goal to eliminate by 2050'.  The separate 80 percent carbon dioxide reduction by 2030 at 40-2-125.5(3)(a)(I) is measured against 2005 emissions and is not a share, so it is not honoured.",
+    "citation": "C.R.S. 40-2-124(1)(c)(I)(E) - the electric resource standards shall require each qualifying retail utility to generate or cause to be generated 30 percent of its retail electricity sales in Colorado from eligible energy resources for 2020 and thereafter (cooperatives 20 percent, municipal utilities serving more than 40,000 customers 10 percent, under 40-2-124(1)(c)(V)). SEPARATELY C.R.S. 40-2-125.5(3)(a)(I) - by 2030 a qualifying retail utility shall reduce carbon dioxide emissions associated with electricity sales by 80 percent from 2005 levels; 40-2-125.5(3)(a)(II) - for 2050 and thereafter the utility 'shall seek to achieve the GOAL' of 100 percent clean energy 'so long as doing so is technically and economically feasible, in the public interest'. The section heading itself reads 'goal to eliminate by 2050'."
+   },
+   {
+    "entry": "IL",
+    "entry_name": "Illinois",
+    "schedule_honoured": {
+     "2040": 0.5
+    },
+    "schedule_already_registered": {
+     "2030": 0.4,
+     "2045": 1.0
+    },
+    "floor_changes": true,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "20 ILCS 3855/1-75(c)(1)(B): the Agency 'shall attempt to procure' renewable energy resources equal to 50 percent of the applicable utilities' load by delivery year 2040, above the 40 percent that is the enforceable requirement from delivery year 2030.",
+    "citation": "415 ILCS 5/9.15(g)-(k) (Climate and Equitable Jobs Act, P.A. 102-0662): private coal and oil units shall permanently reduce all CO2e and copollutant emissions to zero no later than 2030-01-01; private gas units on a staged schedule ending '(5) No later than January 1, 2045: all remaining EGUs and large greenhouse gas-emitting units'; public coal units to zero no later than 2045-12-31; public gas and cogeneration units by 2045-01-01. PLUS 20 ILCS 3855/1-75(c)(1)(B) - renewable procurement rising to at least 40 percent by the 2030 delivery year and continuing at no less than 40 percent thereafter (the Agency 'shall attempt to procure' 50 percent by delivery year 2040)."
+   },
+   {
+    "entry": "IN",
+    "entry_name": "Indiana",
+    "schedule_honoured": {
+     "2025": 0.1
+    },
+    "schedule_already_registered": {},
+    "floor_changes": true,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "IC 8-1-37 (voluntary clean energy portfolio standard program): the clean energy portfolio standard goal is 10 percent of a participating utility's total retail electricity supply by 2025.  Participation is elective, which is why the central does not carry it.",
+    "citation": "IC 8-1-37 (voluntary clean energy portfolio standard program; participation is elective and the 10 percent by 2025 figure is a goal, not an obligation)"
+   },
+   {
+    "entry": "ME",
+    "entry_name": "Maine",
+    "schedule_honoured": {
+     "2030": 0.8,
+     "2040": 1.0
+    },
+    "schedule_already_registered": {
+     "2025": 0.59,
+     "2030": 0.8,
+     "2035": 0.9,
+     "2040": 1.0
+    },
+    "floor_changes": false,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "35-A M.R.S. 3210(1-A): state goals of 80 percent of retail electricity sales from renewable resources by 2030 and 90 percent renewable plus 10 percent clean by 2040.  Both rungs sit at or below the sum of Maine's enforceable portfolio requirements, so honouring them adds no rung to Maine's floor.",
+    "citation": "35-A M.R.S. 3210: subsection 3 - no less than 30 percent of the portfolio from Class II resources; subsection 3-A(A)(10) - 10 percent Class I for 2017 and each year thereafter; subsection 3-B(A) - Class IA rising to 40 percent in 2030 and 'Fifty percent for the period from January 1, 2040 to December 31, 2040 and each year thereafter' [PL 2025, c. 386, sec. 7]; subsection 3-D(A) - Class III ('clean resource', which includes nuclear and hydroelectric) rising from 1 percent in 2031 to 10 percent in 2040 and each year thereafter [PL 2025, c. 386, sec. 8]. The four are additive: resources used for one may not be used for another."
+   },
+   {
+    "entry": "NC",
+    "entry_name": "North Carolina",
+    "schedule_honoured": {
+     "2050": 1.0
+    },
+    "schedule_already_registered": {
+     "2021": 0.125
+    },
+    "floor_changes": true,
+    "delivered_share_moves": true,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "G.S. 62-110.9: 'The Utilities Commission shall take all reasonable steps to achieve reduction in emissions of carbon dioxide ... that result in carbon neutrality by the year 2050'; the section calls this 'the authorized carbon reduction goal' throughout and permits offsets up to 5 percent.  Carbon neutrality is honoured here as a clean share of one, which is the reading the bound is asked to take and is more than the statute's own words guarantee.",
+    "citation": "G.S. 62-133.8(b)(1) - each electric public utility shall be subject to a Clean Energy and Energy Efficiency Portfolio Standard of '12.5% of 2020 North Carolina retail sales' for 2021 and thereafter (electric membership corporations and municipalities 10 percent of 2017 sales from 2018); up to 40 percent of the requirement may be met with energy efficiency savings from 2021, and up to 25 percent with out-of-state renewable energy certificates. SEPARATELY G.S. 62-110.9 - 'The Utilities Commission shall take all reasonable steps to achieve reduction in emissions of carbon dioxide ... that result in carbon neutrality by the year 2050'; the section calls this 'the authorized carbon reduction goal' throughout and permits offsets up to 5 percent."
+   },
+   {
+    "entry": "NM",
+    "entry_name": "New Mexico",
+    "schedule_honoured": {
+     "2050": 1.0
+    },
+    "schedule_already_registered": {
+     "2025": 0.4,
+     "2030": 0.5,
+     "2040": 0.8,
+     "2045": 1.0
+    },
+    "floor_changes": false,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": 2060,
+    "target_citation": "NMSA 1978, 62-16-4 (Energy Transition Act): for rural electric cooperatives the 2050 zero-carbon figure is a target conditioned on technical feasibility and reliability, not the mandate that binds public utilities at 2045.  It sits at the level New Mexico's enforceable floor already reaches five years earlier, so honouring it adds no rung.",
+    "citation": "NMSA 1978, 62-16-4(A) (Energy Transition Act, 2019 SB 489, sec. 29) - for public utilities other than rural electric cooperatives and municipalities: (3) no later than 2025-01-01, renewable energy shall comprise no less than 40 percent of total retail sales; (4) no later than 2030-01-01, no less than 50 percent; (5) no later than 2040-01-01, renewable energy resources shall supply no less than 80 percent of all retail sales of electricity in New Mexico; (6) no later than 2045-01-01, ZERO CARBON RESOURCES shall supply one hundred percent of all retail sales of electricity in New Mexico. For rural electric cooperatives the corresponding 2050 zero-carbon figure is a TARGET, conditioned on technical feasibility and reliability."
+   },
+   {
+    "entry": "NV",
+    "entry_name": "Nevada",
+    "schedule_honoured": {
+     "2050": 1.0
+    },
+    "schedule_already_registered": {
+     "2024": 0.34,
+     "2027": 0.42,
+     "2030": 0.5
+    },
+    "floor_changes": true,
+    "delivered_share_moves": true,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "NRS 704.7820(2): it is the policy of this State to become a leading producer and consumer of clean and renewable energy, 'with a goal of achieving by 2050 an amount of energy production from zero carbon dioxide emission resources equal to the total amount of electricity sold by providers of electric service in this State'.",
+    "citation": "NRS 704.7821(1) - the portfolio standard for each provider: (j) for calendar years 2024 through 2026, not less than 34 percent; (k) for 2027 through 2029, not less than 42 percent; (l) 'For calendar year 2030 and for each calendar year thereafter, not less than 50 percent of the total amount of electricity sold by the provider to its retail customers in this State during that calendar year.' SEPARATELY NRS 704.7820(2) - it is the policy of this State to become a leading producer and consumer of clean and renewable energy, 'with a GOAL of achieving by 2050 an amount of energy production from zero carbon dioxide emission resources equal to the total amount of electricity sold by providers of electric service in this State'."
+   },
+   {
+    "entry": "SD",
+    "entry_name": "South Dakota",
+    "schedule_honoured": {
+     "2015": 0.1
+    },
+    "schedule_already_registered": {},
+    "floor_changes": true,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "SDCL 49-34A-101: 'There is hereby established a state renewable, recycled, and conserved energy objective that ten percent of all electricity sold at retail within the state by the year 2015 be obtained from renewable, recycled, and conserved energy sources. ... This objective is voluntary, and there is no penalty or sanction for a retail provider of electricity that fails to meet this objective.'  The stated year precedes the first projected year, so the honoured floor takes effect at 2025.",
+    "citation": "SDCL 49-34A-101 - 'There is hereby established a state renewable, recycled, and conserved energy objective that ten percent of all electricity sold at retail within the state by the year 2015 be obtained from renewable, recycled, and conserved energy sources. ... This objective is VOLUNTARY, and there is no penalty or sanction for a retail provider of electricity that fails to meet this objective.'"
+   },
+   {
+    "entry": "UT",
+    "entry_name": "Utah",
+    "schedule_honoured": {
+     "2025": 0.2
+    },
+    "schedule_already_registered": {},
+    "floor_changes": true,
+    "delivered_share_moves": true,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "Utah Code 54-17-602(1)(a): 'To the extent that it is cost effective to do so, beginning in 2025 the annual retail electric sales in this state of each electrical corporation shall consist of qualifying electricity or renewable energy certificates in an amount equal to at least 20% of adjusted retail electric sales.'  The cost-effectiveness condition is why the central does not carry it.",
+    "citation": "Utah Code 54-17-602(1)(a) - 'TO THE EXTENT THAT IT IS COST EFFECTIVE TO DO SO, beginning in 2025 the annual retail electric sales in this state of each electrical corporation shall consist of qualifying electricity or renewable energy certificates in an amount equal to at least 20% of adjusted retail electric sales' (effective 2024-05-01)"
+   },
+   {
+    "entry": "WI",
+    "entry_name": "Wisconsin",
+    "schedule_honoured": {
+     "2015": 0.1
+    },
+    "schedule_already_registered": {},
+    "floor_changes": true,
+    "delivered_share_moves": false,
+    "turning_point_on_this_central": "none by 2075",
+    "target_citation": "Wis. Stat. 196.378(2)(a)1.: the statewide figure that 10 percent of the electricity sold to retail customers in the state be renewable by 2015, stated as a goal to be reported on rather than as an obligation.  The stated year precedes the first projected year, so the honoured floor takes effect at 2025.  The provider-specific baseline-plus-six requirement at 196.378(2)(a)2.d. fixes no statewide level and is not honoured here either.",
+    "citation": "Wis. Stat. 196.378(2)(a)2.d.-e. - for 2015 each electric provider shall increase its renewable energy percentage to at least 6 percentage points above its BASELINE RENEWABLE PERCENTAGE (the average of its 2001-2003 renewable percentage), and for each year after 2015 may not decrease below that level; 196.378(2)(a)1. states the statewide 10 percent by 2015 figure as a GOAL to be reported on, not as an obligation"
+   }
+  ],
+  "entries_whose_registered_floor_changes": [
+   "CA",
+   "CO",
+   "IL",
+   "IN",
+   "NC",
+   "NV",
+   "SD",
+   "UT",
+   "WI"
+  ],
+  "entries_whose_registered_floor_changes_two_number": "9 states and no District of Columbia entry",
+  "register_sha256": "afee8862505ae0736538870b8ecae2154f4ec5db0249a8381d14b9cbb065e79a",
+  "rec_and_generation_side_disclosure": {
+   "entries_whose_registered_standard_is_certificate_based": [
+    "AZ",
+    "CA",
+    "CO",
+    "DC",
+    "DE",
+    "MD",
+    "ME",
+    "MO",
+    "NC",
+    "NH",
+    "NJ",
+    "OH",
+    "PA",
+    "UT",
+    "WI"
+   ],
+   "reading": "the floor is a retail-sales obligation that a state may meet with certificates, and it is applied here to a GENERATION-side clean share.  The two are not the same object.  An exact zero of grid carbon intensity is therefore a property of the accounting convention and not a grid with no combustion on it",
+   "two_number_count": "14 states and the District of Columbia"
+  }
+ },
+ "federal_law": {
+  "91_FR_7686": {
+   "what": "the federal standard the published Counterfactual Baseline case states was repealed",
+   "effective": "2026-04-20",
+   "consequence": "the Counterfactual Baseline case is a POLICY-VINTAGE bound and never stated policy"
+  },
+  "Pub_L_119_16": {
+   "what": "the congressional disapproval of the federal waiver for the state zero-emission sales requirement",
+   "date": "2025-06-12",
+   "consequence": "no adopting entry is enforcing a zero-emission sales requirement today; every delivered row carries vehicle_rule_enforceability naming the disapproval"
+  },
+  "enforceability_values": [
+   "ENACTED_STATE_RULE__FEDERAL_WAIVER_DISAPPROVED_PUBL_119_16__NOT_ENFORCEABLE_2026_09_05",
+   "NO_STATE_VEHICLE_RULE"
+  ],
+  "n_entries_by_enforceability": {
+   "NO_STATE_VEHICLE_RULE": 38,
+   "ENACTED_STATE_RULE__FEDERAL_WAIVER_DISAPPROVED_PUBL_119_16__NOT_ENFORCEABLE_2026_09_05": 13
+  },
+  "two_number_by_enforceability": {
+   "NO_STATE_VEHICLE_RULE": "38 states and no District of Columbia entry",
+   "ENACTED_STATE_RULE__FEDERAL_WAIVER_DISAPPROVED_PUBL_119_16__NOT_ENFORCEABLE_2026_09_05": "12 states and the District of Columbia"
+  }
+ },
+ "one_shape_plus_38_offsets": {
+  "n_entries": 38,
+  "two_number_count": "38 states and no District of Columbia entry",
+  "spread_in_share_points_by_year_n_distinct": 1,
+  "spread_min": 0.030202255320658455,
+  "spread_max": 0.03020225532066101,
+  "spread_range": 2.55351295663786e-15,
+  "spread_to_12_digits": 0.030202255321,
+  "reading": "the spread among the entries with no vehicle rule is frozen by the rebasing rule -- one national shape plus 38 measured offsets -- and is not state-level resolution.  The delivered values are sums taken in different orders, so the last bits move"
+ },
+ "disclosure_b_fleet_basis": {
+  "registered_automobiles_the_51_entries_carry": 97413321.0,
+  "two_number_count": "50 states and the District of Columbia",
+  "signalised_intersections_the_51_entries_carry": 291098.0,
+  "registered_automobiles_an_intersection": 334.6409834488729,
+  "source": "FHWA Highway Statistics 2024 table MV-1, registered automobiles",
+  "an_all_light_duty_rescaling_is_a_linear_sensitivity": "the model is exactly linear in the capacity basis, so an all-light-duty denominator rescales every absolute national number by the ratio of the two denominators and moves no share, no ratio and no turning year",
+  "all_registered_motor_vehicles_read_from": {
+   "file": "overleaf_figures_on_v31c_2026-09-05/magnitude_audit/MAGNITUDE_AUDIT.md",
+   "sha256": "849e4e60f690cb3ccb42e950f5ac537d6fec8c7811fcf86e3a4c6dd591c08554",
+   "matched_row": "| Registered automobiles over all 51 entries | 97,413,321 | 297.526 million registered motor vehicles",
+   "why_not_from_an_input": "this build's registered vehicle input carries the FHWA automobile line only; the all-vehicle denominator is not a model input and is quoted from the read-only audit that established the scope flag",
+   "the_audit_automobile_figure_checked_against_the_product": {
+    "audit": 97413321.0,
+    "delivered": 97413321.0,
+    "abs_dev": 0.0
+   }
+  },
+  "all_registered_motor_vehicles": 297526000.0,
+  "automobile_share_of_registered_motor_vehicles": 0.32741112037267334,
+  "automobile_share_recomputed_here": 0.32741112037267334,
+  "automobile_share_per_cent_recomputed_here": 32.74111203726733
+ },
+ "disclosure_b_sti_share": {
+  "national_share_2025": 0.005505667129375868,
+  "national_share_2050": 0.009845664701621452,
+  "national_share_2075": 0.009382755448370682,
+  "national_minimum_over_the_horizon": 0.005505667129375868,
+  "national_maximum_over_the_horizon": 0.009867113779232446,
+  "the_two_deployment_fractions_are_identical_by_construction": {
+   "max_abs_difference": 5.551115123125783e-17,
+   "n_rows": 2601
+  },
+  "reading": "the share is fixed by two inputs -- the per-unit load ratio divided by the registered automobiles an intersection -- because the two deployment fractions are the same number on every delivered row.  It is not a state result and must not be read as one"
+ },
+ "disclosure_c_energy_boundary": {
+  "what": "the delivered energy metric adds wall electricity to gasoline chemical energy on the 33.7 kilowatt hours a gallon basis, so the two carriers are not on one boundary; the gasoline share of ENERGY is therefore reported at both",
+  "gasoline_kwh_per_gallon": 33.7,
+  "grid_to_direct_current": 0.9,
+  "fuel_to_direct_current": 0.21,
+  "by_year": {
+   "2025": {
+    "gasoline_share_at_the_energy_consumption_boundary": 0.9898469932887806,
+    "gasoline_share_at_the_direct_current_boundary": 0.9554677119515085
+   },
+   "2050": {
+    "gasoline_share_at_the_energy_consumption_boundary": 0.840793295868649,
+    "gasoline_share_at_the_direct_current_boundary": 0.5503308106370453
+   },
+   "2075": {
+    "gasoline_share_at_the_energy_consumption_boundary": 0.7853171271694876,
+    "gasoline_share_at_the_direct_current_boundary": 0.4592888454423182
+   }
+  },
+  "the_co2_shares_are_unaffected": {
+   "gasoline_share_of_cumulative_direct_co2": 0.9503479064191938,
+   "why": "a boundary is a choice of denominator for ENERGY; the carbon terms are unchanged"
+  }
+ },
+ "disclosure_d_implied_power": {
+  "implied_direct_current_automation_power_a_deployed_vehicle_W_2025": 776.5398630499329,
+  "driving_hours_a_year_this_layer": 392.98333333333335,
+  "deployed_vehicles_2025": 33266.416697197914,
+  "published_anchors_W": {
+   "Gawron_et_al_2018_total_added_power_midsize_level_4": 220.0,
+   "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 840.0,
+   "the_one_paired_dynamometer_measurement": 446.7
+  },
+  "ratio_implied_over_each_published_anchor": {
+   "Gawron_et_al_2018_total_added_power_midsize_level_4": 3.529726650226968,
+   "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 0.9244522179165868,
+   "the_one_paired_dynamometer_measurement": 1.7383923506826349
+  },
+  "ratio_each_anchor_over_implied": {
+   "Gawron_et_al_2018_total_added_power_midsize_level_4": 0.2833080572785142,
+   "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 1.0817216732452362,
+   "the_one_paired_dynamometer_measurement": 0.5752441326650559
+  },
+  "the_named_line_scales": "the vehicle automation load only -- sensing, computing and communication, on electric and gasoline vehicles alike.  The signal-infrastructure load is not touched, because the measurement is of a vehicle"
+ },
+ "disclosure_e_activity_scenarios": {
+  "state_layer_hours_a_year": 392.98333333333335,
+  "frozen_unit_ledger_hours_a_year": 1095.0,
+  "factor": 2.786377708978328,
+  "activity_basis_label": [
+   "NATIONAL_CONSTANT_DISCLOSED"
+  ],
+  "reading": "the two are not one quantity and a sentence that quotes one must say which layer it is"
+ },
+ "disclosure_f_intensity_boundary": {
+  "entries": {
+   "OH": {
+    "per_cent_change_2025_to_2045_carrier_input": 1.1413186104831885,
+    "per_cent_change_2025_to_2045_direct_current": -8.669128083877153,
+    "per_cent_change_2025_to_2075_carrier_input": 2.356877740773111,
+    "per_cent_change_2025_to_2075_direct_current": -20.201418329849187,
+    "grid_intensity_kg_per_kwh_min": 0.3471407202020169,
+    "grid_intensity_kg_per_kwh_max": 0.48253156320599994
+   },
+   "CA": {
+    "per_cent_change_2025_to_2045_carrier_input": -81.34440964703236,
+    "per_cent_change_2025_to_2045_direct_current": -94.63784626898288,
+    "per_cent_change_2025_to_2075_carrier_input": -99.99776612671978,
+    "per_cent_change_2025_to_2075_direct_current": -99.99944893561769,
+    "grid_intensity_kg_per_kwh_min": 0.0,
+    "grid_intensity_kg_per_kwh_max": 0.1784885975949998
+   }
+  },
+  "gasoline_kg_per_kwh_gge": 0.2637091988130564,
+  "the_manuscript_figure_this_retires": {
+   "claim": "a 52.4 per cent decline in Ohio carbon intensity",
+   "status": "RETIRED; it is not reproduced on either boundary"
+  }
+ },
+ "disclosure_g_fossil_cap": {
+  "bound_kg_per_kwh": [
+   1.3337372831999998
+  ],
+  "entries_where_it_binds": [
+   "VT"
+  ],
+  "two_number_count": "1 state and no District of Columbia entry",
+  "uncapped_value_there": {
+   "VT": 12.480468757590508
+  },
+  "capped_value_there": {
+   "VT": 1.3337372831999998
+  },
+  "reading": "a capped value is described as capped and never as an estimate"
+ },
+ "disclosure_h_exact_zeros": {
+  "entry_years_of_exactly_zero_grid_intensity": 572,
+  "entries": [
+   "CA",
+   "CO",
+   "CT",
+   "DC",
+   "IL",
+   "ME",
+   "MI",
+   "MN",
+   "NC",
+   "NM",
+   "NV",
+   "NY",
+   "OR",
+   "RI",
+   "VA",
+   "VT",
+   "WA"
+  ],
+  "two_number_count": "16 states and the District of Columbia",
+  "entries_at_2075": [
+   "CA",
+   "CO",
+   "CT",
+   "DC",
+   "IL",
+   "ME",
+   "MI",
+   "MN",
+   "NC",
+   "NM",
+   "NV",
+   "NY",
+   "OR",
+   "RI",
+   "VA",
+   "VT",
+   "WA"
+  ],
+  "entry_years_of_exactly_zero_total_direct_co2": 0,
+  "every_zero_at_2075_carries_a_registered_statutory_floor_of_one": true,
+  "reading": "an exact zero of grid carbon intensity is a property of the accounting convention -- a certificate-satisfiable retail obligation applied to a generation-side share -- and not a grid with no combustion on it.  The projection without the statutory floor is delivered"
+ },
+ "ruling_D6": {
+  "rule": "x(t) = 1 - (1 - x2050) exp(-k (t-2050)), k = s2050 / (1 - x2050), for t > 2050; the 2050 value is held where s2050 <= 0.  The ruling-D5 statutory floors apply on top.",
+  "slope_definition": {
+   "electricity_axis": "(lc(2050) - lc(2045)) / 5",
+   "vehicle_axis": "(E(2050) - E(2040)) / 10",
+   "source": "each axis's own published terminal slope, as the registered linear TREND rule already defines it"
+  },
+  "entries_whose_slope_is_not_positive_so_the_2050_value_is_held": [
+   "AK",
+   "CA",
+   "CO",
+   "CT",
+   "DC",
+   "DE",
+   "HI",
+   "IL",
+   "KS",
+   "LA",
+   "MA",
+   "MD",
+   "ME",
+   "MI",
+   "MN",
+   "MT",
+   "NC",
+   "ND",
+   "NJ",
+   "NM",
+   "NV",
+   "NY",
+   "OR",
+   "RI",
+   "SD",
+   "VA",
+   "VT",
+   "WA",
+   "WI"
+  ],
+  "G_V5_decreasing_steps": 38,
+  "G_V5_years": [
+   2074
+  ],
+  "G_V5_entries": [
+   "AK",
+   "AL",
+   "AR",
+   "AZ",
+   "CT",
+   "FL",
+   "GA",
+   "HI",
+   "IA",
+   "ID",
+   "IL",
+   "IN",
+   "KS",
+   "KY",
+   "LA",
+   "ME",
+   "MI",
+   "MN",
+   "MO",
+   "MS",
+   "MT",
+   "NC",
+   "ND",
+   "NE",
+   "NH",
+   "NV",
+   "OH",
+   "OK",
+   "PA",
+   "SC",
+   "SD",
+   "TN",
+   "TX",
+   "UT",
+   "VA",
+   "WI",
+   "WV",
+   "WY"
+  ],
+  "G_V5_two_number_count": "38 states and no District of Columbia entry",
+  "G_V5_no_entry_with_a_regulation_ever_decreases": true,
+  "G_V5_registered_expected_count": 38,
+  "G_V5_step_magnitude_min": 3.2692611197926436e-05,
+  "G_V5_step_magnitude_max": 3.269261120136813e-05,
+  "G_V5_step_is_identical_in_all_38": false
+ },
+ "key_numbers": {
+  "n_rows": 160,
+  "verdicts": {
+   "QUOTE_EXACT": 94,
+   "EXACT_COUNT": 40,
+   "PASS": 15,
+   "QUOTE_WITH_CI": 5,
+   "INHERITED_NOT_RE_MEASURED": 4,
+   "DISCLOSED": 2
+  },
+  "sha256": "413713815cac0ebad0adead4c66afe14f326dc351c03870f492b4feb246845d2"
+ },
+ "product_hygiene_2026_09_06_floor_binding_columns": {
+  "what": "the root products carried one column, `statutory_floor_binds`, which was TRUE on exactly the entries that carry a VEHICLE regulation.  It is renamed `vehicle_schedule_binds` and the ruling-D5 ELECTRICITY floor is published beside it as `electricity_floor_binds`",
+  "parity_certificate": "PARITY_HYGIENE_V33.json",
+  "n_entry_years_in_the_delivered_product": 2601,
+  "vehicle_schedule_binds": {
+   "n_entries": 13,
+   "two_number_count": "12 states and the District of Columbia",
+   "entries": [
+    "CA",
+    "CO",
+    "DC",
+    "DE",
+    "MA",
+    "MD",
+    "NJ",
+    "NM",
+    "NY",
+    "OR",
+    "RI",
+    "VT",
+    "WA"
+   ],
+   "n_entry_years": 643
+  },
+  "electricity_floor_binds": {
+   "n_entries": 21,
+   "two_number_count": "20 states and the District of Columbia",
+   "entries": [
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "IL",
+    "MA",
+    "ME",
+    "MI",
+    "MN",
+    "NC",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OR",
+    "RI",
+    "UT",
+    "VA",
+    "VT",
+    "WA"
+   ],
+   "n_entry_years": 743,
+   "mean_lift_over_the_no_floor_projection": 0.22612399658328014,
+   "min_lift": 0.0006313688932919059,
+   "max_lift": 0.5687732828501825
+  },
+  "entries_on_which_both_are_TRUE_somewhere": {
+   "n_entries": 12,
+   "two_number_count": "11 states and the District of Columbia",
+   "entries": [
+    "CA",
+    "CO",
+    "DC",
+    "DE",
+    "MA",
+    "NJ",
+    "NM",
+    "NY",
+    "OR",
+    "RI",
+    "VT",
+    "WA"
+   ]
+  }
+ },
+ "retired_invariants": {
+  "exactly_zero_total_direct_co2": {
+   "v31c_entry_years": 180,
+   "v31c_entries": [
+    "DC",
+    "NY",
+    "OR",
+    "RI",
+    "VT",
+    "WA"
+   ],
+   "v31c_two_number": "5 states and the District of Columbia",
+   "v31c_first_year": 2046,
+   "v32_entry_years": 0,
+   "v32_entries": [],
+   "action": "DELETED",
+   "reason": "under an age-specific survival table a fraction of every cohort ever added is still in service in 2075, so a surviving gasoline fraction always remains and no delivered total is exactly zero.  There is no `v3.2` number that means what the `v3.1c` count meant"
+  },
+  "electric_stock_share_exactly_one": {
+   "v31c_entries": [
+    "CA",
+    "DC",
+    "MA",
+    "MD",
+    "NJ",
+    "NY",
+    "OR",
+    "RI",
+    "VT",
+    "WA"
+   ],
+   "v31c_n_entries": 10,
+   "v31c_two_number": "9 states and the District of Columbia",
+   "v31c_first_year": 2046,
+   "v32_entries": [],
+   "v32_n_entries": 0,
+   "v32_maximum_delivered_share": 0.9999965921179218,
+   "v32_where_the_maximum_occurs": {
+    "entry": "CA",
+    "year": 2075
+   },
+   "v32_threshold_0_999_entries": {
+    "CA": 2057,
+    "DC": 2057,
+    "MA": 2057,
+    "MD": 2057,
+    "NJ": 2057,
+    "NY": 2057,
+    "OR": 2057,
+    "RI": 2057,
+    "VT": 2057,
+    "WA": 2057
+   },
+   "action": "DELETED",
+   "reason": "a survival-weighted stock keeps a residue of every pre-mandate cohort, so the share approaches one and never attains it.  The successor is a THRESHOLD statement, which is a different quantity and is registered as a new required form, not as a re-assignment of this one",
+   "v32_threshold_0_999_two_number": "9 states and the District of Columbia"
+  },
+  "full_schedule_gasoline_share_exactly_zero_at_2050": {
+   "group": "FULL_SCHEDULE_10",
+   "group_two_number": "9 states and the District of Columbia",
+   "v31c_entries_at_exactly_zero": [
+    "CA",
+    "MA",
+    "MD",
+    "NJ"
+   ],
+   "v31c_n_at_exactly_zero": 4,
+   "v32_entries_at_exactly_zero": [],
+   "v32_n_at_exactly_zero": 0,
+   "v32_smallest_gasoline_share_in_the_group_at_2050": 0.07921783441439535,
+   "v32_smallest_at": "NJ",
+   "v32_largest_gasoline_share_in_the_group_at_2050": 1.0,
+   "action": "DELETED",
+   "reason": "the exactly-zero gasoline share was the same artefact seen on a second axis: it required every pre-mandate cohort to have left the stock.  Under survival every entry in the group still burns gasoline at 2050"
+  },
+  "service_life_length_axis": {
+   "v31c_drawn_column": "cav_service_life_years",
+   "v31c_support": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "v31c_consumed_by_the_delivered_interval": true,
+   "v32_column_still_present_in_the_registered_load_stream": true,
+   "v32_support_still_drawn": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "v32_consumed_by_the_delivered_interval": false,
+   "v32_replacement_axis": "survival SHAPE, 3 registered members, equal weight",
+   "v32_replacement_members": [
+    "MOVES5_LIGHT_DUTY_TRUCK",
+    "MOVES5_PASSENGER_CAR",
+    "NHTSA_2006_PASSENGER_CAR"
+   ],
+   "v31c_9_and_15_year_branches": [
+    9,
+    15
+   ],
+   "action": "DELETED",
+   "reason": "an age-specific survival table has no service-life LENGTH parameter to vary, so the 9-year and 15-year single-factor branches and the drawn length have no meaning under the delivered convention.  The stream column is left in place, unread, so that the registered seed-42 load stream stays bitwise the stream `v3.1c` drew; the equal-weight survival SHAPE family replaces the axis"
+  }
+ },
+ "retired_invariants_recomputed_on_v33": {
+  "entry_years_of_exactly_zero_total_direct_co2": 0,
+  "entries_at_an_electric_stock_share_of_exactly_one": 0,
+  "largest_delivered_electric_stock_share": 0.9999965921179218,
+  "smallest_full_schedule_gasoline_share_of_direct_co2_at_2050": 0.07921783441439535,
+  "full_schedule_entries_at_a_gasoline_share_of_exactly_zero_at_2050": 0
+ }
+}

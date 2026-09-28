@@ -1,0 +1,1252 @@
+{
+  "task": "the 5th-95th percentile interval on the delivered v3.3 central: ruling D6 asymptotic continuation on both axes over the ruling D5 statutory-targets-honoured floors",
+  "build": "v3.3 band_j33",
+  "specification": "expert_central_v33_final/BAND_REBUILD_SPEC.md",
+  "how_to_read_the_files_that_carry_a_prescription_column": {
+    "the_defect_this_prevents": "reading one of these files whole doubles every count, and it carries a census of entry-years with a central of exactly zero that belongs to the v3.1c parity certificate alone -- 180 of them, on the direct CO2 metric, on each capacity basis -- into a sentence about the delivered interval, where that count is 0",
+    "column": "prescription",
+    "values": {
+      "V33_POLICY_CONDITIONAL": "the delivered v3.3 interval: conditional on the published Alternative Transportation case, on the ruling-D6 ASYMPTOTIC continuation of BOTH axes over the ruling-D5 statutory-targets-honoured floors",
+      "V31C_REPRODUCED_PARITY_CERTIFICATE": "the SHIPPED v3.1c prescription reproduced through this build's harness as a parity certificate.  It is not a delivered number and none of its rows may be quoted beside a v3.3 number"
+    },
+    "files": [
+      "band_51_v33_j2000_real_capacity.csv",
+      "band_51_v33_j2000_equal_size_comparison.csv",
+      "national_band_v33_j2000.csv",
+      "band_median_width_by_year_v33_j2000.csv",
+      "median_p50_over_central_v33_j2000.csv",
+      "containment_diagnostic_v33_j2000.csv"
+    ],
+    "the_reader": "df = pd.read_csv(path, float_precision='round_trip'); df = df[df.prescription == 'V33_POLICY_CONDITIONAL']",
+    "every_count_in_this_summary_is_per_prescription": "the keys of n_entry_years_with_a_central_of_exactly_zero, and of every other per-prescription block, end in the prescription name for exactly this reason",
+    "documented_reader": "expert_central_v33_final/band_j33/README.md"
+  },
+  "counting_rule": "the District of Columbia is not a state; every count of entries below is two numbers, and the horizon reads by 2075",
+  "n_entries": {
+    "total": 51,
+    "states": 50,
+    "district_of_columbia": 1
+  },
+  "n_draws": 2000,
+  "seeds": {
+    "load": 42,
+    "published_market_case": 4242,
+    "compliance_level": 424242,
+    "compliance_level_atom": 42424242,
+    "electricity_member": 4242424242,
+    "survival_shape": 424242424242
+  },
+  "central_product": "expert_central_v33_final/expert_central_v33_annual.csv",
+  "central_product_equal_size_basis": "expert_central_v33_final/companion/expert_central_v31_equal_size_comparison_annual.csv",
+  "central_products_are_gated_not_asserted": "six gates stand behind the two delivered centrals this interval is reported against, and four more stand behind the four continuation bound products the named lines are gated against; see gates.D6_the_central_the_interval_is_reported_against",
+  "post_2050_continuation_rule_of_the_electricity_axis": "ASYMPTOTIC",
+  "post_2050_continuation_rule_of_the_vehicle_axis": "ASYMPTOTIC",
+  "reading_of_the_statutory_floor_the_interval_is_conditional_on": "STATUTORY_TARGETS_HONOURED",
+  "post_2050_continuation_rule_note": "The post-2050 continuation rule of BOTH axes is asymptotic on the central: each axis continues along its own published terminal slope at a decreasing rate from 2051 to 2075, approaching a fully clean supply without reaching it, and the enacted statutory floors still apply on top of the electricity axis.  Where the published terminal slope is zero or negative the 2050 value is held.  The rule IS inside this interval: every one of the eleven electricity members is continued by it.  The two rules it supersedes are retained in full and are delivered beside the interval as named lines on each axis -- the linear trend rule, which extrapolates a five-year slope for twenty-five years and clips at one and which takes 4 states and no District of Columbia entry to a fully clean supply of electricity that the delivered rule does not, and the held rule, which carries each entry own 2050 published value forward unchanged.  Under the delivered rule an exact zero of grid carbon at 2075 occurs only where the entry own enacted statutory floor is itself exactly one.",
+  "post_2050_continuation_rule_named_lines": [
+    "NAMED_LINE_POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS",
+    "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS",
+    "NAMED_LINE_POST_2050_TREND_CONTINUATION_VEHICLE_AXIS",
+    "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS"
+  ],
+  "reading_of_the_statutory_floor_named_line": "NAMED_LINE_ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR",
+  "d6_gates": {
+    "D6a_the_three_rules_agree_through_2050_max_abs_dev": 0.0,
+    "D6b_after_2050_outside_its_own_two_bounds_violations": 0,
+    "D6b_entries_where_the_linear_bound_falls_BELOW_the_held_bound_after_2050": [
+      "KS",
+      "LA",
+      "MD",
+      "MT",
+      "ND",
+      "NJ",
+      "SD",
+      "WI"
+    ],
+    "D6b_which_bound_is_the_upper_one_is_not_a_constant": "the linear trend bound is above the held bound only where the published 2045-2050 slope is positive.  Where that slope is negative the linear rule falls away from 2050 and the held rule is the upper bound instead, and the delivered asymptotic path -- which holds the 2050 value whenever the slope is not positive -- is then the held path itself.  The gate is therefore that the delivered path lies between its own two bounds, not that it lies below a bound named in advance",
+    "D6c_entries_with_no_statute_at_exactly_one_delivered_a_fully_clean_grid_at_2075": [],
+    "D6c_entries_delivered_a_fully_clean_grid_at_2075": [
+      "CA",
+      "CO",
+      "CT",
+      "DC",
+      "IL",
+      "ME",
+      "MI",
+      "MN",
+      "NC",
+      "NM",
+      "NV",
+      "NY",
+      "OR",
+      "RI",
+      "VA",
+      "VT",
+      "WA"
+    ],
+    "D6d_trend_differs_from_the_delivered_rule_after_2050_n_cells": 750,
+    "D6d_frozen_differs_from_the_delivered_rule_after_2050_n_cells": 550,
+    "D6d_trend_max_abs_dev_after_2050": 0.10883182465932772,
+    "D6d_frozen_max_abs_dev_after_2050": 0.23150770588755765,
+    "D6e_entries_the_trend_rule_takes_to_a_fully_clean_grid_by_2075": [
+      "AR",
+      "MS",
+      "SC",
+      "TN"
+    ],
+    "D6e_of_which_have_a_registered_statutory_floor_of_any_level": [],
+    "D6f_delivered_below_the_registered_floor_violations": 0,
+    "D6g_enforceable_standard_reading_reproduces_the_v32_delivered_path_through_2050_max_abs_dev": 0.0,
+    "D6g_enforceable_standard_reading_differs_from_the_delivered_reading_n_cells": 121,
+    "D6g_enforceable_standard_reading_differs_from_the_delivered_reading_through_2050_n_cells": 21,
+    "D6g_entries_whose_delivered_share_moves_with_the_floor_reading": [
+      "CA",
+      "CO",
+      "NC",
+      "NV",
+      "UT"
+    ],
+    "D6_disclosure": "the delivered path is continuous in level and in slope at 2050 and approaches a fully clean supply of electricity without reaching it, so every exact zero of grid carbon at 2075 is put there by an enacted statutory floor of exactly one and by nothing else.  Both retained bounds are delivered beside the interval as named lines, on this axis and on the vehicle axis alike, and neither is inside the interval.",
+    "D5_disclosure": "the interval is conditional on the statutory-targets-honoured reading of the floor.  The enforceable-standard reading is delivered beside it as a named line and never as width, and neither reading is quoted without naming which one it is.",
+    "VEHICLE_AXIS": {
+      "in_window_max_abs_dev_across_the_three_rules": 0.0,
+      "after_2050_below_the_frozen_bound_violations": 0,
+      "after_2050_above_the_trend_bound_violations": 0,
+      "the_asymptotic_source_never_reaches_one_violations": 0,
+      "n_cells_after_2050_where_the_trend_rule_differs": 75
+    }
+  },
+  "measured_load_anchor": {
+    "implied_direct_current_automation_power_a_deployed_vehicle_W": 776.5398630499334,
+    "year": 2025,
+    "measured_from": "expert_central_v33_final/expert_central_v33_annual.csv",
+    "driving_hours_a_year": 392.98333333333335,
+    "grid_to_vehicle_conversion_read_off_the_kernel_rows": 0.9,
+    "conversion_coefficient": 0.21,
+    "deployed_vehicles": 33266.41669719791,
+    "automation_direct_current_load_kwh": 10151820.030840432,
+    "anchor_W": 446.7,
+    "anchor_source": "the one paired dynamometer measurement of automation load in the build's own precedent table of published and measured vehicle automation power",
+    "ratio_anchor_over_implied": 0.5752441326650556,
+    "the_two_activity_scenarios_in_this_build": "the frozen unit ledger runs 1095 driving hours a year, an urban service scenario, and this state layer runs 392.98333333333335, the household mean.  The power above is the state layer's and the two are not the same quantity.",
+    "what_the_named_line_scales": "the vehicle automation load only -- sensing, computing and communication, on electric and gasoline vehicles alike.  The signal-infrastructure load is not touched, because the measurement is of a vehicle.",
+    "other_published_anchors_W": {
+      "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 840.0,
+      "Gawron_et_al_2018_total_added_power_midsize_level_4": 220.0
+    }
+  },
+  "named_line_move_flag": {
+    "rule": "A named line is recorded as moving a metric when its national line differs from the central line by more than a relative one part in ten thousand million million.  Both lines are recomputed through the same harness, so a line that moves nothing still differs in the last bits of a floating point sum, and the exact-equality test this replaces reported the central line as moving against itself.  The tolerance is tested rather than asserted: the classification is recomputed at four tolerances spanning three orders of magnitude and must be identical at all four, and the largest deviation called not moving and the smallest called moving must be separated by a factor of at least ten thousand.",
+    "declared_tolerance_relative": 1e-10,
+    "tolerance_test": {
+      "declared_tolerance_relative": 1e-10,
+      "rule": "A named line is recorded as moving a metric when its national line differs from the central line by more than a relative one part in ten thousand million million.  Both lines are recomputed through the same harness, so a line that moves nothing still differs in the last bits of a floating point sum, and the exact-equality test this replaces reported the central line as moving against itself.  The tolerance is tested rather than asserted: the classification is recomputed at four tolerances spanning three orders of magnitude and must be identical at all four, and the largest deviation called not moving and the smallest called moving must be separated by a factor of at least ten thousand.",
+      "n_rows": 3978,
+      "n_rows_moving": 2394,
+      "n_rows_not_moving": 1584,
+      "n_rows_bitwise_identical_to_the_central": 1350,
+      "largest_relative_deviation_classified_as_not_moving": 1.0911747903320448e-15,
+      "smallest_relative_deviation_classified_as_moving": 2.0677705344405962e-07,
+      "separation_factor": 189499478.24686942,
+      "required_separation_factor": 10000.0,
+      "tolerance_ladder": [
+        "1e-09",
+        "1e-10",
+        "1e-11",
+        "1e-12"
+      ],
+      "classification_identical_at_every_tolerance_on_the_ladder": true,
+      "what_the_exact_equality_test_this_replaces_would_report": {
+        "n_rows_it_calls_moving": 2628,
+        "of_which_are_below_the_declared_tolerance": 234,
+        "of_which_are_the_central_line_against_itself": 25,
+        "why": "both lines are recomputed through the same harness, so a line that moves nothing still differs in the last bits of a floating point sum"
+      },
+      "lines_that_must_not_move_a_metric_by_construction": {
+        "CENTRAL_ALTTRNP": {
+          "metrics": [
+            "direct_co2_kg",
+            "energy_kwh_eq",
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "it is the central line and cannot move against itself"
+        },
+        "NAMED_LINE_ETA_HIGH_BRANCH_0p2744": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the conversion coefficient multiplies the gasoline term of energy and of carbon and does not enter the carbon content of a kilowatt hour at all"
+        },
+        "NAMED_LINE_ETA_LOW_BRANCH_0p17": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the conversion coefficient multiplies the gasoline term of energy and of carbon and does not enter the carbon content of a kilowatt hour at all"
+        },
+        "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the deployment scale multiplies the vehicle and the signal load by the same factor, so the electricity weights of the national mean are unchanged, and a carbon intensity does not depend on how many units are deployed"
+        },
+        "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the deployment scale multiplies the vehicle and the signal load by the same factor, so the electricity weights of the national mean are unchanged, and a carbon intensity does not depend on how many units are deployed"
+        },
+        "NAMED_LINE_POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": {
+          "metrics": [],
+          "why": "a continuation rule on the VEHICLE axis changes how much of the deployed stock is electric, so it moves the mix of carriers and therefore the kilowatt hours as well as the carbon; nothing is asserted about it"
+        },
+        "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": {
+          "metrics": [],
+          "why": "a continuation rule on the VEHICLE axis changes how much of the deployed stock is electric, so it moves the mix of carriers and therefore the kilowatt hours as well as the carbon; nothing is asserted about it"
+        },
+        "NAMED_LINE_MEASURED_LOAD_ANCHOR": {
+          "metrics": [],
+          "why": "this line scales the vehicle load and not the signal load, so it changes the electricity weights of the national intensity mean; it is expected to move all three metrics and nothing is asserted about it"
+        }
+      }
+    }
+  },
+  "comparison_against_an_earlier_interval": {
+    "status": "WITHDRAWN",
+    "what_was_withdrawn": "the delivered comparison of this interval half-widths against the band_j32 and band_j321 products, and the summary of it that the earlier build carried in this field",
+    "why": "the `v3.3` registry rules that no number from that family may be quoted beside a v3.3 number.  Those intervals are centred on a central this build does not deliver; their eleven electricity members are built from the enforceable-standard electricity input rather than the statutory-targets-honoured one; and ruling `D6` rewrites every row after 2050 on both axes.  Their gate `Q1` -- the delivered central is one of the members, bitwise -- would now fail on its own terms, which is the reason this interval was rebuilt rather than re-captioned",
+    "what_is_delivered_instead": "the parity certificate against the SHIPPED `v3.1c` interval, which is a different object: it reproduces a shipped product bitwise through this build own harness, on that product own central and on the electricity path it ran on, and it certifies the harness rather than comparing two estimands",
+    "authority": "expert_central_v33_final/V33_REGISTRY.md, section 9"
+  },
+  "r3_turning_count_disclosure": {
+    "what_this_is": "the four-row disclosure the registered ruling requires beside every turning count.  It is read here out of the delivered disclosure product rather than restated.",
+    "source_file": "expert_central_v32_final/disclosures/R3_TURNING_COUNT_DISCLOSURE.csv",
+    "rows": [
+      {
+        "row": "central",
+        "reading_of_the_vehicle_rule": "the central: the schedule met in full, entirely with battery-electric vehicles",
+        "registered_family_level": "STATUTE_MET_EXACTLY_1_0",
+        "n_entries_with_a_turning_point_by_2075": 9,
+        "of_51": "9 of 51",
+        "two_number_count": "8 states and the District of Columbia",
+        "entries_and_years": "CA 2038; CO 2060; DC 2035; NM 2060; NY 2036; OR 2039; RI 2035; VT 2034; WA 2041",
+        "vehicle_groups_of_those_entries": "CAPPED_82_MY2032_3; FULL_SCHEDULE_10",
+        "earliest_turning_point": 2034.0,
+        "latest_turning_point": 2060.0,
+        "cumulative_co2_2025_2075_national_kg": 109312994827.11678,
+        "cumulative_pct_change_vs_central": 0.0,
+        "co2_2050_national_kg": 1972226476.4302282,
+        "co2_2050_pct_change_vs_central": 0.0,
+        "co2_2075_national_kg": 4547815870.400437,
+        "co2_2075_pct_change_vs_central": 0.0,
+        "source_file": "expert_central_v33_candidate/robustness/robustness_scenarios_v32.csv",
+        "per_entry_source_file": "expert_central_v33_candidate/robustness/turning_point_census_by_scenario_and_entry_v33.csv"
+      },
+      {
+        "row": "compliance_level_PHEV_20PCT_CAP",
+        "reading_of_the_vehicle_rule": "the plug-in-hybrid allowance the regulation itself grants, 20 per cent of the annual requirement",
+        "registered_family_level": "PHEV_AT_THE_20PCT_CAP_0_8",
+        "n_entries_with_a_turning_point_by_2075": 0,
+        "of_51": "0 of 51",
+        "two_number_count": "no state and no District of Columbia entry",
+        "entries_and_years": "none",
+        "vehicle_groups_of_those_entries": "none",
+        "earliest_turning_point": "",
+        "latest_turning_point": "",
+        "cumulative_co2_2025_2075_national_kg": 121500827437.34018,
+        "cumulative_pct_change_vs_central": 11.149481934420514,
+        "co2_2050_national_kg": 2181352924.5667367,
+        "co2_2050_pct_change_vs_central": 10.603571680826018,
+        "co2_2075_national_kg": 5126951387.333065,
+        "co2_2075_pct_change_vs_central": 12.734365977786055,
+        "source_file": "expert_central_v33_candidate/robustness/robustness_scenarios_v32.csv",
+        "per_entry_source_file": "expert_central_v33_candidate/robustness/turning_point_census_by_scenario_and_entry_v33.csv"
+      },
+      {
+        "row": "regulation_not_enforced",
+        "reading_of_the_vehicle_rule": "the rule is not enforced, which is its legal status after the federal disapproval",
+        "registered_family_level": "REGULATION_NOT_ENFORCED",
+        "n_entries_with_a_turning_point_by_2075": 0,
+        "of_51": "0 of 51",
+        "two_number_count": "no state and no District of Columbia entry",
+        "entries_and_years": "none",
+        "vehicle_groups_of_those_entries": "none",
+        "earliest_turning_point": "",
+        "latest_turning_point": "",
+        "cumulative_co2_2025_2075_national_kg": 154855714163.76477,
+        "cumulative_pct_change_vs_central": 41.66267643538244,
+        "co2_2050_national_kg": 2819142380.9171352,
+        "co2_2050_pct_change_vs_central": 42.94212224652023,
+        "co2_2075_national_kg": 6514299795.73061,
+        "co2_2075_pct_change_vs_central": 43.24018345001779,
+        "source_file": "expert_central_v33_candidate/robustness/robustness_scenarios_v32.csv",
+        "per_entry_source_file": "expert_central_v33_candidate/robustness/turning_point_census_by_scenario_and_entry_v33.csv"
+      },
+      {
+        "row": "post_regulatory_FROZEN_82",
+        "reading_of_the_vehicle_rule": "the three entries whose rule stops at 82 per cent are held there instead of carrying the authored extension",
+        "registered_family_level": "FROZEN_82",
+        "n_entries_with_a_turning_point_by_2075": 7,
+        "of_51": "7 of 51",
+        "two_number_count": "6 states and the District of Columbia",
+        "entries_and_years": "CA 2038; DC 2035; NY 2036; OR 2039; RI 2035; VT 2034; WA 2041",
+        "vehicle_groups_of_those_entries": "FULL_SCHEDULE_10",
+        "earliest_turning_point": 2034.0,
+        "latest_turning_point": 2041.0,
+        "cumulative_co2_2025_2075_national_kg": 109694392554.17683,
+        "cumulative_pct_change_vs_central": 0.3489042887016902,
+        "co2_2050_national_kg": 1975646457.5235372,
+        "co2_2050_pct_change_vs_central": 0.17340711800497566,
+        "co2_2075_national_kg": 4575767555.256864,
+        "co2_2075_pct_change_vs_central": 0.6146177781372053,
+        "source_file": "expert_central_v33_candidate/robustness/robustness_scenarios_v32.csv",
+        "per_entry_source_file": "expert_central_v33_candidate/robustness/turning_point_census_by_scenario_and_entry_v33.csv"
+      }
+    ],
+    "r4_qualifier": "A turning count must travel with this qualifier.  Colorado is in the central census; New Mexico is in the central census.  Each of them rests on an authored extension of the vehicle schedule past model year 2032: their rule reaches 0.82 of new vehicles in 2032 and the schedule beyond that year is the build own, not the regulation own."
+  },
+  "turning_count_r4_qualifier": "A turning count must travel with this qualifier.  Colorado is in the central census; New Mexico is in the central census.  Each of them rests on an authored extension of the vehicle schedule past model year 2032: their rule reaches 0.82 of new vehicles in 2032 and the schedule beyond that year is the build own, not the regulation own.",
+  "energy_boundary": {
+    "2050": {
+      "national_energy_total_kwh_eq": 8543205764.302047,
+      "gasoline_chemical_energy_kwh_gge": 7183070131.851559,
+      "gasoline_share_of_energy_at_the_energy_consumption_boundary": 0.840793295868649,
+      "gasoline_share_of_energy_at_the_direct_current_boundary": 0.5503308106370453,
+      "the_direct_current_denominator": "the electric vehicles' wall electricity at the registered grid-to-vehicle conversion, plus the signal-infrastructure electricity, which is metered at the site and is not converted, plus the gasoline vehicles' direct-current load"
+    },
+    "2075": {
+      "national_energy_total_kwh_eq": 20651682659.41936,
+      "gasoline_chemical_energy_kwh_gge": 16218120097.311136,
+      "gasoline_share_of_energy_at_the_energy_consumption_boundary": 0.7853171271694876,
+      "gasoline_share_of_energy_at_the_direct_current_boundary": 0.4592888454423182,
+      "the_direct_current_denominator": "the electric vehicles' wall electricity at the registered grid-to-vehicle conversion, plus the signal-infrastructure electricity, which is metered at the site and is not converted, plus the gasoline vehicles' direct-current load"
+    }
+  },
+  "energy_boundary_note": "The delivered energy metric is an energy-consumption total: it adds wall electricity to gasoline chemical energy on the registered gasoline gallon equivalent of 33.7 kilowatt hours a gallon, so a share of it is a share of two different things.  The gasoline share of the national energy total is therefore reported at both boundaries: at the energy-consumption boundary it is 78.5 per cent in 2075, and at the direct-current boundary 45.9 per cent.  The carbon shares are unaffected by the choice: carbon is computed from each carrier's own factor and never from the mixed total.",
+  "grid_intensity_exact_zeros": {
+    "n_entry_years_whose_central_grid_intensity_is_exactly_zero": 572,
+    "of_which_the_enacted_statutory_floor_is_what_puts_them_at_one": 572,
+    "n_entries_at_2075": 17,
+    "entries_at_2075": [
+      "CA",
+      "CO",
+      "CT",
+      "DC",
+      "IL",
+      "ME",
+      "MI",
+      "MN",
+      "NC",
+      "NM",
+      "NV",
+      "NY",
+      "OR",
+      "RI",
+      "VA",
+      "VT",
+      "WA"
+    ],
+    "no_floor_projection_is_delivered_at": "expert_central_v33_final/inputs/grid_paths_v31.csv, series bound_NO_STATUTORY_FLOOR__ASYMPTOTIC.  The v3.3 build carries no bounds product set: its bounds directory is empty, which is a fact about that build and is recorded in its own registry"
+  },
+  "grid_intensity_exact_zero_note": "An exact zero of an entry's carbon intensity is a property of the accounting convention and not a measurement of a grid with no combustion on it.  The convention applies a certificate-satisfiable retail obligation to a generation-side share, so an entry whose enacted standard reaches its full statutory level is carried at a clean share of one and its grid carbon is then exactly zero by construction.  572 entry-years of the delivered central sit at that share, 572 of them because the enacted floor puts them there.  The projection without the statutory floor is delivered as its own registered series and as its own product set, so a reader who does not accept the convention has the alternative in hand.",
+  "fossil_coefficient_cap": {
+    "combustion_bound_kg_per_kwh": 1.3337372831999998,
+    "basis": "97.72 kilograms of carbon dioxide a million British thermal units, the highest-carbon coal rank in the published emissions coefficients, at 3,412.14 British thermal units a kilowatt hour and a stated net thermal efficiency floor of 0.25",
+    "entries_capped": [
+      "VT"
+    ],
+    "uncapped_value": {
+      "VT": 12.480468757590508
+    }
+  },
+  "fossil_coefficient_cap_note": "The fossil-only carbon coefficient of VT is CAPPED at the combustion bound, 1.334 kilograms a kilowatt hour, and a capped value is described as capped and never as an estimate of what that entry's remaining fossil generation emits.  The uncapped value the arithmetic produces there is 12.48, which is not a physical intensity for any thermal plant; it is an artefact of dividing a small residual by a smaller one.",
+  "activity_basis_of_this_layer": {
+    "state_layer_driving_hours_a_year": 392.98333333333335,
+    "frozen_unit_ledger_driving_hours_a_year": 1095.0,
+    "ratio_ledger_over_layer": 2.786377708978328,
+    "note": "the two automation shares this build's two layers report differ by exactly this ratio, and any sentence that quotes one of them must say which layer it is"
+  },
+  "policy_state_the_interval_is_conditional_on": "ALTTRNP",
+  "named_lines": [
+    "NAMED_LINE_CB2026",
+    "NAMED_LINE_ELECTRNP",
+    "NAMED_LINE_ETA_HIGH_BRANCH_0p2744",
+    "NAMED_LINE_ETA_LOW_BRANCH_0p17",
+    "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT",
+    "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT",
+    "NAMED_LINE_POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS",
+    "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS",
+    "NAMED_LINE_POST_2050_TREND_CONTINUATION_VEHICLE_AXIS",
+    "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS",
+    "NAMED_LINE_ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR",
+    "NAMED_LINE_MEASURED_LOAD_ANCHOR"
+  ],
+  "counterfactual_baseline_named_line_note": "The published Counterfactual Baseline market case is carried beside this interval as a named line, at its own value, and it carries none of the interval weight.  The line is produced by this build own harness rather than read from a delivered product, because this build delivers no Counterfactual Baseline product: its bounds directory is empty, and four rows of its own number table that quote that case are marked as inherited and not re-measured for the same reason.  The federal fact travels with the line: 91 FR 7686, effective 2026-04-20, repealed the federal standard this published case describes, so the case is a policy-vintage bound and is never described as current federal policy.",
+  "counterfactual_baseline_named_line": {
+    "line": "NAMED_LINE_CB2026",
+    "status": "DELIVERED_AT_ITS_OWN_VALUE_COMPUTED_BY_THIS_HARNESS",
+    "what_it_is": "the published policy-vintage Counterfactual Baseline market case, run through this build own harness at this build own continuation rules and floor reading, and carried beside the interval.  It carries none of the interval weight",
+    "why_it_is_not_gated_against_a_delivered_product": "the v3.3 build delivers no Counterfactual Baseline product: its bounds directory is empty, and four rows of its own number table that quote that case read INHERITED_NOT_RE_MEASURED for the same reason.  The line here is therefore computed rather than read, and the six central gates that stand behind the delivered central stand behind the harness that computes it",
+    "where_the_inherited_rows_for_this_case_are": "expert_central_v33_final/KEY_NUMBERS_V33.csv, the four rows whose verdict reads INHERITED_NOT_RE_MEASURED.  Those rows are on the held continuation of the enforceable-standard reading and are NOT this line: this line is on this build own asymptotic continuation and its own floor reading, and the two must not be quoted for one another",
+    "the_federal_fact_that_travels_with_it": "91 FR 7686, effective 2026-04-20: the federal standard this published case describes was repealed.  The case is a policy-vintage bound and is never described as current federal policy"
+  },
+  "metrics": [
+    "energy_kwh_eq",
+    "direct_co2_kg",
+    "grid_intensity_kg_per_kwh"
+  ],
+  "electricity_members": [
+    "CAMBIUM24_HighDemandGrowth",
+    "CAMBIUM24_HighNGPrice",
+    "CAMBIUM24_HighRECost",
+    "CAMBIUM24_HighRECost_LowNGPrice",
+    "CAMBIUM24_LowNGPrice",
+    "CAMBIUM24_LowRECost",
+    "CAMBIUM24_LowRECost_HighNGPrice",
+    "CAMBIUM24_MidCase",
+    "EPA_IPM_2025RC",
+    "SS2024_Mid_Case",
+    "SS2024_Mid_Case_No_IRA"
+  ],
+  "survival_shape_members": [
+    "MOVES5_LIGHT_DUTY_TRUCK",
+    "MOVES5_PASSENGER_CAR",
+    "NHTSA_2006_PASSENGER_CAR"
+  ],
+  "conversion_coefficient_central": 0.21,
+  "conversion_coefficient_declared_list": [
+    0.17,
+    0.21,
+    0.2744
+  ],
+  "conversion_coefficient_prior": {
+    "family": "triangular on the declared list",
+    "support": [
+      0.17,
+      0.2744
+    ],
+    "mode": 0.21,
+    "p05": 0.1841604517283863,
+    "p50": 0.21658670232886884,
+    "p95": 0.25661536505828014,
+    "realised_support_over_the_2000_draws": [
+      0.1710216815598078,
+      0.2733040927858699
+    ],
+    "the_two_registered_branches_are_the_endpoints_of_this_support": true,
+    "and_are_also_delivered_as_full_products_and_as_named_lines": true,
+    "note": "the carbon a draw carries moves with the RECIPROCAL of the coefficient, so a median coefficient above the central puts the interval's median carbon a few per cent BELOW the central.  That shift is a property of the declared list, which places 0.21 nearer its low endpoint than its high one, and not of the model.  It is why the delivered median over central for carbon is not one, and it is reported rather than removed"
+  },
+  "conversion_coefficient_branches_at_the_endpoints_of_the_support": {
+    "ETA_HIGH_BRANCH_0p2744": 0.2744,
+    "ETA_LOW_BRANCH_0p17": 0.17
+  },
+  "deployment_scale_named_lines": {
+    "central_held_in_every_draw": 0.3,
+    "declared_range": [
+      0.15,
+      0.45
+    ],
+    "lines": {
+      "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT": 0.15,
+      "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT": 0.45
+    },
+    "the_model_is_exactly_linear_in_this_scale": "every entry starts from a deployed stock of exactly zero, so each year's deployed stock is the declared scale times a fixed path, every load is that stock times a per-unit quantity, and a carbon intensity does not depend on the scale at all.  Each named line is therefore the central rescaled by the level over 0.30.  The equality is not assumed: the harness is RUN at the declared level and compared with the central rescaled, cell by cell, in gates.named_lines",
+    "and_the_scale_is_kept_out_of_the_draws": true
+  },
+  "atom_mass": 0.5,
+  "drawn_axes": {
+    "load_parameters": "20, seed 42, unchanged",
+    "compliance_level": "13 entries with a vehicle rule, seed 424242 with an atom of mass one half at the statutory value, seed 42424242",
+    "electricity_member": "11 registered members, equal weight, seed 4242424242",
+    "survival_shape": "3 registered members, equal weight, seed 424242424242",
+    "conversion_coefficient": "triangular on the declared list -- support 0.17 to 0.2744, mode at the delivered central 0.21 -- carried from the registered seed-42 stream by the map that preserves every draw's position within its own prior"
+  },
+  "axes_not_drawn": {
+    "published_market_case": "FIXED at the central policy state (ruling D3); carried as a named line",
+    "deployment_scale": "held at 30 per cent by 2075 in every draw, against a declared 15 to 45; the two declared levels are delivered as named lines, each the central rescaled, and the equality is gated against the model run at the declared level",
+    "computing_workload_growth": "2 per cent a year, unsampled",
+    "hardware_efficiency_floor": "0.25, unsampled",
+    "cav_service_life_length": "RETIRED by ruling D2 and replaced by the survival SHAPE family"
+  },
+  "not_priced_caption_sentence": "Not priced by this interval: the deployment scale, held at 30 per cent of registered automobiles and 30 per cent of signalized intersections by 2075 in every draw, against its own declared range of 15 to 45 per cent -- the model is exactly linear in that scale, so the two declared levels are delivered beside the interval as named lines, each of them the central rescaled, and never as width; the reading of the statutory floor itself, held at the statutory-targets-honoured reading in every draw, with the enforceable-standard reading delivered beside the interval as a named line rather than as width; the vehicle load model, held at the inherited one, with the single paired dynamometer measurement in the build's own precedent table delivered beside the interval as a named measured-load line; the computing workload growth of 2 per cent a year and the hardware efficiency floor of 0.25, neither of which is drawn or varied anywhere in this build; and the published market case, held at the policy state the interval is conditional on and carried as a named line.  The post-2050 continuation rule IS inside this interval: every electricity member continues along its own 2045-2050 slope at a decreasing rate after 2050 with the enacted statutory floors applied on top, and the linear trend and frozen continuations are delivered beside the interval as named lines.  The fuel-to-direct-current conversion coefficient IS priced here: it is drawn triangular on the declared list, support 0.17 to 0.2744 with its mode at the delivered central 0.21, so the two registered branches are the endpoints of the support this interval samples rather than values outside it, and each of them is also delivered as a named line.",
+  "not_priced_caption_departure_from_the_earlier_wording": "Two clauses of this sentence are WITHDRAWN against the wording the earlier interval carried, and one is added.  The first withdrawal is the post-2050 continuation rule: the earlier build held each entry own 2050 published value in every draw and listed the rule among the things the interval does not price.  Ruling D6 puts the rule inside the interval -- every electricity member is continued along its own published 2045-2050 slope at a decreasing rate, with the enacted statutory floors applied on top -- so the clause that put it outside has been withdrawn, and the two retained bounds are delivered as named lines on each axis instead.  The second withdrawal is the claim that the trend rule is the optimistic bound and the only bound worth naming: ruling D6 keeps BOTH bounds on BOTH axes, and the delivered path sits between them on the electricity axis and above the linear bound on the vehicle axis, because a slower rise in the electric share of new automobiles leaves more combustion in the stock.  The clause that is ADDED is the reading of the statutory floor: the interval is conditional on the statutory-targets-honoured reading of ruling D5, the enforceable-standard reading is delivered beside it as a named line, and neither reading is quoted without naming which one it is.  The deployment scale, the workload growth, the hardware efficiency floor, the vehicle load model and the published market case are unchanged and are still not priced.",
+  "energy_interval_disclaimer": "The electricity-scenario axis changes the carbon content of a kilowatt hour, not the number of kilowatt hours.  Its contribution to the energy interval is therefore exactly zero, and an energy figure must not be captioned as though the electricity axis were inside it.  The same holds for the post-2050 continuation rule ON THAT AXIS and for the reading of the statutory floor: the delivered central, the two electricity-axis continuation lines and the enforceable-standard line carry the same energy in every entry and in every year, bitwise, and they part company only in carbon.  The two VEHICLE-axis continuation lines are a different object and are not covered by this sentence: a rule on that axis moves how much of the deployed stock is electric, so it moves the kilowatt hours as well as the carbon, and the movement is reported rather than gated.",
+  "what_this_interval_does_not_produce": "Turning points.  This product is a distribution over annual quantities on one policy state; the entry-level turning-point count is a property of the CENTRAL and is carried in the central's own products.  On the asymptotic continuation this interval is reported against, the census by 2075 reads 9 of 51, 8 states and the District of Columbia, which is two numbers because the District of Columbia is not a state.  The four-row disclosure that must travel with any such count is delivered in full beside this field, and so is the qualifier that names the entries whose count rests on an authored extension.  Nothing in this interval bears on any of those counts.",
+  "largest_relative_halfwidth_reading_rule": "the floor explanation is attached where the relative half-width exceeds 1.0, that is, where the interval is wider than the central it is reported against",
+  "floor_denominator_note": "Where an entry's central grid intensity is exactly zero, its central carbon is that of the surviving gasoline vehicles alone.  A ratio taken against that central -- a relative half-width, or an interval median over the central -- is then a statement about the denominator and not about the spread of the draws.  The count of such entries is carried beside every such median, and the cells themselves are in largest_relative_halfwidth_cells_v33_j2000.csv.",
+  "containment_status": "DIAGNOSTIC_NOT_A_VALIDATION",
+  "containment_why": "the draws are centred on the central, so containment of the central by its own draws is close to a tautology; it is reported because a reader who does not see it will ask, and it establishes nothing about calibration",
+  "nesting_order_of_the_width_decomposition": [
+    "t1_load_only",
+    "t2_plus_compliance_level",
+    "t3_plus_survival_shape",
+    "t4_TOTAL_plus_electricity_member"
+  ],
+  "the_width_decomposition_also_carries_the_conversion_coefficient": "the load-draw tier includes the conversion coefficient, whose overhead is one of the twenty registered load parameters.  A further tier holds that coefficient at the delivered central and is nested inside the load tier, so the width the coefficient contributes is delivered as its own column rather than left inside the load draws: median_rel_width_load_draws_without_the_conversion_coefficient, and median_rel_increment_conversion_coefficient, in width_decomposition_by_group_v33_j2000.csv",
+  "summary": {
+    "real_energy_kwh_eq": {
+      "largest_symmetric_halfwidth_at": "VT 2054",
+      "largest_symmetric_halfwidth_central_there": 6671296.844850481,
+      "largest_symmetric_halfwidth_why": "An ordinary width.  The largest relative half-widths of this metric are not produced by a near-zero denominator: the central here is a full magnitude and the ratio is the actual spread of the draws.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 0,
+      "median_symmetric_halfwidth_2050": 0.23733640382897864,
+      "median_symmetric_halfwidth_2075": 0.23119376970408254,
+      "largest_symmetric_halfwidth_any_year": 0.27810805614867073,
+      "median_p50_over_central_2075": 0.9716150777876807,
+      "national_p05_2075": 16062563184.370285,
+      "national_p50_2075": 20341761852.86605,
+      "national_p95_2075": 25451362038.093174,
+      "national_central_2075": 20651682659.419357,
+      "national_rel_halfwidth_2050": 0.2344941443098879,
+      "national_rel_halfwidth_2075": 0.22731316882405708
+    },
+    "real_direct_co2_kg": {
+      "largest_symmetric_halfwidth_at": "CA 2075",
+      "largest_symmetric_halfwidth_central_there": 6359.489408267075,
+      "largest_symmetric_halfwidth_why": "A relative half-width divides by the central, and in these cells the central sits AT OR NEXT TO A FLOOR rather than at a magnitude: the entry's delivered electricity path reaches a clean share at which its central grid carbon is exactly zero -- so its central total carbon is that of the surviving gasoline vehicles alone -- or its central grid intensity is within a thousandth of zero.  An electricity member that does not reach that clean share puts grid carbon back, and the ratio against a near-zero denominator is large.  These cells say something about the denominator, not about the width of the distribution; read the absolute p05, p50 and p95 columns beside them.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 0,
+      "median_symmetric_halfwidth_2050": 0.2450204157157711,
+      "median_symmetric_halfwidth_2075": 0.2434828764295072,
+      "largest_symmetric_halfwidth_any_year": 9239.037812852617,
+      "median_p50_over_central_2075": 0.9716200937344747,
+      "national_p05_2075": 3469873771.802591,
+      "national_p50_2075": 4495179001.685184,
+      "national_p95_2075": 5698197950.503581,
+      "national_central_2075": 4547815870.400437,
+      "national_rel_halfwidth_2050": 0.24680041248899803,
+      "national_rel_halfwidth_2075": 0.24498839027367936
+    },
+    "real_grid_intensity_kg_per_kwh": {
+      "largest_symmetric_halfwidth_at": "TN 2075",
+      "largest_symmetric_halfwidth_central_there": 6.419820052986831e-07,
+      "largest_symmetric_halfwidth_why": "A relative half-width divides by the central, and in these cells the central sits AT OR NEXT TO A FLOOR rather than at a magnitude: the entry's delivered electricity path reaches a clean share at which its central grid carbon is exactly zero -- so its central total carbon is that of the surviving gasoline vehicles alone -- or its central grid intensity is within a thousandth of zero.  An electricity member that does not reach that clean share puts grid carbon back, and the ratio against a near-zero denominator is large.  These cells say something about the denominator, not about the width of the distribution; read the absolute p05, p50 and p95 columns beside them.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 17,
+      "median_symmetric_halfwidth_2050": 0.546739964135328,
+      "median_symmetric_halfwidth_2075": 0.688707653199216,
+      "largest_symmetric_halfwidth_any_year": 169312.79813997098,
+      "median_p50_over_central_2075": 0.9996723132273598,
+      "national_p05_2075": 0.03676205959072207,
+      "national_p50_2075": 0.06296994130515554,
+      "national_p95_2075": 0.09904568702022755,
+      "national_central_2075": 0.06111302355362525,
+      "national_rel_halfwidth_2050": 0.38637873740723766,
+      "national_rel_halfwidth_2075": 0.5095773683562969
+    },
+    "equal_energy_kwh_eq": {
+      "largest_symmetric_halfwidth_at": "VT 2058",
+      "largest_symmetric_halfwidth_central_there": 50250926.12561013,
+      "largest_symmetric_halfwidth_why": "An ordinary width.  The largest relative half-widths of this metric are not produced by a near-zero denominator: the central here is a full magnitude and the ratio is the actual spread of the draws.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 0,
+      "median_symmetric_halfwidth_2050": 0.236993877932747,
+      "median_symmetric_halfwidth_2075": 0.2307389934484322,
+      "largest_symmetric_halfwidth_any_year": 0.2763576360830064,
+      "median_p50_over_central_2075": 0.9716080967929116,
+      "national_p05_2075": 8932787887.499443,
+      "national_p50_2075": 11350755623.182161,
+      "national_p95_2075": 14224287017.048237,
+      "national_central_2075": 11566501824.175077,
+      "national_rel_halfwidth_2050": 0.2355085305639003,
+      "national_rel_halfwidth_2075": 0.2287424153813326
+    },
+    "equal_direct_co2_kg": {
+      "largest_symmetric_halfwidth_at": "CA 2075",
+      "largest_symmetric_halfwidth_central_there": 489.9632982067504,
+      "largest_symmetric_halfwidth_why": "A relative half-width divides by the central, and in these cells the central sits AT OR NEXT TO A FLOOR rather than at a magnitude: the entry's delivered electricity path reaches a clean share at which its central grid carbon is exactly zero -- so its central total carbon is that of the surviving gasoline vehicles alone -- or its central grid intensity is within a thousandth of zero.  An electricity member that does not reach that clean share puts grid carbon back, and the ratio against a near-zero denominator is large.  These cells say something about the denominator, not about the width of the distribution; read the absolute p05, p50 and p95 columns beside them.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 0,
+      "median_symmetric_halfwidth_2050": 0.24509923185623647,
+      "median_symmetric_halfwidth_2075": 0.24312099941570062,
+      "largest_symmetric_halfwidth_any_year": 9239.037812852614,
+      "median_p50_over_central_2075": 0.9715811349158281,
+      "national_p05_2075": 2021372066.1951962,
+      "national_p50_2075": 2617789414.0319877,
+      "national_p95_2075": 3313205371.9056354,
+      "national_central_2075": 2657857219.085597,
+      "national_rel_halfwidth_2050": 0.24495380121772525,
+      "national_rel_halfwidth_2075": 0.24302157701211627
+    },
+    "equal_grid_intensity_kg_per_kwh": {
+      "largest_symmetric_halfwidth_at": "TN 2075",
+      "largest_symmetric_halfwidth_central_there": 6.419820052986831e-07,
+      "largest_symmetric_halfwidth_why": "A relative half-width divides by the central, and in these cells the central sits AT OR NEXT TO A FLOOR rather than at a magnitude: the entry's delivered electricity path reaches a clean share at which its central grid carbon is exactly zero -- so its central total carbon is that of the surviving gasoline vehicles alone -- or its central grid intensity is within a thousandth of zero.  An electricity member that does not reach that clean share puts grid carbon back, and the ratio against a near-zero denominator is large.  These cells say something about the denominator, not about the width of the distribution; read the absolute p05, p50 and p95 columns beside them.",
+      "n_entries_with_a_central_of_exactly_zero_at_2075": 17,
+      "median_symmetric_halfwidth_2050": 0.546739964135328,
+      "median_symmetric_halfwidth_2075": 0.688707653199216,
+      "largest_symmetric_halfwidth_any_year": 169312.79813997098,
+      "median_p50_over_central_2075": 0.9996723132273598,
+      "national_p05_2075": 0.055114917999488186,
+      "national_p50_2075": 0.07994344241095377,
+      "national_p95_2075": 0.1155314602586174,
+      "national_central_2075": 0.0766988927458402,
+      "national_rel_halfwidth_2050": 0.3602446966084832,
+      "national_rel_halfwidth_2075": 0.3938553745445427
+    }
+  },
+  "gates": {
+    "conversion_coefficient_prior": {
+      "ruling": "D1, executed over the declared list as TASK 3 directs",
+      "declared_list": [
+        0.17,
+        0.21,
+        0.2744
+      ],
+      "declared_list_registered_at": [
+        "ice_cav_conversion.fuel_to_dc_efficiency_sensitivity",
+        "regional.figure8_article_form.deterministic_engineering_envelope.fuel_to_dc_efficiency_values"
+      ],
+      "prior_family": "triangular on the declared list",
+      "declared_support": [
+        0.17,
+        0.2744
+      ],
+      "mode": 0.21,
+      "carried_from": "Triangular(3.0976676385, 3.6443148688, 4.1909620991) on the fuel equivalent per direct current kilowatt hour: the registered seed-42 stream, read and not redrawn",
+      "carry_rule": "u = F_overhead(overhead_j), then eta_j = F_declared^-1(1 - u); the reflection is forced by the coefficient being the reciprocal of the overhead",
+      "carry_preserves_every_draws_position": true,
+      "support": [
+        0.1710216815598078,
+        0.2733040927858699
+      ],
+      "p05": 0.1841604517283863,
+      "p50": 0.21658670232886884,
+      "p95": 0.25661536505828014,
+      "mean": 0.21853335513803382,
+      "n_draws_at_or_below_the_central": 732,
+      "central_is_inside_the_support": true,
+      "registered_high_branch_0p2744_is_inside_the_support": true,
+      "registered_low_branch_0p17_is_inside_the_support": true,
+      "how_close_the_draws_come_to_the_two_endpoints": {
+        "closest_draw_to_the_low_branch_0p17": 0.1710216815598078,
+        "distance_to_the_low_branch": 0.00102168155980778,
+        "closest_draw_to_the_high_branch_0p2744": 0.2733040927858699,
+        "distance_to_the_high_branch": 0.001095907214130054,
+        "why_no_draw_sits_exactly_on_an_endpoint": "a triangular density is zero at its endpoints, so an endpoint is attained with probability zero.  The two registered branches are the boundary of the support the interval samples, they are delivered as full products and as named lines, and the draws come within about one part in two hundred of each of them"
+      },
+      "median_sits_above_the_central_because_the_declared_list_is_asymmetric": {
+        "median_of_the_draws": 0.21658670232886884,
+        "delivered_central": 0.21,
+        "mean_of_the_declared_list": 0.21813333333333332,
+        "consequence": "the carbon a draw carries moves with the RECIPROCAL of the coefficient, so a median coefficient above the central puts the interval's median carbon a few per cent BELOW the central.  That shift is a property of the declared list, which places 0.21 nearer its low endpoint than its high one, and not of the model.  It is why the delivered median over central for carbon is not one, and it is reported rather than removed"
+      },
+      "magnitude_reach_of_the_coefficient_axis": {
+        "what_this_is": "the factor the gasoline term of an entry's carbon is multiplied by, against the delivered central coefficient.  Gasoline carries the large majority of the delivered carbon, so this factor is very nearly the factor on the carbon itself",
+        "delivered_draws": {
+          "min": 0.7683748818373246,
+          "p05": 0.8183453867809528,
+          "p50": 0.9695886119310317,
+          "p95": 1.140309974963552,
+          "max": 1.2279144847874808,
+          "span_max_over_min": 1.598066925159387
+        },
+        "the_RETIRED_rescaled_prior": {
+          "min": 0.852835220630362,
+          "p05": 0.8960106140069694,
+          "p50": 0.9995687334689303,
+          "p95": 1.1035160398913828,
+          "max": 1.1466461659647438,
+          "span_max_over_min": 1.3445108014150908
+        },
+        "at_the_declared_endpoints": {
+          "at_the_low_branch_0p17": 1.2352941176470587,
+          "at_the_high_branch_0p2744": 0.7653061224489797,
+          "full_declared_span_low_over_high": 1.6141176470588232
+        },
+        "share_of_the_declared_span_the_draws_cover": 0.9900560396395623,
+        "what_the_magnitude_audit_found": "the retired prior reached about a tenth above the central at its ninety-fifth percentile and about a third of a span end to end, against the declared list's three fifths, and it visited neither registered branch.  The delivered draws cover almost the whole declared span"
+      }
+    },
+    "D6_the_central_the_interval_is_reported_against": {
+      "definitions": {
+        "E1": "this build's harness at the central parameter values reproduces the DELIVERED frozen real-capacity product",
+        "E2": "the same harness reproduces the DELIVERED frozen equal-size comparison product",
+        "E3": "the carbon intensity is the same on both capacity bases, because an intensity is a property of the entry and not of how much capacity is deployed",
+        "E4": "the trend named line this interval carries beside itself reproduces the DELIVERED trend continuation product, so the named line is that product and not a second opinion",
+        "E5": "the delivered central's own electricity column IS the registered frozen series this build's members are built on",
+        "E6": "the delivered central and the two delivered ELECTRICITY-axis continuation products carry the same energy in every cell, bitwise: the delivered-product form of the energy disclaimer.  The two VEHICLE-axis continuation products are NOT in this gate and are not expected to be, because that axis moves the mix of carriers"
+      },
+      "E1_max_rel_dev": {
+        "energy_kwh_eq": 4.522571676156993e-16,
+        "direct_co2_kg": 1.787442953684745e-15,
+        "grid_intensity_kg_per_kwh": 0.0
+      },
+      "E2_max_rel_dev": {
+        "energy_kwh_eq": 4.2640473362301033e-16,
+        "direct_co2_kg": 1.874937094638978e-15,
+        "grid_intensity_kg_per_kwh": 0.0
+      },
+      "E3_max_abs_dev": 0.0,
+      "E4_max_rel_dev": {
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS__energy_kwh_eq": 4.522571676156993e-16,
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS__direct_co2_kg": 1.787442953684745e-15,
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS__grid_intensity_kg_per_kwh": 0.0,
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS__energy_kwh_eq": 4.522571676156993e-16,
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS__direct_co2_kg": 1.787442953684745e-15,
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS__grid_intensity_kg_per_kwh": 0.0,
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS__energy_kwh_eq": 4.522571676156993e-16,
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS__direct_co2_kg": 1.787442953684745e-15,
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS__grid_intensity_kg_per_kwh": 0.0,
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS__energy_kwh_eq": 4.522571676156993e-16,
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS__direct_co2_kg": 1.787442953684745e-15,
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS__grid_intensity_kg_per_kwh": 0.0
+      },
+      "E5_max_abs_dev": 0.0,
+      "E6_max_abs_dev": 0.0,
+      "E6_vehicle_axis_energy_max_abs_dev_REPORTED_NOT_GATED": {
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": 21554988.3282094,
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": 241136307.04576635
+      },
+      "delivered_real_capacity_product": "expert_central_v33_final/expert_central_v33_annual.csv",
+      "delivered_equal_size_product": "expert_central_v33_final/companion/expert_central_v31_equal_size_comparison_annual.csv",
+      "delivered_continuation_bound_products": {
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS": "expert_central_v33_final/tails/expert_central_v31_annual_grid_tail_TREND.csv",
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS": "expert_central_v33_final/tails/expert_central_v31_annual_grid_tail_FROZEN.csv",
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": "expert_central_v33_final/tails/expert_central_v31_annual_vehicle_tail_TREND.csv",
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": "expert_central_v33_final/tails/expert_central_v31_annual_vehicle_tail_FROZEN.csv"
+      }
+    },
+    "D6_continuation_rule_on_both_axes_and_D5_floor_reading": {
+      "D6a_the_three_rules_agree_through_2050_max_abs_dev": 0.0,
+      "D6b_after_2050_outside_its_own_two_bounds_violations": 0,
+      "D6b_entries_where_the_linear_bound_falls_BELOW_the_held_bound_after_2050": [
+        "KS",
+        "LA",
+        "MD",
+        "MT",
+        "ND",
+        "NJ",
+        "SD",
+        "WI"
+      ],
+      "D6b_which_bound_is_the_upper_one_is_not_a_constant": "the linear trend bound is above the held bound only where the published 2045-2050 slope is positive.  Where that slope is negative the linear rule falls away from 2050 and the held rule is the upper bound instead, and the delivered asymptotic path -- which holds the 2050 value whenever the slope is not positive -- is then the held path itself.  The gate is therefore that the delivered path lies between its own two bounds, not that it lies below a bound named in advance",
+      "D6c_entries_with_no_statute_at_exactly_one_delivered_a_fully_clean_grid_at_2075": [],
+      "D6c_entries_delivered_a_fully_clean_grid_at_2075": [
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "IL",
+        "ME",
+        "MI",
+        "MN",
+        "NC",
+        "NM",
+        "NV",
+        "NY",
+        "OR",
+        "RI",
+        "VA",
+        "VT",
+        "WA"
+      ],
+      "D6d_trend_differs_from_the_delivered_rule_after_2050_n_cells": 750,
+      "D6d_frozen_differs_from_the_delivered_rule_after_2050_n_cells": 550,
+      "D6d_trend_max_abs_dev_after_2050": 0.10883182465932772,
+      "D6d_frozen_max_abs_dev_after_2050": 0.23150770588755765,
+      "D6e_entries_the_trend_rule_takes_to_a_fully_clean_grid_by_2075": [
+        "AR",
+        "MS",
+        "SC",
+        "TN"
+      ],
+      "D6e_of_which_have_a_registered_statutory_floor_of_any_level": [],
+      "D6f_delivered_below_the_registered_floor_violations": 0,
+      "D6g_enforceable_standard_reading_reproduces_the_v32_delivered_path_through_2050_max_abs_dev": 0.0,
+      "D6g_enforceable_standard_reading_differs_from_the_delivered_reading_n_cells": 121,
+      "D6g_enforceable_standard_reading_differs_from_the_delivered_reading_through_2050_n_cells": 21,
+      "D6g_entries_whose_delivered_share_moves_with_the_floor_reading": [
+        "CA",
+        "CO",
+        "NC",
+        "NV",
+        "UT"
+      ],
+      "D6_disclosure": "the delivered path is continuous in level and in slope at 2050 and approaches a fully clean supply of electricity without reaching it, so every exact zero of grid carbon at 2075 is put there by an enacted statutory floor of exactly one and by nothing else.  Both retained bounds are delivered beside the interval as named lines, on this axis and on the vehicle axis alike, and neither is inside the interval.",
+      "D5_disclosure": "the interval is conditional on the statutory-targets-honoured reading of the floor.  The enforceable-standard reading is delivered beside it as a named line and never as width, and neither reading is quoted without naming which one it is.",
+      "VEHICLE_AXIS": {
+        "in_window_max_abs_dev_across_the_three_rules": 0.0,
+        "after_2050_below_the_frozen_bound_violations": 0,
+        "after_2050_above_the_trend_bound_violations": 0,
+        "the_asymptotic_source_never_reaches_one_violations": 0,
+        "n_cells_after_2050_where_the_trend_rule_differs": 75
+      }
+    },
+    "measured_load_anchor": {
+      "implied_direct_current_automation_power_a_deployed_vehicle_W": 776.5398630499334,
+      "year": 2025,
+      "measured_from": "expert_central_v33_final/expert_central_v33_annual.csv",
+      "driving_hours_a_year": 392.98333333333335,
+      "grid_to_vehicle_conversion_read_off_the_kernel_rows": 0.9,
+      "conversion_coefficient": 0.21,
+      "deployed_vehicles": 33266.41669719791,
+      "automation_direct_current_load_kwh": 10151820.030840432,
+      "anchor_W": 446.7,
+      "anchor_source": "the one paired dynamometer measurement of automation load in the build's own precedent table of published and measured vehicle automation power",
+      "ratio_anchor_over_implied": 0.5752441326650556,
+      "the_two_activity_scenarios_in_this_build": "the frozen unit ledger runs 1095 driving hours a year, an urban service scenario, and this state layer runs 392.98333333333335, the household mean.  The power above is the state layer's and the two are not the same quantity.",
+      "what_the_named_line_scales": "the vehicle automation load only -- sensing, computing and communication, on electric and gasoline vehicles alike.  The signal-infrastructure load is not touched, because the measurement is of a vehicle.",
+      "other_published_anchors_W": {
+        "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 840.0,
+        "Gawron_et_al_2018_total_added_power_midsize_level_4": 220.0
+      }
+    },
+    "central_intensity_is_one_minus_the_low_carbon_share_times_the_capped_fossil_coefficient_max_abs_dev": {
+      "real": 0.0,
+      "equal": 0.0
+    },
+    "the_intensity_metric_is_identical_on_both_capacity_bases_max_abs_dev": 0.0,
+    "energy_parity_the_electricity_axis_moves_no_kilowatt_hours": {
+      "real_t4_TOTAL_plus_electricity_member": {
+        "n_cells": 7803,
+        "n_cells_bitwise_identical_to_the_tier_without_the_electricity_axis": 7803,
+        "max_abs_dev": 0.0,
+        "max_abs_width_the_electricity_axis_adds": 0.0,
+        "max_abs_width_the_electricity_axis_adds_one_at_a_time": 0.0,
+        "what_this_gates": "the first sentence of the energy-interval disclaimer: the electricity-scenario axis changes the carbon content of a kilowatt hour, not the number of kilowatt hours, so its contribution to the energy interval is exactly zero"
+      },
+      "equal_t4_TOTAL_plus_electricity_member": {
+        "n_cells": 7803,
+        "n_cells_bitwise_identical_to_the_tier_without_the_electricity_axis": 7803,
+        "max_abs_dev": 0.0,
+        "max_abs_width_the_electricity_axis_adds": 0.0,
+        "max_abs_width_the_electricity_axis_adds_one_at_a_time": 0.0,
+        "what_this_gates": "the first sentence of the energy-interval disclaimer: the electricity-scenario axis changes the carbon content of a kilowatt hour, not the number of kilowatt hours, so its contribution to the energy interval is exactly zero"
+      }
+    },
+    "n_entry_years_with_a_central_of_exactly_zero": {
+      "real_energy_kwh_eq_V33_POLICY_CONDITIONAL": 0,
+      "real_energy_kwh_eq_V31C_REPRODUCED_PARITY_CERTIFICATE": 0,
+      "real_direct_co2_kg_V33_POLICY_CONDITIONAL": 0,
+      "real_direct_co2_kg_V31C_REPRODUCED_PARITY_CERTIFICATE": 180,
+      "real_grid_intensity_kg_per_kwh_V33_POLICY_CONDITIONAL": 572,
+      "real_grid_intensity_kg_per_kwh_V31C_REPRODUCED_PARITY_CERTIFICATE": 507,
+      "equal_energy_kwh_eq_V33_POLICY_CONDITIONAL": 0,
+      "equal_energy_kwh_eq_V31C_REPRODUCED_PARITY_CERTIFICATE": 0,
+      "equal_direct_co2_kg_V33_POLICY_CONDITIONAL": 0,
+      "equal_direct_co2_kg_V31C_REPRODUCED_PARITY_CERTIFICATE": 180,
+      "equal_grid_intensity_kg_per_kwh_V33_POLICY_CONDITIONAL": 572,
+      "equal_grid_intensity_kg_per_kwh_V31C_REPRODUCED_PARITY_CERTIFICATE": 507
+    },
+    "named_line_move_flag_tolerance_test": {
+      "declared_tolerance_relative": 1e-10,
+      "rule": "A named line is recorded as moving a metric when its national line differs from the central line by more than a relative one part in ten thousand million million.  Both lines are recomputed through the same harness, so a line that moves nothing still differs in the last bits of a floating point sum, and the exact-equality test this replaces reported the central line as moving against itself.  The tolerance is tested rather than asserted: the classification is recomputed at four tolerances spanning three orders of magnitude and must be identical at all four, and the largest deviation called not moving and the smallest called moving must be separated by a factor of at least ten thousand.",
+      "n_rows": 3978,
+      "n_rows_moving": 2394,
+      "n_rows_not_moving": 1584,
+      "n_rows_bitwise_identical_to_the_central": 1350,
+      "largest_relative_deviation_classified_as_not_moving": 1.0911747903320448e-15,
+      "smallest_relative_deviation_classified_as_moving": 2.0677705344405962e-07,
+      "separation_factor": 189499478.24686942,
+      "required_separation_factor": 10000.0,
+      "tolerance_ladder": [
+        "1e-09",
+        "1e-10",
+        "1e-11",
+        "1e-12"
+      ],
+      "classification_identical_at_every_tolerance_on_the_ladder": true,
+      "what_the_exact_equality_test_this_replaces_would_report": {
+        "n_rows_it_calls_moving": 2628,
+        "of_which_are_below_the_declared_tolerance": 234,
+        "of_which_are_the_central_line_against_itself": 25,
+        "why": "both lines are recomputed through the same harness, so a line that moves nothing still differs in the last bits of a floating point sum"
+      },
+      "lines_that_must_not_move_a_metric_by_construction": {
+        "CENTRAL_ALTTRNP": {
+          "metrics": [
+            "direct_co2_kg",
+            "energy_kwh_eq",
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "it is the central line and cannot move against itself"
+        },
+        "NAMED_LINE_ETA_HIGH_BRANCH_0p2744": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the conversion coefficient multiplies the gasoline term of energy and of carbon and does not enter the carbon content of a kilowatt hour at all"
+        },
+        "NAMED_LINE_ETA_LOW_BRANCH_0p17": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the conversion coefficient multiplies the gasoline term of energy and of carbon and does not enter the carbon content of a kilowatt hour at all"
+        },
+        "NAMED_LINE_DEPLOYMENT_SCALE_LOW_15PCT": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the deployment scale multiplies the vehicle and the signal load by the same factor, so the electricity weights of the national mean are unchanged, and a carbon intensity does not depend on how many units are deployed"
+        },
+        "NAMED_LINE_DEPLOYMENT_SCALE_HIGH_45PCT": {
+          "metrics": [
+            "grid_intensity_kg_per_kwh"
+          ],
+          "why": "the deployment scale multiplies the vehicle and the signal load by the same factor, so the electricity weights of the national mean are unchanged, and a carbon intensity does not depend on how many units are deployed"
+        },
+        "NAMED_LINE_POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR": {
+          "metrics": [
+            "energy_kwh_eq"
+          ],
+          "why": "a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours"
+        },
+        "NAMED_LINE_POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": {
+          "metrics": [],
+          "why": "a continuation rule on the VEHICLE axis changes how much of the deployed stock is electric, so it moves the mix of carriers and therefore the kilowatt hours as well as the carbon; nothing is asserted about it"
+        },
+        "NAMED_LINE_POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": {
+          "metrics": [],
+          "why": "a continuation rule on the VEHICLE axis changes how much of the deployed stock is electric, so it moves the mix of carriers and therefore the kilowatt hours as well as the carbon; nothing is asserted about it"
+        },
+        "NAMED_LINE_MEASURED_LOAD_ANCHOR": {
+          "metrics": [],
+          "why": "this line scales the vehicle load and not the signal load, so it changes the electricity weights of the national intensity mean; it is expected to move all three metrics and nothing is asserted about it"
+        }
+      }
+    },
+    "named_lines": {
+      "real_harness_reproduces_the_delivered_v32_central": {
+        "energy_kwh_eq": {
+          "max_abs_dev": 4.470348358154297e-08,
+          "max_rel_dev": 4.522571676156993e-16
+        },
+        "direct_co2_kg": {
+          "max_abs_dev": 2.9802322387695312e-08,
+          "max_rel_dev": 1.787442953684745e-15
+        },
+        "grid_intensity_kg_per_kwh": {
+          "max_abs_dev": 0.0,
+          "max_rel_dev": 0.0
+        }
+      },
+      "real_the_model_is_exactly_linear_in_the_deployment_scale": {
+        "DEPLOYMENT_SCALE_LOW_15PCT": {
+          "declared_deployment_scale_by_2075": 0.15,
+          "deployment_scale_of_the_central_by_2075": 0.3,
+          "rescaling_factor": 0.5,
+          "what_is_compared": "the harness RUN at the declared level, against the central line multiplied by the factor",
+          "why_the_agreement_may_not_be_bitwise": "0.15 is exactly half of 0.30 in binary floating point, so the low line agrees cell for cell and bit for bit.  0.45 is NOT exactly one and a half times 0.30 -- the two differ by half a unit in the last place -- so the high line agrees to within about one part in 10^15, which is that representation and not a departure from linearity",
+          "energy_kwh_eq": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "direct_co2_kg": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "grid_intensity_kg_per_kwh": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "unchanged: a carbon intensity does not depend on how many units are deployed"
+          }
+        },
+        "DEPLOYMENT_SCALE_HIGH_45PCT": {
+          "declared_deployment_scale_by_2075": 0.45,
+          "deployment_scale_of_the_central_by_2075": 0.3,
+          "rescaling_factor": 1.5,
+          "what_is_compared": "the harness RUN at the declared level, against the central line multiplied by the factor",
+          "why_the_agreement_may_not_be_bitwise": "0.15 is exactly half of 0.30 in binary floating point, so the low line agrees cell for cell and bit for bit.  0.45 is NOT exactly one and a half times 0.30 -- the two differ by half a unit in the last place -- so the high line agrees to within about one part in 10^15, which is that representation and not a departure from linearity",
+          "energy_kwh_eq": {
+            "max_abs_dev_from_the_central_rescaled": 1.9073486328125e-06,
+            "max_rel_dev_from_the_central_rescaled": 1.3287103115949797e-15,
+            "n_cells_bitwise_identical": 592,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "direct_co2_kg": {
+            "max_abs_dev_from_the_central_rescaled": 3.5762786865234375e-07,
+            "max_rel_dev_from_the_central_rescaled": 1.3681979218092908e-15,
+            "n_cells_bitwise_identical": 563,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "grid_intensity_kg_per_kwh": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "unchanged: a carbon intensity does not depend on how many units are deployed"
+          }
+        }
+      },
+      "real_the_continuation_rule_moves_no_kilowatt_hours": {
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 1651,
+          "max_abs_dev": 21554988.3282094,
+          "gated": false,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 1651,
+          "max_abs_dev": 241136307.04576635,
+          "gated": false,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        }
+      },
+      "real_measured_load_anchor": {
+        "implied_direct_current_automation_power_a_deployed_vehicle_W": 776.5398630499334,
+        "year": 2025,
+        "measured_from": "expert_central_v33_final/expert_central_v33_annual.csv",
+        "driving_hours_a_year": 392.98333333333335,
+        "grid_to_vehicle_conversion_read_off_the_kernel_rows": 0.9,
+        "conversion_coefficient": 0.21,
+        "deployed_vehicles": 33266.41669719791,
+        "automation_direct_current_load_kwh": 10151820.030840432,
+        "anchor_W": 446.7,
+        "anchor_source": "the one paired dynamometer measurement of automation load in the build's own precedent table of published and measured vehicle automation power",
+        "ratio_anchor_over_implied": 0.5752441326650556,
+        "the_two_activity_scenarios_in_this_build": "the frozen unit ledger runs 1095 driving hours a year, an urban service scenario, and this state layer runs 392.98333333333335, the household mean.  The power above is the state layer's and the two are not the same quantity.",
+        "what_the_named_line_scales": "the vehicle automation load only -- sensing, computing and communication, on electric and gasoline vehicles alike.  The signal-infrastructure load is not touched, because the measurement is of a vehicle.",
+        "other_published_anchors_W": {
+          "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 840.0,
+          "Gawron_et_al_2018_total_added_power_midsize_level_4": 220.0
+        }
+      },
+      "equal_harness_reproduces_the_delivered_v32_central": {
+        "energy_kwh_eq": {
+          "max_abs_dev": 2.9802322387695312e-08,
+          "max_rel_dev": 4.2640473362301033e-16
+        },
+        "direct_co2_kg": {
+          "max_abs_dev": 1.4901161193847656e-08,
+          "max_rel_dev": 1.874937094638978e-15
+        },
+        "grid_intensity_kg_per_kwh": {
+          "max_abs_dev": 0.0,
+          "max_rel_dev": 0.0
+        }
+      },
+      "equal_the_model_is_exactly_linear_in_the_deployment_scale": {
+        "DEPLOYMENT_SCALE_LOW_15PCT": {
+          "declared_deployment_scale_by_2075": 0.15,
+          "deployment_scale_of_the_central_by_2075": 0.3,
+          "rescaling_factor": 0.5,
+          "what_is_compared": "the harness RUN at the declared level, against the central line multiplied by the factor",
+          "why_the_agreement_may_not_be_bitwise": "0.15 is exactly half of 0.30 in binary floating point, so the low line agrees cell for cell and bit for bit.  0.45 is NOT exactly one and a half times 0.30 -- the two differ by half a unit in the last place -- so the high line agrees to within about one part in 10^15, which is that representation and not a departure from linearity",
+          "energy_kwh_eq": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "direct_co2_kg": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "grid_intensity_kg_per_kwh": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "unchanged: a carbon intensity does not depend on how many units are deployed"
+          }
+        },
+        "DEPLOYMENT_SCALE_HIGH_45PCT": {
+          "declared_deployment_scale_by_2075": 0.45,
+          "deployment_scale_of_the_central_by_2075": 0.3,
+          "rescaling_factor": 1.5,
+          "what_is_compared": "the harness RUN at the declared level, against the central line multiplied by the factor",
+          "why_the_agreement_may_not_be_bitwise": "0.15 is exactly half of 0.30 in binary floating point, so the low line agrees cell for cell and bit for bit.  0.45 is NOT exactly one and a half times 0.30 -- the two differ by half a unit in the last place -- so the high line agrees to within about one part in 10^15, which is that representation and not a departure from linearity",
+          "energy_kwh_eq": {
+            "max_abs_dev_from_the_central_rescaled": 2.980232238769531e-07,
+            "max_rel_dev_from_the_central_rescaled": 9.29817861580544e-16,
+            "n_cells_bitwise_identical": 652,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "direct_co2_kg": {
+            "max_abs_dev_from_the_central_rescaled": 8.940696716308594e-08,
+            "max_rel_dev_from_the_central_rescaled": 1.0126647556696387e-15,
+            "n_cells_bitwise_identical": 597,
+            "n_cells": 2601,
+            "expected": "the central times the factor"
+          },
+          "grid_intensity_kg_per_kwh": {
+            "max_abs_dev_from_the_central_rescaled": 0.0,
+            "max_rel_dev_from_the_central_rescaled": 0.0,
+            "n_cells_bitwise_identical": 2601,
+            "n_cells": 2601,
+            "expected": "unchanged: a carbon intensity does not depend on how many units are deployed"
+          }
+        }
+      },
+      "equal_the_continuation_rule_moves_no_kilowatt_hours": {
+        "POST_2050_TREND_CONTINUATION_ELECTRICITY_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_FROZEN_CONTINUATION_ELECTRICITY_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "ENFORCEABLE_STANDARD_READING_OF_THE_STATUTORY_FLOOR": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 2601,
+          "max_abs_dev": 0.0,
+          "gated": true,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_TREND_CONTINUATION_VEHICLE_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 1651,
+          "max_abs_dev": 3063847.071501434,
+          "gated": false,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        },
+        "POST_2050_FROZEN_CONTINUATION_VEHICLE_AXIS": {
+          "n_cells": 2601,
+          "n_cells_bitwise_identical_to_the_central": 1651,
+          "max_abs_dev": 34275349.95266044,
+          "gated": false,
+          "what_this_gates": "the second sentence of the energy-interval disclaimer: a continuation rule on the ELECTRICITY axis, and a reading of the statutory floor, change the carbon content of a kilowatt hour and not the number of kilowatt hours.  A continuation rule on the VEHICLE axis is a different object: it moves the mix of carriers, so it moves the kilowatt hours too, and this row reports that movement rather than gating it"
+        }
+      },
+      "equal_measured_load_anchor": {
+        "implied_direct_current_automation_power_a_deployed_vehicle_W": 776.5398630499334,
+        "year": 2025,
+        "measured_from": "expert_central_v33_final/expert_central_v33_annual.csv",
+        "driving_hours_a_year": 392.98333333333335,
+        "grid_to_vehicle_conversion_read_off_the_kernel_rows": 0.9,
+        "conversion_coefficient": 0.21,
+        "deployed_vehicles": 33266.41669719791,
+        "automation_direct_current_load_kwh": 10151820.030840432,
+        "anchor_W": 446.7,
+        "anchor_source": "the one paired dynamometer measurement of automation load in the build's own precedent table of published and measured vehicle automation power",
+        "ratio_anchor_over_implied": 0.5752441326650556,
+        "the_two_activity_scenarios_in_this_build": "the frozen unit ledger runs 1095 driving hours a year, an urban service scenario, and this state layer runs 392.98333333333335, the household mean.  The power above is the state layer's and the two are not the same quantity.",
+        "what_the_named_line_scales": "the vehicle automation load only -- sensing, computing and communication, on electric and gasoline vehicles alike.  The signal-infrastructure load is not touched, because the measurement is of a vehicle.",
+        "other_published_anchors_W": {
+          "Sudhakar_Sze_and_Karaman_2023_onboard_computer": 840.0,
+          "Gawron_et_al_2018_total_added_power_midsize_level_4": 220.0
+        }
+      }
+    },
+    "parity_against_the_shipped_v31c_band_j31": {
+      "real_energy_kwh_eq_p05_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_p50_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_p95_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_central_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_width_load_only_abs_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_width_load_plus_market_case_abs_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_width_total_abs_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_rel_halfwidth_symmetric_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_rel_halfwidth_n_compared": 2601,
+      "real_energy_kwh_eq_rel_halfwidth_n_blank_in_the_shipped_file": 0,
+      "real_energy_kwh_eq_national_p05_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_national_p50_max_abs_dev": 0.0,
+      "real_energy_kwh_eq_national_p95_max_abs_dev": 0.0,
+      "real_direct_co2_kg_p05_max_abs_dev": 0.0,
+      "real_direct_co2_kg_p50_max_abs_dev": 0.0,
+      "real_direct_co2_kg_p95_max_abs_dev": 0.0,
+      "real_direct_co2_kg_central_max_abs_dev": 0.0,
+      "real_direct_co2_kg_width_load_only_abs_max_abs_dev": 0.0,
+      "real_direct_co2_kg_width_load_plus_market_case_abs_max_abs_dev": 0.0,
+      "real_direct_co2_kg_width_total_abs_max_abs_dev": 0.0,
+      "real_direct_co2_kg_rel_halfwidth_symmetric_max_abs_dev": 0.0,
+      "real_direct_co2_kg_rel_halfwidth_n_compared": 2421,
+      "real_direct_co2_kg_rel_halfwidth_n_blank_in_the_shipped_file": 180,
+      "real_direct_co2_kg_national_p05_max_abs_dev": 0.0,
+      "real_direct_co2_kg_national_p50_max_abs_dev": 0.0,
+      "real_direct_co2_kg_national_p95_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_p05_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_p50_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_p95_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_central_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_width_load_only_abs_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_width_load_plus_market_case_abs_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_width_total_abs_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_rel_halfwidth_symmetric_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_rel_halfwidth_n_compared": 2601,
+      "equal_energy_kwh_eq_rel_halfwidth_n_blank_in_the_shipped_file": 0,
+      "equal_energy_kwh_eq_national_p05_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_national_p50_max_abs_dev": 0.0,
+      "equal_energy_kwh_eq_national_p95_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_p05_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_p50_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_p95_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_central_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_width_load_only_abs_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_width_load_plus_market_case_abs_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_width_total_abs_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_rel_halfwidth_symmetric_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_rel_halfwidth_n_compared": 2421,
+      "equal_direct_co2_kg_rel_halfwidth_n_blank_in_the_shipped_file": 180,
+      "equal_direct_co2_kg_national_p05_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_national_p50_max_abs_dev": 0.0,
+      "equal_direct_co2_kg_national_p95_max_abs_dev": 0.0,
+      "n_relative_half_width_cells_compared": 10044,
+      "n_relative_half_width_cells_blank_in_the_shipped_file": 360,
+      "WORST_MAX_ABS_DEV": 0.0,
+      "what_this_certifies": "the shipped v3.1c interval, recomputed through THIS build's harness at the frozen coefficient 0.2744, the twelve-year whole-cohort retirement rule and the drawn market case.  A deviation of exactly zero means the post-processing split at the carrier boundary, the survival argument added to the kernel call and the assembly rewrite changed no arithmetic on any channel this build does not deliberately move."
+    }
+  }
+}

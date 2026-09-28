@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PROVISIONAL_RECOMMENDED_COMMON_SCENARIO_REQUIRES_OWNER_APPROVAL_BEFORE_MANUSCRIPT_USE",
+  "created_at": "2026-08-31",
+  "scope": {
+    "primary": "50 states",
+    "supplemental": "District of Columbia",
+    "base_year": 2024,
+    "first_output_year": 2025,
+    "main_endpoint_year": 2050,
+    "tail_endpoint_year": 2075
+  },
+  "comparative_reference_bundle": {
+    "registered_automobile_capacity": 1000000,
+    "signalized_site_capacity": 1000,
+    "cav_reporting_unit": "per 1,000,000 registered automobiles",
+    "sti_reporting_unit": "per 1,000 standardized reference-site equivalents",
+    "standardized_site_definition": "One identical CLEAR-ATS STI retrofit BOM reference-site equivalent from the frozen STI unit ledger; it is not an observed intersection, controller, ownership-complete inventory, or infrastructure-density estimate.",
+    "combined_reporting_unit": "one author-defined synthetic reference bundle: 1,000,000 registered automobiles plus 1,000 standardized reference-site equivalents",
+    "absolute_state_total_status": "NOT_ESTIMATED_IN_NATIONAL_ATLAS",
+    "reason": "Ownership-complete statewide signal inventories do not exist on a comparable national basis. CA/OH absolute registered-scope case studies remain separate."
+  },
+  "common_activity": {
+    "miles_per_registered_automobile_year": 10787.0,
+    "vehicle_hours_per_registered_automobile_year": 392.98333333333335,
+    "annual_growth_through_2050": {
+      "low": 0.003,
+      "medium": 0.004,
+      "high": 0.006
+    },
+    "post_2050": "hold each bundle at its 2050 activity multiplier"
+  },
+  "common_deployment": {
+    "initial_cav_fraction": 0.0,
+    "initial_sti_fraction": 0.0,
+    "path_shape": "smoothstep from 2024 to 2075",
+    "target_fraction_2075": {
+      "low": {
+        "cav": 0.15,
+        "sti": 0.15
+      },
+      "medium": {
+        "cav": 0.3,
+        "sti": 0.3
+      },
+      "high": {
+        "cav": 0.45,
+        "sti": 0.45
+      }
+    },
+    "evidence_status": "AUTHOR_COMPARATIVE_SCENARIO_NOT_OBSERVED_STATE_FORECAST"
+  },
+  "common_electrification": {
+    "initial_value": "DOE AFDC 2025 all-light-duty BEV share proxy; denominator and vintage differ from FHWA 2024 registered automobiles",
+    "path_applies_to": "electric share of each newly added CAV cohort, not total CAV stock; the stock share emerges from cohort turnover",
+    "anchor_year": 2025,
+    "base_year_compatibility": "The imported cohort kernel requires a 2024 anchor. The AFDC 2025 proxy is repeated at 2024 only for the zero-stock compatibility cohort; the first nonzero 2025 cohort uses the unadvanced AFDC 2025 proxy.",
+    "annual_remaining_gap_closure_rate": {
+      "low": 0.04,
+      "medium": 0.08,
+      "high": 0.16
+    },
+    "equation": "q_y = 1 - (1 - q_2025) * (1 - r)^(y - 2025), for y >= 2025",
+    "evidence_status": "AUTHOR_GAP_CLOSURE_SCENARIO_NOT_CAV_SALES_OR_STOCK_FORECAST"
+  },
+  "common_grid": {
+    "initial_value": "EPA eGRID2023 revision-2 state total-output direct-CO2 rate used as a 2024 model-year proxy",
+    "annual_remaining_intensity_gap_closure_rate": {
+      "low": 0.01,
+      "medium": 0.05,
+      "high": 0.1
+    },
+    "equation": "I_y = I_2024 * (1 - r)^(y - 2024)",
+    "resource_share_rule": "Raw eGRID resource shares remain descriptive context only. National emissions use the total-output intensity directly, avoiding unstable fossil-block reconstruction in near-zero or negative net-generation shares.",
+    "evidence_status": "ATTRIBUTIONAL_AUTHOR_INTENSITY_SCENARIO_NOT_CAMBIUM_OR_OFFICIAL_STATE_FORECAST"
+  },
+  "common_engineering": {
+    "traffic_branch": "Moderate Traffic*",
+    "weather_branch": "neutral",
+    "cav_service_life_years": 12,
+    "sti_service_life_years": 12,
+    "workload_growth_per_year": {
+      "low": 0.0,
+      "medium": 0.02,
+      "high": 0.04
+    },
+    "workload_anchor_year": 2025,
+    "workload_formula": "W_y = (1 + g)^(y - 2025)",
+    "hardware_path": {
+      "low": "fast",
+      "medium": "reference",
+      "high": "slow"
+    },
+    "weather_note": "No one-station-per-state rural weather expansion; neutral response is held across all national bundles."
+  },
+  "bundles": {
+    "low": {
+      "deployment": "low",
+      "activity": "low",
+      "hardware": "fast",
+      "workload": "low",
+      "electrification": "high",
+      "grid": "high"
+    },
+    "medium": {
+      "deployment": "medium",
+      "activity": "medium",
+      "hardware": "reference",
+      "workload": "medium",
+      "electrification": "medium",
+      "grid": "medium"
+    },
+    "high": {
+      "deployment": "high",
+      "activity": "high",
+      "hardware": "slow",
+      "workload": "high",
+      "electrification": "low",
+      "grid": "low"
+    }
+  },
+  "estimands": {
+    "carrier_input": "annual operational ATS-incremental carrier input for the normalized reference bundle; propulsion and conventional signal-core energy excluded",
+    "direct_co2": "scope-matched operational direct CO2: eGRID state total-output attributional electricity CO2 plus EPA gasoline tailpipe CO2; upstream, non-CO2 and embodied terms excluded",
+    "turning": "first year after which every annual direct-CO2 step through 2075 is non-increasing, with at least five subsequent modeled years; otherwise right-censored",
+    "turning_numerical_tolerance_kg_per_synthetic_bundle": 1e-7,
+    "turning_tolerance_interpretation": "absolute floating-point equality guard for an author-defined fixed-size synthetic bundle; effectively exact at the modeled scale, not scientific uncertainty",
+    "claim_boundary": "deterministic comparative scenarios, not empirical forecasts, causal policy effects, city or urban-rural estimands, carbon-neutrality dates, or cumulative payback dates"
+  },
+  "policy_use": {
+    "rps_ces": "descriptive covariate only",
+    "acc_ii": "descriptive covariate only",
+    "hav_law": "descriptive upstream context only",
+    "policy_to_scenario_bridge": "NOT_REGISTERED"
+  }
+}
