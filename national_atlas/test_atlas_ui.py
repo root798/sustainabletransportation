@@ -43,6 +43,11 @@ def plot_key(plot) -> str:
 
 
 class AtlasLandingUITests(unittest.TestCase):
+    def test_plotly_container_does_not_add_height_outside_the_figure(self):
+        theme = (ATLAS_DIR / "assets" / "theme.css").read_text(encoding="utf-8")
+        self.assertIn('div[data-testid="stPlotlyChart"] { padding-top: 0; }', theme)
+        self.assertNotIn('div[data-testid="stPlotlyChart"] { padding-top: 0.25rem; }', theme)
+
     def test_delivered_turning_points_recompute_from_annual_series(self):
         """Recompute the published endpoint without using an onset helper."""
         annual = pd.read_csv(

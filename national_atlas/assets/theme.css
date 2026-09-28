@@ -261,7 +261,10 @@ div[data-testid="stDataFrame"]::-webkit-scrollbar-thumb {
   border-radius: 5px;
 }
 
-div[data-testid="stPlotlyChart"] { padding-top: 0.25rem; }
+/* Streamlit fixes each Plotly element container to the figure's exact pixel
+   height. Padding the chart itself adds four extra pixels without enlarging
+   that container, which creates a misleading internal vertical scrollbar. */
+div[data-testid="stPlotlyChart"] { padding-top: 0; }
 [data-testid="stExpander"] { border-color: #e4e8ee; border-radius: 6px; }
 [data-testid="stExpander"] summary { font-size: 0.9rem; }
 [data-testid="stCaptionContainer"] { line-height: 1.5; }

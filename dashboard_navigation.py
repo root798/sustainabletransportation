@@ -79,4 +79,4 @@ def main() -> None:
     page = st.navigation(list(registered.values()), expanded=True)
     page.run()
     with st.sidebar:
-        st.caption("Interface · 2026.09.28.4")
+        st.caption("Interface · 2026.09.28.5")
