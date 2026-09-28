@@ -76,7 +76,7 @@ def main() -> None:
         for key, callback in callbacks.items()
     }
     st.session_state["_clearats_page_registry"] = registered
-    page = st.navigation(list(registered.values()))
+    page = st.navigation(list(registered.values()), expanded=True)
     page.run()
     with st.sidebar:
-        st.caption("Interface · 2026.09.28.3")
+        st.caption("Interface · 2026.09.28.4")

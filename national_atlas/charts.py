@@ -853,7 +853,8 @@ def make_driver_trajectory(data: Mapping[str, Any], state: str, scenario: str,
             hovertemplate="50-state-only median: %{y:,.2f}<extra></extra>",
         )
     )
-    layout = _base_layout(290, margin={"l": 64, "r": 12, "t": 78, "b": 50})
+    # Reserve a separate top row for Plotly's toolbar on narrow screens.
+    layout = _base_layout(320, margin={"l": 64, "r": 12, "t": 108, "b": 50})
     layout.update(
         {
             "xaxis": {**_axis("Modeled year"), "dtick": 10, "showgrid": False},
@@ -862,7 +863,7 @@ def make_driver_trajectory(data: Mapping[str, Any], state: str, scenario: str,
                 "text": title,
                 "x": 0,
                 "xanchor": "left",
-                "y": 0.99,
+                "y": 0.88,
                 "yanchor": "top",
                 "font": {"family": PLOT_FONT, "size": 12, "color": INK},
             },

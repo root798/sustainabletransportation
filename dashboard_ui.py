@@ -87,7 +87,7 @@ def _figure_uri(name: str) -> str:
 
 
 def manuscript_figure(key: str) -> None:
-    """Display an exact PDF-to-SVG rendering, with deliberate readable zoom."""
+    """Display the original vector artwork at the available page width."""
     figure = {
         "framework": {
             "stem": "clear_ats_framework", "label": "CLEAR-ATS framework · Figure 2",
@@ -101,30 +101,19 @@ def manuscript_figure(key: str) -> None:
         },
     }[key]
     with st.container(key=f"manuscript_figure_{key}"):
-        controls, download = st.columns([1.5, 1], vertical_alignment="bottom")
-        with controls:
-            view = st.segmented_control(
-                "Figure view", ["Fit to page", "Read labels"], default="Fit to page",
-                key=f"figure_view_{key}", label_visibility="collapsed",
-            ) or "Fit to page"
-        with download:
-            st.download_button(
-                "Download original PDF",
-                data=(ASSETS / f"{figure['stem']}.pdf").read_bytes(),
-                file_name=f"{figure['stem']}.pdf", mime="application/pdf",
-                key=f"figure_download_{key}", width="stretch",
-            )
-        enlarged = view == "Read labels"
-        image_style = f"width:{figure['width']}px;max-width:none;" if enlarged else "width:100%;"
         st.markdown(
-            f'<div class="clearats-figure-viewport{ " is-enlarged" if enlarged else ""}" '
+            '<div class="clearats-figure-viewport" '
             f'tabindex="0" role="region" aria-label="{escape(str(figure["label"]))}">'
             f'<img src="{_figure_uri(str(figure["stem"]) + ".svg")}" '
-            f'alt="{escape(str(figure["alt"]))}" style="{image_style}height:auto;display:block;object-fit:fill;" />'
+            f'alt="{escape(str(figure["alt"]))}" style="width:100%;height:auto;display:block;" />'
             '</div>', unsafe_allow_html=True,
         )
-        if enlarged:
-            st.caption("Scroll within the figure to read every label. The PDF preserves the original vector artwork.")
+        st.download_button(
+            "Download original PDF",
+            data=(ASSETS / f"{figure['stem']}.pdf").read_bytes(),
+            file_name=f"{figure['stem']}.pdf", mime="application/pdf",
+            key=f"figure_download_{key}",
+        )
 
 
 def page_card(key: str) -> None:

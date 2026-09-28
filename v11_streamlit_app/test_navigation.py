@@ -88,6 +88,20 @@ class NavigationTests(unittest.TestCase):
         self.assertLess(PAGE_ORDER.index("scenario"), PAGE_ORDER.index("atlas"))
         self.assertEqual(PAGE_ORDER[-1], "uncertainty")
 
+    def test_home_figure_has_no_view_mode_selector(self):
+        app = AppTest.from_file(
+            str(navigation.ROOT / "streamlit_app.py"), default_timeout=90
+        ).run()
+        self.assertEqual([error.message for error in app.exception], [])
+        self.assertFalse(any(
+            "figure_view" in str(getattr(widget, "key", ""))
+            for widget in app.get("button_group")
+        ))
+        self.assertEqual(len(app.get("download_button")), 1)
+        rendered = "\n".join(element.value for element in app.markdown)
+        self.assertIn("data:image/svg+xml;base64,", rendered)
+        self.assertNotIn("is-enlarged", rendered)
+
     def test_home_cards_link_to_every_registered_destination(self):
         app = AppTest.from_file(
             str(navigation.ROOT / "streamlit_app.py"), default_timeout=90
