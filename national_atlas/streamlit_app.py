@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+from dashboard_ui import page_intro
+
 from atlas_io import (
     EXPERT_CAPACITY_BASIS_STATE_SCALED,
     EXPERT_CENTRAL_SCENARIO,
@@ -345,8 +347,7 @@ if "metric_family" not in st.session_state:
 
 
 summary = atlas["summary"]
-st.title("50-State Atlas")
-st.caption("Carbon emissions and turning points across 50 states and DC.")
+page_intro("atlas")
 
 # --------------------------------------------------------------------------
 # Default landing view: the expert-central national turning-point map.

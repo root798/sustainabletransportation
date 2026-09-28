@@ -26,6 +26,7 @@ APP_DIR = Path(__file__).resolve().parent.parent
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+from dashboard_ui import page_intro  # noqa: E402
 from core import (  # noqa: E402
     CAV_LEVEL_TEMPLATES,
     CONTROL_SPECS,
@@ -552,12 +553,7 @@ with st.sidebar:
 # ═══════════════════════════════════════════════════════════════════
 # MAIN TITLE + QUARANTINE / POLICY WARNINGS
 # ═══════════════════════════════════════════════════════════════════
-st.title("Scenario Explorer")
-st.caption(
-    "State-scale utility-phase projections for ATS energy demand and "
-    "CO₂ emissions under selected deployment, electrification, grid, "
-    "weather, and hardware-efficiency settings, displayed through 2075."
-)
+page_intro("scenario")
 
 with st.expander("Scope and uncertainty objects", expanded=False):
     st.markdown(

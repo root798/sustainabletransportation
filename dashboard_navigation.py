@@ -8,8 +8,14 @@ from pathlib import Path
 
 import streamlit as st
 
+from dashboard_ui import PAGE_INFO
+
 
 ROOT = Path(__file__).resolve().parent
+
+
+def home() -> None:
+    _run("dashboard_home.py")
 
 
 def _run(relative_path: str) -> None:
@@ -58,11 +64,17 @@ def main() -> None:
             h1 { font-size: 1.75rem !important; }
         }
     </style>""")
-    page = st.navigation([
-        st.Page(one_time_energy, title="One-Time Embodied Energy", url_path="One-Time_Embodied_Energy"),
-        st.Page(utility_phase_energy, title="Utility-Phase Energy", url_path="Utility-Phase_Energy"),
-        st.Page(scenario_explorer, title="Scenario Explorer", default=True),
-        st.Page(national_atlas, title="50-State Atlas", url_path="50_State_Atlas"),
-        st.Page(uncertainty_method, title="Uncertainty Method", url_path="Uncertainty_Method"),
-    ])
+    callbacks = {
+        "home": home, "one_time": one_time_energy, "utility": utility_phase_energy,
+        "scenario": scenario_explorer, "atlas": national_atlas, "uncertainty": uncertainty_method,
+    }
+    registered = {
+        key: st.Page(
+            callback, title=str(PAGE_INFO[key]["title"]),
+            url_path=str(PAGE_INFO[key]["path"]), default=key == "home",
+        )
+        for key, callback in callbacks.items()
+    }
+    st.session_state["_clearats_page_registry"] = registered
+    page = st.navigation(list(registered.values()))
     page.run()

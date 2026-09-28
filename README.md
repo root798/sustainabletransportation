@@ -28,16 +28,27 @@ streamlit run streamlit_app.py
 Both entrypoints call `dashboard_navigation.py` and therefore expose the same
 page order:
 
-1. **One-Time Embodied Energy**
-2. **Utility-Phase Energy**
-3. **Scenario Explorer** — default landing page
-4. **50-State Atlas**
-5. **Uncertainty Method**
+1. **Home** — default landing page, manuscript framework and page guide
+2. **One-Time Embodied Energy**
+3. **Utility-Phase Energy**
+4. **Scenario Explorer**
+5. **50-State Atlas**
+6. **Uncertainty Method**
+
+Home uses the active manuscript Figure 2, while Uncertainty Method uses its
+active Figure 3 (v31). Both are rendered from their original PDFs as SVGs;
+the page-fit and readable-label modes do not redraw or alter the artwork.
+Original PDF downloads and source hashes are retained under `dashboard_assets/`.
+Every analytical page has a short introduction and native links to Home and
+related views, preserving the Streamlit session during navigation.
 
 ## Repository layout
 
 ```text
 dashboard_navigation.py       shared page registry and default-page selection
+dashboard_home.py             manuscript-backed overview and page guide
+dashboard_ui.py               shared introductions, links and vector-figure viewer
+dashboard_assets/             manuscript figures, source manifest and scoped UI styles
 streamlit_app.py              equivalent root entrypoint for local use
 v11_streamlit_app/            original v11 functional pages and model bridge
 v11_streamlit_app/views/      functional pages registered by shared navigation
@@ -76,7 +87,7 @@ The existing Streamlit Community Cloud app uses:
   root `requirements.txt` so both entrypoints use the same environment
 
 Because both entrypoints use the shared navigation module, local and Cloud
-launches present the same five pages and the same default page.
+launches present the same six pages and the same default page.
 
 Run the entrypoint and legacy-module-cache regression checks with:
 

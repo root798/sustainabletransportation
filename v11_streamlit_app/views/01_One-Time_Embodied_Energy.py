@@ -37,6 +37,7 @@ APP_DIR = Path(__file__).resolve().parent.parent
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+from dashboard_ui import page_intro  # noqa: E402
 from core import (  # noqa: E402
     NATURE_CATEGORICAL,
     plotly_layout_defaults,
@@ -83,13 +84,7 @@ st.set_page_config(
 # subheaders, and the first chart. Defined once in utils.plotly_layout.
 st.markdown(page_top_spacing(), unsafe_allow_html=True)
 
-st.title("One-Time Energy and Marginal Components")
-st.caption(
-    "This page reports production, logistics, and end-of-life "
-    "accounting for ATS autonomy hardware. Operational energy and "
-    "emissions are reported separately on the Utility Phase Energy "
-    "and Scenario Explorer pages."
-)
+page_intro("one_time")
 
 # Cross-check rows are computed once (used internally below and by the
 # end-page "Data consistency note"). Values come from the baseline

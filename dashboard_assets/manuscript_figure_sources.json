@@ -1,0 +1,24 @@
+{
+  "source": "CLEAR-ATS manuscript, active figure references",
+  "source_commit": "20bf6de1aa57c6a4cfc3765663f49a86725c9677",
+  "verified_date": "2026-09-28",
+  "rendering": "PDFs copied byte-for-byte. SVGs generated with pdftocairo -svg, preserving the PDF CropBox and vector labels; no redraw or content editing.",
+  "figures": [
+    {
+      "figure": 2,
+      "manuscript_path": "figs/fig2_LCA_workflow/fig2_f.pdf",
+      "active_reference": "sections/introduction.tex",
+      "pdf": "clear_ats_framework.pdf",
+      "svg": "clear_ats_framework.svg",
+      "sha256": "8ce4c4831e95de4999f98e52e5a4ebacf54b2b97cef2cc43ee0ff7cb1ffebed9"
+    },
+    {
+      "figure": 3,
+      "manuscript_path": "figs/fig2_LCA_workflow/clear_ats_uncertainty_figure_v31.drawio.pdf",
+      "active_reference": "sections/method.tex",
+      "pdf": "clear_ats_uncertainty_v31.pdf",
+      "svg": "clear_ats_uncertainty_v31.svg",
+      "sha256": "32e0579fca06d316c6d0a48f0bcabead0b429582c3c7f8fea86eb10966b8bf17"
+    }
+  ]
+}

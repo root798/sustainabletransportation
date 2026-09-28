@@ -1,0 +1,93 @@
+/* Shared navigation styling is scoped so existing analytical pages keep
+   their charts, controls, palettes and accounting settings unchanged. */
+[class*="st-key-page_intro_"] h1 { letter-spacing: -0.025em; }
+[class*="st-key-page_intro_"] [data-testid="stCaptionContainer"] {
+  color: #526275;
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 68rem;
+}
+[class*="st-key-page_intro_"] [data-testid="stCaptionContainer"] p {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+[class*="st-key-page_nav_"] {
+  border-bottom: 1px solid #e3e8ef;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.6rem;
+}
+[class*="st-key-page_nav_"] [data-testid="stHorizontalBlock"] {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 0.35rem 1rem !important;
+}
+[class*="st-key-page_nav_"] [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+  flex: 0 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: 44px;
+}
+[class*="st-key-page_nav_"] [data-testid="stPageLink"] a {
+  font-size: 0.85rem;
+  color: #255779;
+  padding: 0.35rem 0.4rem;
+  min-height: 44px;
+}
+[class*="st-key-page_nav_"] [data-testid="stPageLink"] p { font-size: 0.85rem; color: #255779; }
+[class*="st-key-home_card_"] {
+  border: 1px solid #dfe6ee !important;
+  border-radius: 10px !important;
+  padding: 1.05rem 1.15rem !important;
+  background: #f8fafc;
+  min-height: 172px;
+}
+[class*="st-key-home_card_"] [data-testid="stCaptionContainer"] {
+  color: #526275;
+  font-size: 0.8rem;
+}
+[class*="st-key-home_card_"] [data-testid="stPageLink"] a {
+  color: #174b6d;
+  font-size: 1.15rem;
+  font-weight: 650;
+  padding: 0;
+  min-height: 36px;
+}
+[class*="st-key-home_card_"] p { font-size: 0.92rem; line-height: 1.5; }
+[class*="st-key-home_card_"] [data-testid="stPageLink"] p {
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: #174b6d;
+}
+[class*="st-key-home_card_"] [data-testid="stCaptionContainer"] p {
+  color: #526275;
+  font-size: 0.8rem;
+}
+.st-key-home_card_uncertainty { min-height: 0; }
+.clearats-figure-viewport {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: #fff;
+  scrollbar-width: auto;
+}
+.clearats-figure-viewport.is-enlarged { max-height: 640px; }
+.clearats-figure-viewport:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 2px;
+}
+[class*="st-key-manuscript_figure_"] button { min-height: 42px; }
+@media (max-width: 1050px) {
+  .st-key-home_page_cards [data-testid="stHorizontalBlock"] { flex-direction: column !important; gap: 0.8rem; }
+  .st-key-home_page_cards [data-testid="stColumn"] { width: 100% !important; flex: 1 1 100% !important; }
+}
+@media (max-width: 700px) {
+  [class*="st-key-page_intro_"] [data-testid="stCaptionContainer"] { font-size: 0.92rem; }
+  [class*="st-key-home_card_"] { min-height: 0; padding: 0.8rem 0.9rem !important; }
+  [class*="st-key-manuscript_figure_"] [data-testid="stHorizontalBlock"] { flex-direction: column !important; gap: 0.4rem; }
+  [class*="st-key-manuscript_figure_"] [data-testid="stColumn"] { width: 100% !important; flex: 1 1 100% !important; }
+  .clearats-figure-viewport { padding: 0.4rem; }
+  .clearats-figure-viewport.is-enlarged { max-height: 480px; }
+}

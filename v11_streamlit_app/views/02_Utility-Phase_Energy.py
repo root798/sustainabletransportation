@@ -42,6 +42,7 @@ APP_DIR = Path(__file__).resolve().parent.parent
 if str(APP_DIR) not in sys.path:
     sys.path.insert(0, str(APP_DIR))
 
+from dashboard_ui import page_intro  # noqa: E402
 from figure_style import (  # noqa: E402
     NATURE_CATEGORICAL, plotly_layout_defaults, rgba,
 )
@@ -73,14 +74,7 @@ st.set_page_config(page_title="Utility Phase Energy", page_icon="C", layout="wid
 # Page-top breathing room (shared CSS block, see utils.plotly_layout).
 st.markdown(page_top_spacing(), unsafe_allow_html=True)
 
-st.title("Utility Phase Energy")
-st.caption(
-    "Annual running energy at the unit level. How much energy does one "
-    "vehicle (or one roadside infrastructure asset) consume per year, "
-    "and how does that energy divide between propulsion and the AV "
-    "subsystems? State-scale evolution, regional comparisons, and "
-    "uncertainty controls are on the Scenario Explorer page."
-)
+page_intro("utility")
 
 
 # ── component palette (single source of truth, shared with Scenario Explorer)
