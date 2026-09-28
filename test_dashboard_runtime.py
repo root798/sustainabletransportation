@@ -38,7 +38,15 @@ class UIReleaseTests(unittest.TestCase):
 
     def test_entrypoints_and_visible_release_agree(self):
         for path in ("streamlit_app.py", "v11_streamlit_app/streamlit_app.py", "dashboard_navigation.py"):
-            self.assertIn("2026.09.28.7", (runtime.ROOT / path).read_text())
+            source = (runtime.ROOT / path).read_text()
+            self.assertIn("2026.09.28.8", source)
+        self.assertEqual(runtime.RUNTIME_RELEASE, "2026.09.28.8")
+
+    def test_entrypoints_can_reload_an_older_runtime_bootstrap(self):
+        for path in ("streamlit_app.py", "v11_streamlit_app/streamlit_app.py"):
+            source = (runtime.ROOT / path).read_text()
+            self.assertIn("importlib.reload(_dashboard_runtime)", source)
+            self.assertIn('getattr(_dashboard_runtime, "RUNTIME_RELEASE", None)', source)
 
 
 if __name__ == "__main__":

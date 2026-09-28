@@ -6,6 +6,7 @@ from threading import Lock
 
 
 ROOT = Path(__file__).resolve().parent
+RUNTIME_RELEASE = "2026.09.28.8"
 _release = None
 _lock = Lock()
 _UI_MODULES = {
