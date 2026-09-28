@@ -9,7 +9,6 @@ import streamlit as st
 
 from atlas_io import (
     EXPERT_CAPACITY_BASIS_STATE_SCALED,
-    interval_caption_sentences,
     EXPERT_CENTRAL_SCENARIO,
     EXPERT_CONDITIONALITY_FOOTNOTE,
     MAP_METRIC_GROUPS,
@@ -19,24 +18,17 @@ from atlas_io import (
     POLICY_CENTRAL_SCENARIO,
     EXPERT_ENTRIES_WITH_A_TURNING_POINT,
     EXPERT_ENTRIES_WITH_A_VEHICLE_RULE,
-    EXPERT_FLOOR_READING_BOUND_GLOSS,
-    EXPERT_FLOOR_READING_BOUND_NAME,
-    EXPERT_FLOOR_READING_CENTRAL_GLOSS,
     EXPERT_FLOOR_READING_CENTRAL_NAME,
-    EXPERT_FLOOR_READING_PAIR_RULE,
     EXPERT_NO_TURNING_POINT_COUNT_PHRASE,
     EXPERT_NO_VEHICLE_RULE_PHRASE,
     EXPERT_NO_VEHICLE_RULE_REACHING_ONE,
-    EXPERT_NO_VEHICLE_RULE_WITH_A_TURNING_POINT,
     EXPERT_POST_2050_SENTENCE,
-    EXPERT_TURNING_POINT_CONDITIONALITY_NOTE,
     EXPERT_TURNING_POINT_COUNT_PHRASE,
     EXPERT_TURNING_POINT_RANGE,
     EXPERT_WITH_A_VEHICLE_RULE_WITH_A_TURNING_POINT,
     PRIMARY_SCOPE,
     SCENARIO_AXIS,
     SCENARIO_AXIS_LABELS,
-    TURNING_POINT_NONE_LABEL,
     TURNING_POINT_NONE_OUTLINE,
     TURNING_POINT_NONE_TILE_NOTE,
     AtlasContractError,
@@ -56,13 +48,14 @@ from atlas_io import (
     metric_spec,
     packaged_bundle_tag,
     band_halfwidth_phrase,
-    band_horizon_direction_note,
+    band_horizon_contraction_mechanism,
+    band_horizon_growth,
     band_horizon_overlay_note,
+    band_horizon_panel_metrics,
     band_metric_is_packaged,
     band_width_readout,
     band_zero_central_note,
     EXPERT_BAND_AXES_SHORT,
-    CLAIM_BOUNDARY_SCOPE_NOTE,
     relative_pct_text,
     policy_central_annual_row,
     policy_central_band,
@@ -91,7 +84,6 @@ from metric_names import (
     GRID_INTENSITY_NAME,
     METRIC_DISPLAY_NAMES,
     STI_EMISSIONS_NAME,
-    TURNING_POINT_LOWER,
     TURNING_POINT_NAME,
     to_manuscript_vocabulary,
 )
@@ -110,7 +102,6 @@ from style import (
     metric_cards,
     note,
     page_header,
-    provisional_banner,
     state_header,
 )
 
@@ -119,7 +110,7 @@ st.set_page_config(
     page_title="CLEAR-ATS National Atlas",
     page_icon="C",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="auto",
 )
 inject_theme()
 
@@ -256,6 +247,85 @@ def _ordinal_position(frame: pd.DataFrame, state: str) -> str:
     return f"{index} of 50 in ascending numeric order"
 
 
+def _render_interval_scope(*, include_energy_note: bool = False) -> None:
+    """Show the registered interval and named sensitivities without a prose wall."""
+    st.table(
+        pd.DataFrame(
+            [
+                {
+                    "Component": "Drawn in the interval",
+                    "Treatment": (
+                        "20 load parameters; statutory compliance level (including an atom at 1); "
+                        "11 electricity scenarios; 3 survival shapes; and the fuel-to-direct-current "
+                        "coefficient (triangular 0.17–0.2744, mode 0.21; both endpoints also "
+                        "appear as named lines)."
+                    ),
+                },
+                {
+                    "Component": "Deployment scale",
+                    "Treatment": (
+                        "Held at 30% by 2075. The 15% and 45% paths are named, exactly rescaled "
+                        "sensitivity lines—not interval limits."
+                    ),
+                },
+                {
+                    "Component": "Policy, load and market",
+                    "Treatment": (
+                        "The statutory-targets-honoured floor, inherited vehicle-load model and "
+                        "published market case are held. Enforceable-standard, measured-load and "
+                        "market-case alternatives are named sensitivity lines."
+                    ),
+                },
+                {
+                    "Component": "Workload and hardware",
+                    "Treatment": (
+                        "Computing-workload growth is fixed at 2% yr⁻¹ and the hardware-efficiency "
+                        "floor at 0.25; neither is varied in this build."
+                    ),
+                },
+                {
+                    "Component": "After 2050",
+                    "Treatment": (
+                        "The decreasing-rate continuation of each 2045–2050 slope is inside the "
+                        "interval. Straight-line and held-2050 continuations are named sensitivity lines."
+                    ),
+                },
+            ]
+        ).set_index("Component")
+    )
+    if include_energy_note:
+        st.markdown(
+            "- **Energy panels:** the electricity scenario, electricity-axis continuation and "
+            "statutory-floor reading change kg CO₂ kWh⁻¹, not kWh, so their contribution to "
+            "the energy interval is zero. Vehicle-axis continuation can change both energy and carbon."
+        )
+
+
+def _compact_band_direction(
+    data: dict[str, Any], state: str, horizon: int
+) -> tuple[str, list[str]]:
+    """Summarize only the selected state's drawn bands, without a 51-state roster."""
+    direction_parts: list[str] = []
+    contraction_notes: list[str] = []
+    for metric in band_horizon_panel_metrics(data):
+        growth = band_horizon_growth(
+            policy_central_band(data, state, metric), metric, horizon
+        )
+        direction = "widens" if float(growth["abs_ratio"]) >= 1.0 else "narrows"
+        direction_parts.append(
+            f"{METRIC_DISPLAY_NAMES[metric]} {direction} ×{float(growth['abs_ratio']):.1f}"
+        )
+        if direction == "narrows":
+            contraction_notes.append(
+                str(
+                    band_horizon_contraction_mechanism(
+                        data, state, metric, horizon
+                    )["sentence"]
+                )
+            )
+    return " · ".join(direction_parts), contraction_notes
+
+
 try:
     atlas = load_atlas()
     policy_central = load_policy_central()
@@ -276,54 +346,9 @@ if "metric_family" not in st.session_state:
     st.session_state["metric_family"] = "Outcomes"
 
 
-page_header(
-    "CLEAR-ATS · NATIONAL ATLAS v5",
-    "One framework. Fifty states. Policy-conditioned pathways.",
-    "Two policies decide every pathway: whether the state carries an Advanced "
-    "Clean Cars II policy, and whether its enacted clean-electricity target "
-    "reaches 100 per cent. "
-    "Click any state — or the supplemental District of Columbia — to inspect its pathway.",
-)
-provisional_banner()
-
 summary = atlas["summary"]
-metric_cards(
-    [
-        ("Primary comparison", "50 states", "every state weighted equally"),
-        ("Supplemental", "District of Columbia", "visible; excluded from 50-state summaries"),
-        (
-            "Default scenario",
-            "The delivered central",
-            "each state's own rules over a published market projection",
-        ),
-        ("Comparator bundles", "3", "uniform Low · Medium · High; no probability weights"),
-    ]
-)
-
-navigation_grid = st.container(key="atlas_navigation")
-one_time_link, utility_link, scenario_link, uncertainty_link = navigation_grid.columns(4)
-with one_time_link:
-    st.page_link(
-        "pages/01_One-Time_Embodied_Energy.py",
-        label="One-time embodied energy →",
-    )
-with utility_link:
-    st.page_link(
-        "pages/02_Utility-Phase_Energy.py",
-        label="Utility-phase energy →",
-    )
-with scenario_link:
-    st.page_link(
-        "pages/03_Scenario_Explorer.py",
-        label="Scenario explorer →",
-    )
-with uncertainty_link:
-    st.page_link(
-        "pages/04_Uncertainty_Method.py",
-        label="Uncertainty method →",
-    )
-
-st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
+st.title("50-State Atlas")
+st.caption("Carbon emissions and turning points across 50 states and DC.")
 
 # --------------------------------------------------------------------------
 # Default landing view: the expert-central national turning-point map.
@@ -340,8 +365,8 @@ st.markdown('<div class="clearats-eyebrow">Default view · national turning poin
 st.markdown('<div class="clearats-panel-title">National turning-point map</div>', unsafe_allow_html=True)
 # A1/A2: the landing map is FIXED — the delivered central at each
 # state's real deployment scale, filled by the TURNING POINT itself. NO
-# control renders above it. The class fills and every other scenario live in
-# the Advanced-maps expander and on the State Pathways page.
+# control renders above it. The class fills and comparator scenarios live in
+# the Advanced-maps expander and selected-state controls below.
 map_scenario = "expert"
 color_by = "turning_point"
 
@@ -361,35 +386,8 @@ _turning_split_sentence = (
     f"{EXPERT_NO_TURNING_POINT_COUNT_PHRASE} "
     "have no turning point by 2075."
 )
-# The count above is an ARITHMETIC CONSEQUENCE of the two laws, not a result,
-# and no surface may lead with it.  The mechanism sentence is what leads, and
-# every number in it is recomputed by the loader gate from the packaged tables.
 _WITH_A_VEHICLE_RULE_WITH_NO_TURNING_POINT = (
     EXPERT_ENTRIES_WITH_A_VEHICLE_RULE - EXPERT_WITH_A_VEHICLE_RULE_WITH_A_TURNING_POINT
-)
-_mechanism_sentence = (
-    f"Of the {EXPERT_NO_VEHICLE_RULE_PHRASE}, "
-    + (
-        "none reaches a turning point"
-        if EXPERT_NO_VEHICLE_RULE_WITH_A_TURNING_POINT == 0
-        else f"{EXPERT_NO_VEHICLE_RULE_WITH_A_TURNING_POINT} reach a turning point"
-    )
-    + ": every one of them still has CO₂ emissions rising in 2075. "
-    f"{EXPERT_NO_VEHICLE_RULE_REACHING_ONE} of those 38 reach a delivered "
-    "share of clean electricity of one inside the horizon and not one of them "
-    "turns — a clean supply of electricity on its own does not reverse the "
-    f"burden. Of the {EXPERT_ENTRIES_WITH_A_VEHICLE_RULE} entries that do "
-    "carry an Advanced Clean Cars II policy, "
-    f"{EXPERT_WITH_A_VEHICLE_RULE_WITH_A_TURNING_POINT} "
-    # `P2-4` of the 2026-09-05 gate: the complement was the one hand-typed
-    # literal left in an otherwise constant-driven sentence, so a constant
-    # update would have moved one half of a subtraction and not the other.
-    f"turn and {_WITH_A_VEHICLE_RULE_WITH_NO_TURNING_POINT} do not, and the "
-    "split is made on the electricity axis without "
-    "an exception: every entry whose delivered share of clean electricity "
-    "reaches one turns, and every entry whose share does not reach one does "
-    "not turn. The entries that turn are exactly the entries carrying both an "
-    "Advanced Clean Cars II policy and a 100% clean electricity policy."
 )
 
 # Two more sentences the captions below need, each COMPUTED from a packaged
@@ -444,27 +442,9 @@ policy_turning_frame = policy_central_turning_map_frame(policy_central)
 market_turning_frame = market_central_turning_map_frame(market_central)
 expert_turning_frame = expert_central_turning_map_frame(expert_central)
 turning_frame = expert_turning_frame
-# One trimmed caption (≤2 short lines): scenario nature, L=1 conditionality,
-# DC supplemental status. Full conditionality prose stays in the hover text
-# and the detail panel below.
 st.caption(
-    "The delivered central — each entry's own vehicle policy as a floor over a "
-    "published national market projection (AEO2026 Alternative Transportation "
-    "case) rebased to its observed starting share; deterministic scenarios, "
-    f"not forecasts. {_mechanism_sentence} {_turning_split_sentence} "
-    f"{EXPERT_TURNING_POINT_CONDITIONALITY_NOTE} The four-row disclosure that "
-    "must travel with it is below the map. Colour is the turning point year; "
-    "the entries that do not turn carry the outlined fill named in the key, "
-    f"never a year. Every turning point is {EXPERT_CONDITIONALITY_FOOTNOTE}, "
-    "is distinct from the absolute peak, and is not carbon neutrality or "
-    "payback. Deployment scale: each state's actual fleet. Electricity: a "
-    "published national grid projection (NREL, 2024 mid case) resolved to each "
-    "state, held at or above the level the state's own enacted "
-    "clean-electricity target requires, on "
-    f"{EXPERT_FLOOR_READING_CENTRAL_NAME}. {EXPERT_POST_2050_SENTENCE} "
-    "Every value after 2050 is the authors' continuation, not the published "
-    "projection. The District of Columbia is supplemental: shown on the map "
-    "but excluded from 50-state summaries."
+    "The delivered central uses each entry's actual fleet and policy-conditioned "
+    f"path; it is a deterministic scenario, not a forecast. {_turning_split_sentence}"
 )
 turning_map_event = st.plotly_chart(
     make_turning_point_map(turning_frame, color_by, selected_state, scenario=map_scenario),
@@ -493,7 +473,7 @@ small_state_onsets = turning_frame.loc[
     turning_frame["state"].isin(TURNING_MAP_SMALL_STATES)
 ].sort_values("state")
 st.caption(
-    "Small eastern states (compact reference): "
+    "Small eastern states and DC: "
     + " · ".join(
         f"{row.state} {row.onset_label}"
         for row in small_state_onsets.itertuples(index=False)
@@ -510,83 +490,71 @@ if st.button(
 ):
     _set_pending_state("DC")
 
-st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
+with st.expander("Turning-point definition and scenario assumptions", expanded=False):
+    st.markdown(
+        f"- **Turning point:** {EXPERT_CONDITIONALITY_FOOTNOTE}; distinct from the "
+        "absolute peak, carbon neutrality and cumulative payback. A missing point means "
+        "no sustained non-increase through 2075, not an imputed year.\n"
+        "- **Vehicle pathway:** the AEO2026 Alternative Transportation case is rebased "
+        "to the observed starting share, with each entry's vehicle policy applied as a floor.\n"
+        f"- **Electricity pathway:** NREL's 2024 mid case is state-resolved and bounded by "
+        f"{EXPERT_FLOOR_READING_CENTRAL_NAME}.\n"
+        f"- **Mechanism:** none of the {EXPERT_NO_VEHICLE_RULE_PHRASE} turns, including "
+        f"the {EXPERT_NO_VEHICLE_RULE_REACHING_ONE} that reach a clean-electricity share "
+        f"of one. Among {EXPERT_ENTRIES_WITH_A_VEHICLE_RULE} entries with an Advanced "
+        f"Clean Cars II policy, {EXPERT_WITH_A_VEHICLE_RULE_WITH_A_TURNING_POINT} turn and "
+        f"{_WITH_A_VEHICLE_RULE_WITH_NO_TURNING_POINT} do not; the turning entries carry "
+        "both that vehicle policy and a 100% clean-electricity policy.\n"
+        f"- **After 2050:** {EXPERT_POST_2050_SENTENCE} These values are the authors' "
+        "continuation, not published projections.\n"
+        "- **Coverage:** DC is shown as a supplemental entry and excluded from 50-state summaries."
+    )
 
-# --------------------------------------------------------------------------
-# THE FOUR-ROW DISCLOSURE.  Ruling R3: it travels with EVERY count of entries
-# with a turning point, in the same visual frame as the count.  All four rows
-# are measured on this central -- at v3.2.2 three of them were inherited from
-# the enforceable-standard reading, and the robustness family was rebuilt on
-# the targets-honoured electricity axis so that they could be re-measured.
-# Nothing here is typed: the table is the packaged product.
-# --------------------------------------------------------------------------
-st.markdown(
-    '<div class="clearats-eyebrow">Travels with the count · reading of the '
-    'vehicle policy</div>',
-    unsafe_allow_html=True,
-)
 _r3 = expert_central["r3_disclosure"]
-# The two-number count is folded into the count cell rather than given a
-# column of its own: at 1440 px the five-column form pushed "Which, and when"
-# off the right edge, and that column is the one a reader checks the census
-# against.
-st.dataframe(
-    pd.DataFrame(
-        {
-            "Reading of the vehicle policy": _r3["reading_of_the_vehicle_rule"],
-            "Entries with a turning point": [
-                f"{of_51} — {two_number}"
-                for of_51, two_number in zip(_r3["of_51"], _r3["two_number_count"])
-            ],
-            "Which, and when": _r3["entries_and_years"],
-            "Cumulative CO₂ against the central": [
-                f"{float(value):+.2f} %"
-                for value in _r3["cumulative_pct_change_vs_central"]
-            ],
-        }
-    ),
-    hide_index=True,
-    width="stretch",
-    column_config={
-        "Reading of the vehicle policy": st.column_config.TextColumn(
-            width="medium"
+with st.expander("Vehicle-policy reading sensitivity", expanded=False):
+    st.caption(
+        "The turning-point census changes under alternative readings of the vehicle rule; "
+        "the four registered readings and their cumulative CO₂ differences are shown below."
+    )
+    st.dataframe(
+        pd.DataFrame(
+            {
+                "Reading of the vehicle policy": _r3["reading_of_the_vehicle_rule"],
+                "Entries with a turning point": [
+                    f"{of_51} — {two_number}"
+                    for of_51, two_number in zip(_r3["of_51"], _r3["two_number_count"])
+                ],
+                "Which, and when": _r3["entries_and_years"],
+                "Cumulative CO₂ against the central": [
+                    f"{float(value):+.2f} %"
+                    for value in _r3["cumulative_pct_change_vs_central"]
+                ],
+            }
         ),
-        "Entries with a turning point": st.column_config.TextColumn(
-            width="medium"
-        ),
-        "Which, and when": st.column_config.TextColumn(width="large"),
-        "Cumulative CO₂ against the central": st.column_config.TextColumn(
-            width="small"
-        ),
-    },
-)
-st.caption(
-    "Every count of entries with a turning point travels with this table and "
-    "with the qualifier below it. Two of the four readings dissolve the "
-    "structure completely, and every turning point in this build belongs to an "
-    "entry that carries an Advanced Clean Cars II policy, so the headline "
-    "rests entirely on that policy. "
-    + str(expert_central["contract"]["r3_disclosure"]["r4_qualifier"])
-)
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "Reading of the vehicle policy": st.column_config.TextColumn(width="medium"),
+            "Entries with a turning point": st.column_config.TextColumn(width="medium"),
+            "Which, and when": st.column_config.TextColumn(width="large"),
+            "Cumulative CO₂ against the central": st.column_config.TextColumn(width="small"),
+        },
+    )
+    st.markdown(
+        "- Two readings remove the turning-point structure; in this build, every turning "
+        "entry carries an Advanced Clean Cars II policy.\n"
+        "- Colorado and New Mexico are in the central census, but both rely on an authored "
+        "vehicle-schedule continuation beyond model year 2032. Their regulation reaches "
+        "0.82 in 2032; the later schedule is the build's, not the regulation's."
+    )
 
 st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------
-# THE NATIONAL TRAJECTORY, its interval, and the two declared deployment
-# levels as NAMED LINES -- never as interval width.  The two caption sentences
-# the build requires beside every interval display are read out of the packaged
-# interval summary rather than restated here.
+# National total: actual-fleet scale, with the conditional interval and named
+# deployment sensitivities kept visually distinct.
 # --------------------------------------------------------------------------
-st.markdown(
-    '<div class="clearats-eyebrow">National trajectory · the interval and its '
-    'named lines</div>',
-    unsafe_allow_html=True,
-)
-st.markdown(
-    '<div class="clearats-panel-title">National direct CO₂ emissions, '
-    '2025–2075</div>',
-    unsafe_allow_html=True,
-)
+st.markdown("## National direct CO₂ emissions, 2025–2075")
 st.plotly_chart(
     make_national_trajectory(
         expert_central["national_band"],
@@ -600,24 +568,21 @@ st.plotly_chart(
     config=PLOT_CONFIG,
     key="national_trajectory_direct_co2",
 )
-_not_priced_sentence, _energy_disclaimer = interval_caption_sentences(expert_central)
 st.caption(
-    "Summed over the 51 entries at each entry's real deployment scale. The "
-    "ribbon is the 5th–95th percentile interval, 2,000 draws. The two dashed "
-    "lines are the DECLARED deployment levels, 15 and 45 per cent by 2075, "
-    "each of them the central rescaled — the model is exactly linear in that "
-    "scale — and they are named lines, never interval width. "
-    f"{EXPERT_POST_2050_SENTENCE} "
-    f"{_not_priced_sentence}"
+    "Actual-fleet total across all 51 entries. The ribbon is a conditional "
+    "5th–95th percentile interval from 2,000 draws; dashed 15% and 45% deployment "
+    "paths are matched-scale sensitivity lines, not interval limits or forecasts."
 )
+with st.expander("National interval and named sensitivities", expanded=False):
+    _render_interval_scope(include_energy_note=False)
 
 st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------
 # Compare states: multi-select scenario overlay.
 # --------------------------------------------------------------------------
-st.markdown('<div class="clearats-eyebrow">Scenario comparison · multi-state overlay</div>', unsafe_allow_html=True)
-st.markdown('<div class="clearats-panel-title">Compare states</div>', unsafe_allow_html=True)
+st.markdown("## Compare states")
+st.caption("Overlay up to six states and switch between actual-fleet and matched equal-size views.")
 # B1/B2: names come from the single registry; no local synonyms.
 COMPARE_METRIC_KEYS = {name: key for key, name in METRIC_DISPLAY_NAMES.items()}
 compare_control_a, compare_control_b = st.columns([1.6, 1.9], vertical_alignment="top")
@@ -697,15 +662,14 @@ with compare_control_b:
         default="state_scaled",
         key="compare_deployment_scope",
         format_func=lambda key: {
-            "state_scaled": "State-scaled (actual fleet)",
-            "reference": "Equal-size comparison (1M vehicles + 2,988 STI units)",
+            "state_scaled": "Actual fleet",
+            "reference": "Equal-size comparison",
         }[key],
         disabled=compare_source != "expert",
         help=(
-            "State-scaled is the default and applies to the recommended "
-            "central only: CAV pathways at each state's actual FHWA MV-1 "
-            "2024 registered-vehicle total (official statistic); STI counted "
-            "separately on the state's own intersection count. The "
+            "State-scaled is the default and applies to the delivered central "
+            "only: the overlay shows CAV pathways at each state's actual FHWA "
+            "MV-1 2024 registered-vehicle total; STI is excluded from these lines. The "
             "equal-size comparison gives every state one million registered "
             "vehicles and the measured national ratio of 2,988 STI units per "
             "million vehicles. Turning point years are read from the "
@@ -726,7 +690,8 @@ with compare_control_b:
         ),
     ) or METRIC_DISPLAY_NAMES["energy"]
     compare_bands_allowed = (
-        len(compare_states) <= COMPARE_BAND_MAX_STATES
+        bool(compare_states)
+        and len(compare_states) <= COMPARE_BAND_MAX_STATES
         and compare_banded_source
         and not compare_state_scaled
     )
@@ -746,24 +711,15 @@ with compare_control_b:
             "credible interval. Available for up to three states."
         ),
     )
-    if not compare_banded_source:
+    if compare_states and not compare_banded_source:
         st.caption(
             "Sensitivity envelopes are packaged only for the recommended "
             "central and the policy-registered scenario."
         )
-    elif compare_state_scaled:
-        # D4 (2026-09-04), owner B4.  The retired sentence said envelopes are
-        # "not drawn on the state-scaled (actual-fleet) basis" full stop, and
-        # the single-state view on State pathways draws them at exactly that
-        # basis (pathway_charts.make_state_scaled_triptych, which transports
-        # them at unchanged RELATIVE width).  A reader who moved between the
-        # two pages was told two different things.  The restriction is real,
-        # but it belongs to THIS multi-state overlay only.
+    elif compare_states and compare_state_scaled:
         st.caption(
-            "Sensitivity envelopes are not overlaid on this multi-state "
-            "comparison at the actual-fleet scale. The single-state view on "
-            "State pathways draws them there, transported at unchanged "
-            "relative width."
+            "This multi-state actual-fleet view omits envelopes; the selected-state "
+            "view can show them at unchanged relative width."
         )
     elif len(compare_states) > COMPARE_BAND_MAX_STATES:
         st.caption("Sensitivity envelopes can be shown for up to three states.")
@@ -778,12 +734,12 @@ with compare_control_b:
             "Registered for the policy-central line only."
         ),
     )
-    if compare_source != "policy" and compare_weather:
+    if compare_states and compare_source != "policy" and compare_weather:
         st.caption(
             "The weather-adjusted variant is registered for the policy-central line "
             "only; it is not drawn on this overlay."
         )
-    elif compare_weather and compare_bands_requested and compare_bands_allowed:
+    elif compare_states and compare_weather and compare_bands_requested and compare_bands_allowed:
         st.caption(
             "Sensitivity envelopes are conditioned on the central line, so they "
             "are hidden while the weather-adjusted variant is displayed."
@@ -812,74 +768,90 @@ if compare_states:
     )
 else:
     st.caption("Select at least one state to draw the overlay.")
-if compare_source == "expert":
-    expert_compare_caption = (
-        "Recommended-central deterministic scenarios; every turning point is "
-        + EXPERT_CONDITIONALITY_FOOTNOTE
-        + "; not forecasts. Dots mark each state's turning point; "
-        "the legend identifies trajectories without duplicating labels at overlapping endpoints."
+if compare_states and compare_source == "expert":
+    _compare_basis_caption = (
+        "Actual-fleet CAV-only scale using each state's FHWA MV-1 2024 vehicle total; "
+        "STI is excluded from these lines."
+        if compare_state_scaled
+        else "Matched equal-size scale: 1 million vehicles and 2,988 STI units per entry."
     )
-    if compare_bands_requested and compare_bands_allowed:
-        # A5: measured for the states and metric actually drawn, never a
-        # blanket "widens toward 2075" — two packaged ribbons genuinely
-        # narrow on the drawn scale (atlas_io.band_horizon_sweep).
-        expert_compare_caption += (
-            " Shaded fills are the 5th-95th percentile interval. "
-            + band_horizon_overlay_note(
-                expert_central,
-                compare_states,
-                COMPARE_METRIC_KEYS[compare_metric_label],
-                2075,
+    _compare_band_caption = (
+        "; shading is the conditional 5th–95th percentile interval from 2,000 draws."
+        if compare_bands_requested and compare_bands_allowed
+        else "."
+    )
+    st.caption(
+        _compare_basis_caption
+        + " Dots mark turning points and paths are conditional scenarios, not forecasts"
+        + _compare_band_caption
+    )
+elif compare_states and compare_source == "market":
+    st.caption(
+        "Registered 2016–2025 market-trend extrapolations; deterministic scenarios, "
+        "not forecasts. Dots mark turning points, and no dot means none through 2075."
+    )
+elif compare_states and compare_source == "noaccii":
+    st.caption(
+        "The no Advanced Clean Cars II comparison changes both policy and estimator "
+        "assignment, so it is not a one-lever effect or forecast. Dots mark turning points."
+    )
+elif compare_states:
+    st.caption(
+        "Policy-registered deterministic scenarios, not forecasts. Dots mark turning "
+        "points; optional shading is a load-model (L2) sensitivity envelope."
+    )
+
+if compare_states:
+    with st.expander("Comparison assumptions", expanded=False):
+        if compare_source == "expert":
+            st.markdown(
+                f"- **Scenario:** every turning point is {EXPERT_CONDITIONALITY_FOOTNOTE}.\n"
+                + (
+                    "- **Scale:** actual-fleet lines are CAV-only and include differences in "
+                    "state fleet size; STI is excluded.\n"
+                    if compare_state_scaled
+                    else "- **Scale:** every entry uses the same capacity and common deployment and "
+                    "hardware path; switch to actual-fleet scale for state totals.\n"
+                )
+                + (
+                    "- **Interval on screen:** "
+                    + band_horizon_overlay_note(
+                        expert_central,
+                        compare_states,
+                        COMPARE_METRIC_KEYS[compare_metric_label],
+                        2075,
+                    )
+                    + " A late ribbon can look thinner in absolute units as its central path "
+                    "approaches zero.\n"
+                    if compare_bands_requested and compare_bands_allowed
+                    else ""
+                )
+                + (
+                    f"- **Near-zero paths:** {_equal_size_zero_sentence}"
+                    if not compare_state_scaled
+                    else ""
+                )
             )
-            + " Where the grid decarbonizes, the central path itself falls "
-            "toward zero late, so a drawn ribbon can look thinner there even "
-            "though the band is a larger share of that year's central value."
-        )
-    st.caption(expert_compare_caption)
-    if compare_state_scaled:
-        st.caption(
-            "basis: actual FHWA MV-1 2024 fleet; STI counted separately"
-        )
-    else:
-        st.caption(
-            "Energy on the equal-size comparison is defined per identical "
-            "capacity on a common deployment and hardware path, so the state "
-            "lines run close together in the late horizon. "
-            # RETIRED AT v3.1c.  The sentence here used to name eleven states
-            # sitting at a 100%-clean-electricity statute and a registered
-            # vehicle ceiling at once, and quoted how far apart their CO2 lines
-            # stayed.  Neither half survives: there is no ceiling, and the
-            # entries that now reach a delivered clean share of one reach
-            # EXACTLY ZERO direct CO2 rather than converging near it, so a
-            # relative spread among them is undefined.  What replaces it is the
-            # thing the build certifies, measured from the packaged file in
-            # tests/test_v2_sweep_closure_2026_09_03.py.
-            + _equal_size_zero_sentence
-            + " Switch to the state-scaled basis to compare actual-fleet "
-            "magnitudes."
-        )
-elif compare_source == "market":
-    st.caption(
-        "Market-trend upper bound (v2) deterministic scenarios — registered "
-        "extrapolations of observed 2016-2025 trends; not forecasts. Dots mark "
-        "each state's turning point; a state with no turning point by "
-        "2075 carries no dot."
-    )
-elif compare_source == "noaccii":
-    st.caption(
-        "Compound no Advanced Clean Cars II comparison — both the policy "
-        "assumption and estimator assignment differ from the recommended "
-        "central. It is not a one-lever policy effect, central estimate or "
-        "forecast. Dots mark the turning point; the "
-        + _noaccii_no_dot_phrase
-        + " with no turning point by 2075 carry no dot."
-    )
-else:
-    st.caption(
-        "Policy-registered deterministic scenarios; not forecasts. Dots mark each "
-        "state's turning point; the optional envelope is a load-model (L2) "
-        "sensitivity check, not manuscript uncertainty."
-    )
+        elif compare_source == "market":
+            st.markdown(
+                "- Uses each state's fitted 2016–2025 market rates, with enacted policy retained "
+                "only as a floor or statutory anchor.\n"
+                "- No sensitivity envelope is packaged for this source."
+            )
+        elif compare_source == "noaccii":
+            st.markdown(
+                "- Both the vehicle-policy assumption and estimator assignment differ from the "
+                "delivered central.\n"
+                f"- {_noaccii_no_dot_phrase.capitalize()} have no turning point through 2075 "
+                "and therefore carry no dot."
+            )
+        else:
+            st.markdown(
+                "- The optional load-model (L2) envelope is a sensitivity check, not prediction "
+                "uncertainty or a confidence/credible interval.\n"
+                "- The weather-adjusted line is a named deterministic variant (+1.6% to +7.9% "
+                "levels); it does not change turning-point years."
+            )
 
 st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 
@@ -888,8 +860,8 @@ st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 # --------------------------------------------------------------------------
 with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · High)", expanded=False):
     st.caption(
-        "These thirteen map views describe the uniform comparator bundles; the "
-        "delivered central remains the default above."
+        "Explore the uniform Low, Medium and High comparator bundles; the delivered "
+        "central remains the primary view above."
     )
     control_a, control_b = st.columns([1.1, 2.4], vertical_alignment="bottom")
     with control_a:
@@ -935,9 +907,11 @@ with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · Hi
     clicked_state = _extract_location(map_event)
     if clicked_state and clicked_state != selected_state and clicked_state in state_name_by_code:
         _set_pending_state(clicked_state)
-    st.caption(
-        f"{spec.description} {spec.boundary} Map colors use a fixed 50-state domain for this view; "
-        "DC is displayed but excluded from that domain."
+    st.markdown(
+        f"- **Measure:** {spec.description}\n"
+        f"- **Boundary:** {spec.boundary}\n"
+        "- **Color scale:** fixed to the 50 states for this view; DC is shown but "
+        "excluded from the domain."
     )
     key_text = (
         '<span style="color:#d85d2a;font-size:1.05rem">★</span> orange = registered CA/OH case available'
@@ -971,11 +945,8 @@ with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · Hi
         unsafe_allow_html=True,
     )
     st.caption(
-        f"Same turning points as the landing map ({_turning_split_sentence}); "
-        "only the fill changes, from the turning point year itself to the "
-        "grid-decarbonization class. The states with no turning point by "
-        "2075 are filled by their grid class here like every other state; "
-        "their hover card reads \"none by 2075\"."
+        "The years match the landing map; here the fill encodes electricity-law class. "
+        "Entries without a turning point retain their grid class and read \"none by 2075\" on hover."
     )
     st.plotly_chart(
         make_turning_point_map(
@@ -1003,6 +974,7 @@ with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · Hi
 
 st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 
+st.markdown("## Selected state")
 detail_col, trajectory_col = st.columns([1.0, 1.58], gap="large", vertical_alignment="top")
 with detail_col:
     selected_state = st.selectbox(
@@ -1167,13 +1139,9 @@ with detail_col:
         onset_card = (
             f"{TURNING_POINT_NAME} · delivered central",
             expert_onset_display,
-            f"delivered-central turning point {EXPERT_CONDITIONALITY_FOOTNOTE}, "
-            f"on {EXPERT_FLOOR_READING_CENTRAL_NAME}; the SUPERSEDED "
-            f"comparators' own years, never this central's: policy-registered "
-            f"{policy_onset_display} / market-trend {market_onset_display}; "
-            f"modeled years; {TURNING_POINT_NONE_TILE_NOTE}; it travels with "
-            "the four-row disclosure below the map; distinct from the absolute "
-            "peak; not neutrality or payback",
+            f"conditional modeled year; policy-registered {policy_onset_display} / "
+            f"market-trend {market_onset_display}; {TURNING_POINT_NONE_TILE_NOTE}; "
+            "not the absolute peak, neutrality or payback",
         )
     else:
         onset_card = (
@@ -1221,11 +1189,8 @@ with detail_col:
             (
                 f"{CAV_EMISSIONS_NAME} · 2050 · actual fleet",
                 f"{float(state_scaled_annual_row(state_scaled, selected_state, 2050)['cav_direct_co2_kg_actual_fleet']) / 1e6:,.1f}",
-                "kt CO₂ yr⁻¹ · basis: the delivered central at this "
-                "state's actual FHWA MV-1 2024 registered vehicles (official "
-                "statistic); STI counted separately on the state's own "
-                "intersection count (a measurement, not a census, in 45 "
-                "states; an agency count of every signal in 6)",
+                "kt CO₂ yr⁻¹ · delivered central at this state's actual FHWA "
+                "MV-1 2024 registered vehicles; STI counted separately",
             ),
         ),
     ]
@@ -1302,21 +1267,41 @@ with detail_col:
     note(str(context["geography_warning"]))
     if expert_central_selected:
         state_csv = policy_central_state_slice(expert_central, selected_state)
-        ledger_name = f"clear_ats_{selected_state.lower()}_expert_central_ledger_v22.csv"
+        ledger_name = (
+            f"clear_ats_{selected_state.lower()}_expert_central_equal_size_model_ledger_v33.csv"
+        )
+        actual_fleet_csv = state_scaled["annual"].loc[
+            state_scaled["annual"]["state"] == selected_state
+        ].copy()
+        st.download_button(
+            "Download actual-fleet state pathway",
+            data=actual_fleet_csv.to_csv(index=False).encode("utf-8"),
+            file_name=(
+                f"clear_ats_{selected_state.lower()}_expert_central_actual_fleet_pathway_v33.csv"
+            ),
+            mime="text/csv",
+            width="stretch",
+        )
     elif noaccii_selected:
         state_csv = policy_central_state_slice(noaccii, selected_state)
-        ledger_name = f"clear_ats_{selected_state.lower()}_noaccii_counterfactual_ledger_v21.csv"
+        ledger_name = (
+            f"clear_ats_{selected_state.lower()}_noaccii_equal_size_model_ledger_v21.csv"
+        )
     elif policy_central_selected:
         state_csv = policy_central_state_slice(policy_central, selected_state)
-        ledger_name = f"clear_ats_{selected_state.lower()}_policy_central_ledger_v1.csv"
+        ledger_name = (
+            f"clear_ats_{selected_state.lower()}_policy_central_equal_size_model_ledger_v1.csv"
+        )
     elif market_central_selected:
         state_csv = policy_central_state_slice(market_central, selected_state)
-        ledger_name = f"clear_ats_{selected_state.lower()}_market_central_ledger_v2.csv"
+        ledger_name = (
+            f"clear_ats_{selected_state.lower()}_market_central_equal_size_model_ledger_v2.csv"
+        )
     else:
         state_csv = state_slice(atlas, selected_state)
-        ledger_name = f"clear_ats_{selected_state.lower()}_normalized_ledger_v1.csv"
+        ledger_name = f"clear_ats_{selected_state.lower()}_equal_size_model_ledger_v1.csv"
     st.download_button(
-        "Download selected state ledger",
+        "Download equal-size model ledger",
         data=state_csv.to_csv(index=False).encode("utf-8"),
         file_name=ledger_name,
         mime="text/csv",
@@ -1325,97 +1310,68 @@ with detail_col:
 
 with trajectory_col:
     st.markdown("## Selected-state pathways")
+    pathway_details: list[str] = []
     if expert_central_selected:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · The delivered central "
-            "(each entry's own vehicle rule as a floor over a published market "
-            "projection, with its enacted clean-electricity target honoured as a "
-            "floor at its own statutory level) is the emphasized path. "
-            "The turning point is " + EXPERT_CONDITIONALITY_FOOTNOTE + ". "
+            f"{state_name_by_code[selected_state]} · Delivered-central carbon and energy "
+            "pathways; turning-point markers are conditional on the selected policy path."
         )
         if detail_show_envelope:
-            pathway_caption += (
-                "Shading is the 5th-95th percentile interval; "
-                "it is not prediction uncertainty or a confidence/credible interval. "
-            )
-        if compare_detail_scenarios:
-            pathway_caption += (
-                "Uniform Low/Medium/High comparator bundles are added as thin "
-                "lines; the y-axis stays fitted to the emphasized central "
-                "(plus any displayed band) and the 50-state-only median, so a "
-                "distant branch (typically High) can exceed the frame — "
-                "toggle it in the legend. "
-            )
+            pathway_caption += " Shading is the conditional 5th–95th percentile interval from 2,000 draws, not a forecast."
+        pathway_details.extend(
+            [
+                "**Source:** each entry's vehicle rule is a floor over the published market "
+                "projection, and its enacted clean-electricity target is honoured at its "
+                "statutory level.",
+                f"**Turning point:** {EXPERT_CONDITIONALITY_FOOTNOTE}; it is not the absolute "
+                "peak, carbon neutrality or cumulative payback.",
+            ]
+        )
     elif noaccii_selected:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · Compound no Advanced Clean "
-            "Cars II comparison — both the policy assumption and estimator "
-            "assignment differ from the delivered central. It is not a "
-            "one-lever policy effect or central estimate. A state with no "
-            "turning point by 2075 shows no marker. "
+            f"{state_name_by_code[selected_state]} · No Advanced Clean Cars II compound "
+            "comparison; both policy and estimator assignment differ from the delivered central. "
+            "It is not a one-lever effect or forecast."
         )
-        if compare_detail_scenarios:
-            pathway_caption += (
-                "Uniform Low/Medium/High comparator bundles are added as thin "
-                "lines; the y-axis stays fitted to the emphasized central "
-                "(plus any displayed band) and the 50-state-only median, so a "
-                "distant branch (typically High) can exceed the frame — "
-                "toggle it in the legend. "
-            )
+        pathway_details.append(
+            "**Turning point:** no marker means no sustained non-increase through 2075; "
+            "the value is reported, never imputed."
+        )
     elif policy_central_selected:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · The policy-registered scenario is the "
-            "emphasized enacted-policy path. "
+            f"{state_name_by_code[selected_state]} · Policy-registered enacted-policy path."
         )
         if detail_show_envelope:
             pathway_caption += (
-                "Shading is a load-model (L2) sensitivity envelope; "
-                "it is not prediction uncertainty or a confidence/credible interval. "
-            )
-        if compare_detail_scenarios:
-            pathway_caption += (
-                "Uniform Low/Medium/High comparator bundles are added as thin "
-                "lines; the y-axis stays fitted to the emphasized central "
-                "(plus any displayed band) and the 50-state-only median, so a "
-                "distant branch (typically High) can exceed the frame — "
-                "toggle it in the legend. "
+                " Shading is a load-model (L2) sensitivity envelope, not a forecast "
+                "or confidence/credible interval."
             )
         if weather_variant_on:
-            pathway_caption += (
-                "The dash-dot line is the named weather-adjusted variant (+1.6% to +7.9% levels; "
-                "turning point unchanged)."
+            pathway_details.append(
+                "**Weather line:** named deterministic workload variant (+1.6% to +7.9% "
+                "levels); the turning-point year is unchanged."
             )
     elif market_central_selected:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · The market-trend upper bound — this state's own "
-            "fitted market rates with enacted policy entering only as a floor or retained "
-            "statutory/target anchors — is the emphasized path. A state with no turning point by "
-            "2075 shows no marker. "
+            f"{state_name_by_code[selected_state]} · Market-trend upper-bound path using "
+            "state-fitted rates and retained statutory anchors. No marker means no turning "
+            "point through 2075."
         )
-        if compare_detail_scenarios:
-            pathway_caption += (
-                "Uniform Low/Medium/High comparator bundles are added as thin "
-                "lines; the y-axis stays fitted to the emphasized central "
-                "(plus any displayed band) and the 50-state-only median, so a "
-                "distant branch (typically High) can exceed the frame — "
-                "toggle it in the legend. "
-            )
     else:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · {detail_scenario.title()} comparator bundle is "
-            "conditioned as the primary path. "
+            f"{state_name_by_code[selected_state]} · {detail_scenario.title()} uniform "
+            "comparator bundle. "
             + (
-                "The other deterministic branches are added as comparators; the y-axis stays fitted to the "
-                "emphasized path and its support, so a distant branch (typically High) can exceed the frame—"
-                "toggle it in the legend. "
-                if compare_detail_scenarios
-                else "Other branches are hidden until comparison is requested. "
-            )
-            + (
-                "The shaded object is an exhaustive deterministic engineering support, not a probability ribbon."
+                "Shading is deterministic engineering support, not a probability interval."
                 if detail_range_object != "none"
                 else "No range object is displayed."
             )
+        )
+    if compare_detail_scenarios:
+        pathway_details.append(
+            "**Comparator lines:** uniform Low, Medium and High bundles are added as thin "
+            "lines. The axis remains fitted to the emphasized path, displayed range and "
+            "50-state median; distant lines remain available in the legend."
         )
     st.caption(pathway_caption)
     if expert_central_selected:
@@ -1478,19 +1434,26 @@ with trajectory_col:
             compare_scenarios=compare_detail_scenarios,
             range_object=detail_range_object,
         )
-    # This integrated release keeps the full figure in the existing expander
-    # instead of linking to a National Atlas subpage that is not being added.
-    with st.expander("Show the three-panel figure here", expanded=False):
-        st.plotly_chart(
-            triptych_figure,
-            width="stretch",
-            config=PLOT_CONFIG,
-            key=(
-                f"bundle_triptych_{selected_state}_{detail_scenario}_"
-                f"{detail_range_object}_{detail_year}_{compare_detail_scenarios}_"
-                f"{weather_variant_on}_{detail_show_envelope}"
-            ),
+    st.plotly_chart(
+        triptych_figure,
+        width="stretch",
+        config=PLOT_CONFIG,
+        key=(
+            f"bundle_triptych_{selected_state}_{detail_scenario}_"
+            f"{detail_range_object}_{detail_year}_{compare_detail_scenarios}_"
+            f"{weather_variant_on}_{detail_show_envelope}"
+        ),
+    )
+    with st.expander("Selected-state pathway assumptions", expanded=False):
+        if pathway_details:
+            st.markdown("\n".join(f"- {line}" for line in pathway_details))
+        st.markdown(
+            "- **Actual-fleet tile:** vehicles use the state's FHWA MV-1 2024 "
+            "registered-vehicle total; STI uses the state's intersection count. The latter "
+            "is a measurement in 45 states and a full agency signal count in 6."
         )
+        if expert_central_selected and detail_show_envelope:
+            _render_interval_scope(include_energy_note=True)
 
 st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 
@@ -1541,53 +1504,33 @@ with context_col:
         st.markdown(
             f"**Maximum one-sided band width at {detail_year}:** " + " · ".join(band_lines)
         )
-        note(
-            "The 5th-95th percentile interval on the equal-size comparison, "
-            "2,000 draws over four registered axes plus the conversion "
-            "coefficient: the twenty load parameters (seed 42), the statutory "
-            "compliance level with an atom at the statutory value of one "
-            "(seed 424242, atom seed 42424242), one of eleven registered "
-            "electricity scenarios at equal weight (seed 4242424242) and one "
-            "of three registered survival shapes at equal weight (seed "
-            "424242424242), with the fuel-to-direct-current conversion "
-            "coefficient drawn triangular on its declared list, support 0.17 "
-            "to 0.2744 with its mode at the delivered central 0.21. The "
-            "published market case is HELD in every draw and carried as a "
-            "named line, so there is no market-case seed. "
-            "Widths are quoted on one basis over the whole horizon: the "
-            "interval as a share of that same year's central path, and over "
-            "all 51 entries the median is "
-            + band_halfwidth_phrase()
-            + ". "
-            + band_zero_central_note()
-            + " A width far above 100 per cent of the central is a statement "
-            "about the DENOMINATOR and not about the spread of the draws: 17 "
-            "entries reach a clean-electricity share of one and their central "
-            "grid carbon is then exactly zero, so read the absolute 5th, 50th "
-            "and 95th percentiles beside it. "
-            + " Direction is measured for the state and horizon on screen, "
-            "not asserted: "
-            + band_horizon_direction_note(
-                expert_central,
-                selected_state,
-                2050 if int(detail_year) <= 2050 else 2075,
+        with st.expander("Read this state's interval", expanded=False):
+            _band_horizon = 2050 if int(detail_year) <= 2050 else 2075
+            _band_direction, _band_contraction_notes = _compact_band_direction(
+                expert_central, selected_state, _band_horizon
             )
-            + " Still excluded: structural-form and policy risk. "
-            "Not prediction uncertainty or a confidence/credible interval; p50 "
-            "sits below the central late-horizon, reported, never recentered — "
-            "a property of the declared coefficient list, which places 0.21 "
-            "nearer its low endpoint than its high one, and not of the model. "
-            + _not_priced_sentence
-        )
+            st.markdown(
+                "- **Definition:** conditional 5th–95th percentiles on the equal-size "
+                "comparison, using 2,000 draws; not prediction uncertainty or a "
+                "confidence/credible interval.\n"
+                f"- **Across entries:** {band_halfwidth_phrase()}.\n"
+                f"- **Zero-central rule:** {band_zero_central_note()} If a denominator "
+                "approaches zero, use the absolute 5th, 50th and 95th percentiles.\n"
+                f"- **Absolute-width direction, 2030–{_band_horizon}:** {_band_direction}."
+                + "".join(
+                    f"\n- **Why a band narrows:** {sentence}."
+                    for sentence in _band_contraction_notes
+                )
+                + "\n- **Boundary:** structural-form and policy risk are excluded. Late-horizon "
+                "p50 may lie below the central because the declared coefficient list places "
+                "0.21 nearer its low endpoint than its high endpoint; it is reported without "
+                "recentering."
+            )
     elif noaccii_selected:
         note(
-            "The no Advanced Clean Cars II branch is a compound comparison: "
-            "both the policy assumption and estimator assignment differ from "
-            "the delivered central. It is not a one-lever policy effect or "
-            "central estimate. Turning points: delivered central "
-            f"{expert_onset_display} / compound branch {onset}. "
-            f"{TURNING_POINT_NONE_TILE_NOTE.capitalize()}, and it is reported, "
-            "never imputed."
+            "Compound comparison: both policy and estimator assignment differ from the "
+            f"delivered central. Turning points — delivered central {expert_onset_display}; "
+            f"compound branch {onset}; {TURNING_POINT_NONE_TILE_NOTE}, reported without imputation."
         )
     elif policy_central_selected and detail_show_envelope:
         band_lines = []
@@ -1614,11 +1557,9 @@ with context_col:
     elif market_central_selected:
         note(
             "No sensitivity envelope is packaged for the market-trend upper bound. "
-            "Turning points, each the SUPERSEDED comparator's own and never "
-            f"the delivered central's: policy-registered {policy_onset_display} "
-            f"/ market-trend {market_onset_display}. "
-            f"{TURNING_POINT_NONE_TILE_NOTE.capitalize()}, and it is reported, "
-            "never imputed."
+            f"Comparator turning points — policy-registered {policy_onset_display}; "
+            f"market-trend {market_onset_display}; {TURNING_POINT_NONE_TILE_NOTE}, "
+            "reported without imputation."
         )
     elif not central_selected and detail_range_object != "none":
         width_lines = []
@@ -1648,10 +1589,8 @@ with context_col:
     )
     if selected_state in {"CA", "OH"}:
         note(
-            "This national pathway is a different accounting basis from the "
-            "separate legacy CA/OH case bundle (an earlier registered-scope case "
-            "study, kept for audit) — the two are never numerically "
-            "interchangeable."
+            "The separate legacy CA/OH case bundle uses a different accounting basis; "
+            "its values are not numerically interchangeable with this national pathway."
         )
 
 with drivers_col:
@@ -1740,28 +1679,26 @@ with st.expander("Definitions and claim boundaries", expanded=False):
     st.markdown(
         "**Claim boundary.** " + to_manuscript_vocabulary(boundaries["claim_boundary"])
     )
-    st.caption(CLAIM_BOUNDARY_SCOPE_NOTE)
+    st.markdown(
+        "- These definitions apply to equal-size comparison maps; those values are never summed.\n"
+        "- State-scaled totals use each entry's actual fleet and are summed across all 51 entries; "
+        "the two bases are not mixed.\n"
+        "- The manuscript's urban–rural allocation is a separate product and is not displayed here."
+    )
 
-status = atlas["dashboard_status"]
-dashboard_contract = str(
-    status.get("status", status.get("dashboard_contract_status", "not recorded"))
-)
-# A9(7): no bare ALL_CAPS enum reaches the reader.  The raw status token is
-# still available to auditors on the Framework & data page.
-dashboard_contract_label = (
-    "verified"
-    if dashboard_contract == "DASHBOARD_DATA_CONTRACT_PASS"
-    else "not verified"
-)
-# One-line footer (shortest honest form); per-bundle statuses and the raw
-# status enums live on the Framework & data page.
+with st.expander("Data and version", expanded=False):
+    st.markdown(
+        "- **Numerical release:** v3.3.\n"
+        "- **Interface:** streamlined National Dashboard v5 view.\n"
+        "- **Verified:** 28 September 2026; all 73 packaged data files match the current source snapshot.\n"
+        "- **Snapshot:** bundled with this deployment; values are not recomputed live.\n"
+        "- **Coverage:** current 50 states plus supplemental DC, modeled from 2025 to 2075.\n"
+        "- **Scale:** national totals sum state-scaled values; equal-size values are used "
+        "only for matched comparisons and are never summed."
+    )
+
 footer(
-    "Data contract "
-    + dashboard_contract_label
-    + " · Default scenario: the delivered central · "
-    "Equal-size values are never summed; national totals are the packaged sums of "
-    "the state-scaled values over the 51 entries (50 states and the District of "
-    "Columbia) · the District of Columbia excluded from 50-state medians and ordering · "
+    "Numerical release v3.3 · 50 states + supplemental DC · "
     + to_manuscript_vocabulary(
         str(summary.get("claim_boundary", "Deterministic comparative scenarios only."))
     )

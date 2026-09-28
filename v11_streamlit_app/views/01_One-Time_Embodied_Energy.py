@@ -448,34 +448,34 @@ for r in unit_rows:
         "Manuscript (kWh)":  float(ms_v) if ms_v == ms_v else float("nan"),
         "Status":            status,
     })
-st.markdown("**Figure B live vs manuscript comparison.**")
-_compare_df = prepare_for_streamlit(
-    pd.DataFrame(_compare_rows),
-    numeric_cols=["Live (kWh)", "Manuscript (kWh)"],
-)
-st.dataframe(
-    style_with_nan_dash(
-        _compare_df,
+with st.expander("Figure B live vs manuscript comparison", expanded=False):
+    _compare_df = prepare_for_streamlit(
+        pd.DataFrame(_compare_rows),
         numeric_cols=["Live (kWh)", "Manuscript (kWh)"],
-        fmt="{:,.1f}",
-    ),
-    hide_index=True, width="stretch",
-)
-if _b_any_drift:
-    st.caption(
-        "Live Figure B values differ from manuscript Figure 3b by "
-        "more than 1 %. This indicates a divergence between the "
-        "live component sum and the manuscript aggregation; both "
-        "are reproducible from the inventory table at the end of "
-        "this page."
     )
-if _b_any_manuscript_gap:
-    st.caption(
-        "STI Basic row shows a rare aggregation discrepancy: summing the "
-        "component inventory gives 2,747.36 kWh, whereas an alternative "
-        "aggregation path reports 2,139.77 kWh. Both values are shown on "
-        "this page so the reader can compare."
+    st.dataframe(
+        style_with_nan_dash(
+            _compare_df,
+            numeric_cols=["Live (kWh)", "Manuscript (kWh)"],
+            fmt="{:,.1f}",
+        ),
+        hide_index=True, width="stretch",
     )
+    if _b_any_drift:
+        st.caption(
+            "Live Figure B values differ from manuscript Figure 3b by "
+            "more than 1 %. This indicates a divergence between the "
+            "live component sum and the manuscript aggregation; both "
+            "are reproducible from the inventory table at the end of "
+            "this page."
+        )
+    if _b_any_manuscript_gap:
+        st.caption(
+            "STI Basic row shows a rare aggregation discrepancy: summing the "
+            "component inventory gives 2,747.36 kWh, whereas an alternative "
+            "aggregation path reports 2,139.77 kWh. Both values are shown on "
+            "this page so the reader can compare."
+        )
 
 l5_bd = production_only_subsystem_breakdown(CAV_COUNTS["L5"])
 l5_total = sum(l5_bd.values())
@@ -509,14 +509,8 @@ st.markdown("---")
 st.subheader("Figure C. Marginal components across autonomy levels")
 
 st.caption(
-    ":bulb: **Why this chart matters.** Total component count tells "
-    "you how many additional hardware items autonomy introduces; the "
-    "stacked breakdown tells you **which** components those are. "
-    "Sensors carry low per-unit energy but multiply quickly; "
-    "high-performance computing and LiDAR units carry much higher "
-    "per-unit energy but appear in smaller numbers. Total count "
-    "alone does not equal one-time energy — see Figure B for the "
-    "energy-weighted view."
+    "Additional-component counts show deployment density and composition; "
+    "Figure B provides the complementary energy-weighted view."
 )
 
 # Component-list ordering used for the stacked breakdown. Order is
@@ -697,17 +691,27 @@ st.caption(
     "Figure C. Count of additional hardware components that autonomy "
     "introduces relative to a conventional vehicle (left group) or a "
     "traditional intersection (right group). Counts come directly "
-    "from Extended Data Tables 3 (CAV) and 4 (STI) of the manuscript. "
-    "**Why L3 Small / Medium / Large is non-monotonic in total count.** "
-    "L3 Small uses 12 sonar to compensate for missing LiDAR; L3 Medium "
-    "trades sonar for two LiDAR S; L3 Large eliminates sonar entirely "
-    "and adds five LiDAR S plus more radars. The total count drops "
-    "across L3 Small → Medium → Large but the per-unit one-time energy "
-    "rises (see Figure B), because a LiDAR S costs roughly 2.3 × a "
-    "sonar in embodied energy. **Figure C count and Figure B energy "
-    "tell complementary stories: count tracks deployment density; "
-    "energy tracks the concentration of high-energy components.**"
+    "from Extended Data Tables 3 (CAV) and 4 (STI) of the manuscript."
 )
+
+with st.expander(
+    "Why component count and one-time energy differ", expanded=False
+):
+    st.markdown(
+        "Total component count shows how many hardware items autonomy adds; "
+        "the stacked breakdown shows which items they are. Sensors carry low "
+        "per-unit energy but multiply quickly, while high-performance computing "
+        "and LiDAR carry higher per-unit energy but appear less often.\n\n"
+        "**Why L3 Small / Medium / Large is non-monotonic in total count.** "
+        "L3 Small uses 12 sonar to compensate for missing LiDAR; L3 Medium "
+        "trades sonar for two LiDAR S; L3 Large eliminates sonar entirely "
+        "and adds five LiDAR S plus more radars. The total count drops "
+        "across L3 Small → Medium → Large but the per-unit one-time energy "
+        "rises (see Figure B), because a LiDAR S costs roughly 2.3 × a "
+        "sonar in embodied energy. **Figure C count and Figure B energy "
+        "tell complementary stories: count tracks deployment density; "
+        "energy tracks the concentration of high-energy components.**"
+    )
 
 st.markdown("---")
 
@@ -860,18 +864,19 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════════
 st.subheader("Why the life-cycle optimisation must span both phases")
 
-st.info(
-    "**v10 note.** The 'live' L5 annual-utility figure below is now the "
-    "bottom-up component-registry value (~1 MWh/yr), not the manuscript's "
-    "~18.2 MWh/yr. The manuscript figure was derived from server-GPU "
-    "(NVIDIA A100) per-inference benchmarks multiplied by per-agent "
-    "inference counts; v10 uses deployed automotive-ASIC power. With the "
-    "recalibrated value the autonomy subsystem's *annual operational* "
-    "energy is roughly one-tenth of its *one-time embodied* energy — the "
-    "inverse of the manuscript's 'utility ≈ 2× one-time' framing for the "
-    "autonomy stack. See "
-    "`audits/step_08_component_power_realignment/COMPONENT_REALIGNMENT_MEMO.md`."
-)
+with st.expander("Accounting-basis note", expanded=False):
+    st.info(
+        "**v10 note.** The 'live' L5 annual-utility figure below is now the "
+        "bottom-up component-registry value (~1 MWh/yr), not the manuscript's "
+        "~18.2 MWh/yr. The manuscript figure was derived from server-GPU "
+        "(NVIDIA A100) per-inference benchmarks multiplied by per-agent "
+        "inference counts; v10 uses deployed automotive-ASIC power. With the "
+        "recalibrated value the autonomy subsystem's *annual operational* "
+        "energy is roughly one-tenth of its *one-time embodied* energy — the "
+        "inverse of the manuscript's 'utility ≈ 2× one-time' framing for the "
+        "autonomy stack. See "
+        "`audits/step_08_component_power_realignment/COMPONENT_REALIGNMENT_MEMO.md`."
+    )
 
 prod_log_l5 = TABLE2_PROD_LOG["CAV L5"]["prod_log"]  # 9237.2 (production + logistics, unchanged)
 utility_annual_manuscript = L5_UTILITY_ANNUAL_KWH        # 18232 — manuscript pre-recalibration

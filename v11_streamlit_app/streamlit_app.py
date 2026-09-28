@@ -1,21 +1,11 @@
-"""Cloud-compatible entry point for the CLEAR-ATS National Atlas."""
-from __future__ import annotations
-
-import runpy
-import sys
+"""Existing Streamlit Cloud entrypoint for the CLEAR-ATS dashboard."""
 from pathlib import Path
+import sys
 
-_APP_DIR = Path(__file__).resolve().parent
-_REPO_DIR = _APP_DIR.parent
+_REPO_DIR = Path(__file__).resolve().parent.parent
+if str(_REPO_DIR) not in sys.path:
+    sys.path.insert(0, str(_REPO_DIR))
 
-# Streamlit Community Cloud currently launches this file directly. Keep the
-# National Atlas isolated while making its modules importable from that saved
-# deployment coordinate.
-for path in (_REPO_DIR, _REPO_DIR / "national_atlas"):
-    if path.exists() and str(path) not in sys.path:
-        sys.path.insert(0, str(path))
+from dashboard_navigation import main
 
-runpy.run_path(
-    str(_REPO_DIR / "national_atlas" / "streamlit_app.py"),
-    run_name="__main__",
-)
+main()

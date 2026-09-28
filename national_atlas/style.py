@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Iterable, Tuple
 
 import streamlit as st
-from streamlit.errors import StreamlitAPIException
 
 
 APP_DIR = Path(__file__).resolve().parent
@@ -230,68 +229,8 @@ def inject_theme() -> None:
     # Do not mount the standalone National Atlas navigation a second time.
 
 
-# X4: Streamlit's automatic multipage nav labels the entry page from its
-# filename, so a publish-ready product advertised "streamlit app" as its first
-# navigation item.  The automatic nav is switched off in .streamlit/config.toml
-# and replaced by these named links.  The sidebar still carries NAVIGATION
-# ONLY -- no input widget (owner requirement A7).
-NAV_PAGES: tuple[tuple[str, str], ...] = (
-    ("streamlit_app.py", "National atlas"),
-    ("pages/01_State_Pathways_and_Uncertainty.py", "State pathways and uncertainty"),
-    ("pages/02_Framework_and_Data.py", "Framework and data"),
-)
-
-
-def sidebar_nav() -> None:
-    with st.sidebar:
-        st.markdown(
-            '<div class="clearats-nav-title">CLEAR-ATS</div>',
-            unsafe_allow_html=True,
-        )
-        for target, label in NAV_PAGES:
-            try:
-                st.page_link(target, label=label)
-            except (KeyError, ValueError, StreamlitAPIException):
-                # A page can be absent when a single script is run directly
-                # (AppTest, export scripts); navigation degrades, nothing else.
-                continue
-
-
 def provisional_banner(context: str = "atlas") -> None:
-    # One short disclaimer per page (owner declutter directive 2026-09-02);
-    # the full status detail lives on the Framework & data page.
-    # L4-07 (2026-09-26): the boundary is scoped by deployment scale.  The
-    # default national layer is state-scaled (each state's actual fleet) and its
-    # national totals are packaged sums over the 51 entries; only the
-    # equal-size comparison is "not a state total".  The two bases are never
-    # mixed.  The manuscript's CA/OH case study (Figure 8) and its urban-rural
-    # allocation (Figure 7) are separate manuscript products that this
-    # dashboard neither displays nor reconciles.
-    manuscript_products = (
-        "The manuscript's CA/OH case study (Figure 8) and its urban–rural "
-        "allocation (Figure 7) are separate manuscript products; they are not "
-        "displayed here or reconciled with this national layer."
-    )
-    if context == "pathways":
-        boundary = (
-            "Deterministic comparison scenarios, not forecasts. " + manuscript_products
-        )
-    else:
-        boundary = (
-            "Deterministic comparison scenarios, not forecasts. State-scaled values use "
-            "each state's actual fleet; equal-size values are comparisons, never state "
-            "totals, and the two are never mixed. " + manuscript_products
-        )
-    st.markdown(
-        f"""
-        <div class="clearats-status" role="status">
-          <span class="clearats-status-dot" aria-hidden="true"></span>
-          <div><strong>Validated atlas; provisional research use.</strong> {escape(boundary)}
-          Owner approvals for public release remain open; details are retained in the packaged data contract.</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.caption("v3.3 data · 2025–2075 · Conditional scenarios, not forecasts.")
 
 
 def page_header(kicker: str, title: str, deck: str) -> None:
@@ -305,7 +244,7 @@ def state_header(state_name: str, state_code: str, *, spotlight: bool = False,
     badges = []
     if spotlight:
         badges.append(
-            '<span class="clearats-badge">Registered CA/OH case available · a separate accounting basis</span>'
+            '<span class="clearats-badge">CA/OH case · separate accounting basis</span>'
         )
     if supplemental:
         badges.append('<span class="clearats-badge">Supplemental · the District of Columbia</span>')

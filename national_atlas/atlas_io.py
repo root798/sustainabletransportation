@@ -496,6 +496,18 @@ REQUIRED_FILES = {
     "engineering_validation": "state_atlas_engineering_validation_v2.json",
 }
 
+_ENGINEERING_RANGE_CATEGORY_COLUMNS = (
+    "state",
+    "state_name",
+    "scope_role",
+    "scenario_bundle",
+    "reporting_scope",
+    "metric",
+    "range_object",
+    "status",
+    "forbidden_interpretation",
+)
+
 
 def _load_atlas_uncached(data_dir: str = str(DEFAULT_DATA_DIR)) -> Dict[str, Any]:
     root = Path(data_dir).expanduser().resolve()
@@ -534,6 +546,14 @@ def _load_atlas_uncached(data_dir: str = str(DEFAULT_DATA_DIR)) -> Dict[str, Any
     )
     result["data_dir"] = str(root)
     _assert_runtime_contract(result)
+    # These nine identifiers contain only 1-51 repeated strings across the
+    # 140,454-row lattice.  Categorizing them preserves the frozen values while
+    # avoiding a separate Python string allocation for every repeated cell in
+    # each st.cache_data copy.
+    engineering_ranges = result["engineering_ranges"]
+    engineering_ranges[list(_ENGINEERING_RANGE_CATEGORY_COLUMNS)] = engineering_ranges[
+        list(_ENGINEERING_RANGE_CATEGORY_COLUMNS)
+    ].astype("category")
     return result
 
 

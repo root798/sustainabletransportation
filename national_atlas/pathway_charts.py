@@ -1,6 +1,8 @@
 """Article-style pathway and retained-sensitivity charts for the dashboard."""
 from __future__ import annotations
 
+import re
+import textwrap
 from typing import Any, Mapping
 
 import numpy as np
@@ -53,7 +55,6 @@ from style import HAIRLINE, INK, MUTED, PAPER
 # measured width and the drawn width the same number by construction. Page
 # chrome (headings, body, tiles) keeps Source Sans / Source Serif.
 PLOT_SANS = "Arial, Helvetica, sans-serif"
-PLOT_SERIF = "Georgia, 'Times New Roman', serif"
 
 # V2-08 (2026-09-03): the horizontal legends were laid out on ONE row's worth
 # of vertical room.  Sizing each entry to its own text (entrywidth 0) stopped
@@ -161,6 +162,28 @@ NATIONAL_RANGE_LABELS = {
 }
 
 
+def _compact_panel_annotation(text: str) -> str:
+    """Wrap band-width readouts without dropping their basis or direction."""
+    match = re.fullmatch(
+        r"one-sided (.+?) of central \((\d{4}→\d{4})\) · absolute ×(.+)",
+        text,
+    )
+    if match:
+        relative, years, ratio = match.groups()
+        zero_central = " (the central is zero)" in relative
+        relative = relative.replace(" (the central is zero)", "")
+        lines = [
+            f"one-sided {relative} of central",
+            f"{years} · absolute width ×{ratio}",
+        ]
+        if zero_central:
+            lines.append("central is zero at the horizon")
+        return "<br>".join(lines)
+    return "<br>".join(
+        textwrap.wrap(text, width=42, break_long_words=False, break_on_hyphens=False)
+    )
+
+
 def _panel_band_annotation(fig: go.Figure, row_index: int,
                            max_side: float | None = None, *,
                            text: str | None = None) -> None:
@@ -176,6 +199,7 @@ def _panel_band_annotation(fig: go.Figure, row_index: int,
         if max_side is None:
             raise ValueError("Either max_side or text is required")
         text = f"max one-sided deviation {relative_pct_text(max_side)}"
+    text = _compact_panel_annotation(text)
     fig.add_annotation(
         text=text,
         row=row_index,
@@ -315,7 +339,7 @@ def _layout(title: str, y_title: str, *, height: int = 350) -> dict[str, Any]:
             "text": title,
             "x": 0,
             "xanchor": "left",
-            "font": {"family": PLOT_SERIF, "size": 14, "color": INK},
+            "font": {"family": PLOT_SANS, "size": 14, "color": INK},
         },
         "xaxis": {**_axis("Modeled year"), "dtick": 10, "showgrid": False},
         "yaxis": _axis(y_title),
@@ -475,7 +499,7 @@ def _triptych(*, height: int) -> go.Figure:
         annotation.update(
             x=0,
             xanchor="left",
-            font={"family": PLOT_SERIF, "size": 14, "color": INK},
+            font={"family": PLOT_SANS, "size": 14, "color": INK},
         )
     fig.update_layout(
         height=height,
@@ -1086,12 +1110,19 @@ def make_policy_central_triptych(
             )
             fig.add_annotation(
                 x=onset,
-                y=1.0,
+                # Anchor inside the lower edge of panel b, away from both its
+                # title and the wrapped band readout at the upper-right.
+                y=0.22,
                 yref="y2 domain",
-                text=f"{TURNING_POINT_LOWER} {onset}",
+                text=f"{TURNING_POINT_LOWER}<br>{onset}",
                 showarrow=False,
+                xanchor="left" if onset <= (2025 + horizon) / 2 else "right",
+                xshift=4 if onset <= (2025 + horizon) / 2 else -4,
                 yanchor="bottom",
-                font={"family": PLOT_SANS, "size": 10, "color": MUTED},
+                align="left" if onset <= (2025 + horizon) / 2 else "right",
+                font={"family": PLOT_SANS, "size": 9, "color": MUTED},
+                bgcolor="rgba(252,252,250,0.82)",
+                borderpad=2,
             )
     fig.update_xaxes(range=[2025, horizon], tick0=2030, dtick=10, showgrid=False)
     fig.update_xaxes(title_text="Modeled year", row=3, col=1)
@@ -1656,15 +1687,32 @@ def make_state_comparison(
                     ),
                 )
             )
-    title_scope = " · state-scaled (actual fleet)" if state_scaled_scope else ""
-    layout = _layout(
-        f"{COMPARE_METRIC_TITLE_STEMS[metric]} · {central_label} overlay{title_scope}",
-        unit,
-        height=height,
+    subtitle_lines = textwrap.wrap(
+        central_label, width=40, break_long_words=False, break_on_hyphens=False
     )
-    # Two-row top band: title above, legend below (they collided at t=58).
-    layout["margin"] = {"l": 60, "r": 40, "t": 84, "b": 82}
-    layout["title"] = {**layout["title"], "y": 0.985, "yanchor": "top"}
+    subtitle_lines.extend(
+        ["CAV only · STI excluded", "actual FHWA MV-1 2024 fleet"]
+        if state_scaled_scope
+        else ["matched equal-size comparison"]
+    )
+    wrapped_subtitle = "<br>".join(subtitle_lines)
+    layout = _layout(
+        (
+            f"{COMPARE_METRIC_TITLE_STEMS[metric]}<br>"
+            f"<span style='font-size:11px'>{wrapped_subtitle}</span>"
+        ),
+        unit,
+        height=height + 34,
+    )
+    # Multi-line title above a separate legend band. The explicit wraps keep
+    # long scenario names and the actual-fleet qualifier inside 390 px.
+    layout["margin"] = {"l": 60, "r": 24, "t": 118, "b": 82}
+    layout["title"] = {
+        **layout["title"],
+        "y": 0.95,
+        "yanchor": "top",
+        "pad": {"b": 6},
+    }
     layout["legend"] = {**layout["legend"], "y": 1.02, "yanchor": "bottom"}
     fig.update_layout(**layout)
     _basis_footnote(fig, "state_scaled" if state_scaled_scope else "bundle")
@@ -2319,7 +2367,7 @@ def make_state_scaled_triptych(
         annotation.update(
             x=0,
             xanchor="left",
-            font={"family": PLOT_SERIF, "size": 13, "color": INK},
+            font={"family": PLOT_SANS, "size": 13, "color": INK},
         )
     fig.update_layout(
         height=790,

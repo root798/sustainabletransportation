@@ -78,13 +78,8 @@ st.caption(
     "Annual running energy at the unit level. How much energy does one "
     "vehicle (or one roadside infrastructure asset) consume per year, "
     "and how does that energy divide between propulsion and the AV "
-    "subsystems?"
-)
-
-st.info(
-    "This page is about **individual units**. For state-scale scenario "
-    "evolution, regional comparison, and uncertainty controls, see the "
-    "**Scenario Explorer** page."
+    "subsystems? State-scale evolution, regional comparisons, and "
+    "uncertainty controls are on the Scenario Explorer page."
 )
 
 
@@ -292,14 +287,9 @@ st.plotly_chart(fig1, width="stretch",
                 config={"displaylogo": False})
 
 st.caption(
-    "Reading this figure. For an internal-combustion vehicle, propulsion "
-    "dominates the total at every autonomy level — the autonomy stack is a "
-    "low-single-digit-to-~10 % share. For a battery-electric vehicle the "
-    "smaller propulsion baseline makes the autonomy stack more visible, "
-    "rising to roughly one-fifth of the total at L5. Electrification shifts "
-    "the relative burden structure; it does not eliminate the autonomy cost. "
-    "These shares are computed bottom-up from component datasheets, not fitted "
-    "to a target."
+    "Bars separate propulsion, computing, sensing and communication; AV shares "
+    "reflect the selected duty cycle and compute platform. Underlying inputs "
+    "are assembled bottom-up and are not fitted to a target."
 )
 
 # ── Figure 2 — AV-subsystem-only breakdown per unit type ────────────
@@ -438,32 +428,27 @@ with st.expander("Per-unit annual energy table (kWh/yr)", expanded=False):
     )
 
 # ── interpretation text ─────────────────────────────────────────────
-st.subheader("Reading this page")
-st.markdown("""
-- **Propulsion dominates total vehicle energy.** At any autonomy level,
-  combustion propulsion is by far the largest single block for a gasoline
-  vehicle (autonomy stack ≈ 1-11 % of the total). Battery-electric
-  propulsion is roughly one-quarter of the gasoline case, so the autonomy
-  stack becomes a meaningfully larger share — about one-fifth of the total
-  at L5.
-- **AV-system share rises with autonomy.** Moving from L3 to L5 raises the
-  AV-subsystem burden per unit by ~8×. Most of that growth is compute,
-  because deployed perception-and-planning silicon scales with the autonomy
-  level (Tesla-FSD-class at L3 → NVIDIA-DRIVE-Orin-class at L4 →
-  NVIDIA-DRIVE-Thor-class at L5) **and** the compute-unit count doubles at L5.
-- **Computing dominates the AV subsystem at L5, sensing at lower levels.**
-  At L5 compute is ~70 % of the autonomy stack; at L3 sensing and compute
-  are comparable. Communication is consistently the smallest share.
-- **STI runs continuously, so its autonomy stack is roughly an order of
-  magnitude larger than a vehicle's.** A highly-automated STI's annual
-  autonomy energy is ~12-14× a L5 CAV's autonomy stack — driven by 24/7
-  operation and an extensive on-road sensing inventory, not by per-agent
-  inference inflation.
-- **Electrification changes the relative burden structure.** A BEV L5
-  vehicle's AV subsystem is roughly one-fifth of its propulsion, so
-  targeting compute-efficiency improvements becomes a first-class
-  decarbonization lever — but the autonomy stack does not, on its own,
-  outweigh propulsion at any autonomy level.
+with st.expander("Interpretation and key takeaways", expanded=False):
+    st.markdown("""
+- **The propulsion/AV split is control-dependent.** Propulsion uses the values
+  entered above; the AV-system total responds to autonomy level, duty cycle,
+  compute platform and the configured ICECAV overhead factor. Figure 1 reports
+  the resulting share for every bar rather than assuming one component always
+  dominates.
+- **AV-system demand rises with autonomy.** The experiment-based computing
+  baseline and component inventory both vary by autonomy level. Selecting the
+  cloud platform changes computing demand; selecting robotaxi duty changes the
+  duty-scaled sensing and communication loads.
+- **Computing is the largest AV-subsystem contribution at higher autonomy
+  levels under the displayed baseline.** Communication remains the smallest
+  contribution; exact shares are shown in the figure and per-unit table.
+- **STI and CAV values use different operating assumptions.** STI runs
+  continuously, while CAV duty is selected above; the STI architecture and
+  its on-road sensing inventory also differ from the vehicle model.
+- **Electrification changes the relative burden structure.** The lower BEV
+  propulsion baseline makes the same AV-system demand a larger fraction of
+  the vehicle total. Depending on autonomy level and selected controls, that
+  fraction can be smaller or larger than propulsion.
 """)
 
 st.markdown("---")
@@ -563,13 +548,14 @@ if _WX_ROWS:
     )
 
 st.markdown("---")
-st.caption(
-    "Data sources. AV-subsystem energy per level: `v11_streamlit_app/"
-    "component_registry.py` (per-component deployed-silicon power × component "
-    "counts from manuscript Extended Data Tables 3 & 4 × duty × utilization). "
-    "Emission factors and the ICECAV overhead factor: `configs/<region>.json`. "
-    "Propulsion baselines: FHWA Highway Statistics (VMT), EPA Automotive Trends "
-    "Report (ICE mpg), EPA fuel-economy BEV kWh/mi. Propulsion values are "
-    "editable above. Recalibration rationale and evidence tiers: "
-    "`audits/step_08_component_power_realignment/COMPONENT_REALIGNMENT_MEMO.md`."
-)
+with st.expander("Data sources and model lineage", expanded=False):
+    st.caption(
+        "AV-subsystem energy per level: `v11_streamlit_app/"
+        "component_registry.py` (per-component deployed-silicon power × component "
+        "counts from manuscript Extended Data Tables 3 & 4 × duty × utilization). "
+        "Emission factors and the ICECAV overhead factor: `configs/<region>.json`. "
+        "Propulsion baselines: FHWA Highway Statistics (VMT), EPA Automotive Trends "
+        "Report (ICE mpg), EPA fuel-economy BEV kWh/mi. Propulsion values are "
+        "editable above. Recalibration rationale and evidence tiers: "
+        "`audits/step_08_component_power_realignment/COMPONENT_REALIGNMENT_MEMO.md`."
+    )

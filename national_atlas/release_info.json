@@ -1,0 +1,19 @@
+{
+  "schema_version": "clearats-national-atlas-release-info-1.0",
+  "scientific_release": "national-v3.3",
+  "source_interface": "CLEAR_ATS_National_Dashboard_v5 landing-page subset",
+  "verified_on": "2026-09-28",
+  "verification_is_realtime": false,
+  "runtime_data_mode": "packaged frozen tables; no scientific recomputation",
+  "packaged_file_count": 73,
+  "matched_file_count": 73,
+  "matched_against": "current source-interface files with the same relative names",
+  "national_release_status": "PASS_NATIONAL_V33_RELEASE",
+  "pipeline_status_as_of_verification": "FAIL_PAPER_AUTHORITY_PIN_BEHIND_REMOTE_ASSETS_CHANGED",
+  "source_manifest": "national_v33_dashboard_bundle_manifest.csv",
+  "source_manifest_sha256": "fbda6c11702c76360fd138bc6e65c333f7533f1a35cbdd3d083a0e6c0176e2c4",
+  "source_manifest_file_count": 52,
+  "source_manifest_members_packaged": 40,
+  "source_manifest_members_matched": 40,
+  "status_note": "Verification snapshot only. The national v3.3 release passed, while the wider manuscript and pipeline authority gate was not passing on the verification date."
+}

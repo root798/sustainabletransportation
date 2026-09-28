@@ -1,82 +1,101 @@
 # CLEAR-ATS — Clean Energy Automated Road Transport System
 
-**CLEAR-ATS** is a scenario-conditioned simulation framework that projects the
-energy demand (kWh/yr) and CO₂ emissions (kg/yr) of road transport from
-**2024 onward** under different trajectories of **Connected Autonomous Vehicles
-(CAVs)** and **Smart Traffic Infrastructure (STI)**.
+CLEAR-ATS is a scenario-conditioned research dashboard for the energy demand
+and direct CO₂ emissions associated with connected and automated road
+transport. This repository combines the original v11 dashboard pages with a
+50-state National Atlas based on the current frozen national v3.3 source
+tables.
 
-This repository contains the **v10** deployable bundle. v10 introduces a
-component-level recalibration of utility-phase energy (bottom-up
-automotive-silicon registry + sensor / V2X components) on top of the same
-simulation engine used by earlier versions, and inherits the v8 annual
-weather-share Dirichlet (`F32`–`F36`) for state-specific subsystem reweighting.
+This is an integrated publication interface, not a copy of the complete
+standalone `CLEAR_ATS_National_Dashboard_v5` application. The National Atlas
+reuses that interface's reviewed landing-page loaders and charts, while the
+other functional pages remain the original v11 pages.
 
----
+## Run the dashboard
 
-## Quick start
+Install the root requirements and launch either supported entrypoint:
 
 ```bash
-cd clean_release_v10
 pip install -r requirements.txt
-streamlit run v10_streamlit_app/streamlit_app.py
+
+# The entrypoint configured in Streamlit Community Cloud
+streamlit run v11_streamlit_app/streamlit_app.py
+
+# Equivalent local entrypoint
+streamlit run streamlit_app.py
 ```
 
-CLI run of the simulator:
+Both entrypoints call `dashboard_navigation.py` and therefore expose the same
+page order:
 
-```bash
-cd clean_release_v10
-python footprint_model.py --scenarios california ohio us_average --years 68 --policy baseline
+1. **One-Time Embodied Energy**
+2. **Utility-Phase Energy**
+3. **Scenario Explorer** — default landing page
+4. **50-State Atlas**
+5. **Uncertainty Method**
+
+## Repository layout
+
+```text
+dashboard_navigation.py       shared page registry and default-page selection
+streamlit_app.py              equivalent root entrypoint for local use
+v11_streamlit_app/            original v11 functional pages and model bridge
+v11_streamlit_app/views/      functional pages registered by shared navigation
+legacy_pages/                retained compatibility shims, not auto-discovered
+national_atlas/               integrated National Atlas landing page
+national_atlas/data/          packaged, frozen reader tables
+src/clearats/                 uncertainty-band plumbing used by v11
+configs/, scenarios/          v11 scenario configuration
+results/                      packaged v11 fallback results
 ```
 
-Monte-Carlo (200 samples per region × policy):
+## Version and data boundary
 
-```bash
-cd clean_release_v10
-python footprint_model.py --scenarios california ohio us_average --years 68 --policy baseline --mc 200 --seed 42
-```
+- The v11 pages retain their original scientific scope and behavior.
+- The 50-State Atlas reads packaged national **v3.3** tables. It does not
+  recompute the national release at runtime.
+- The deployed Atlas is a landing-page integration sourced from
+  `CLEAR_ATS_National_Dashboard_v5`; it is not the complete standalone v5
+  multi-page product.
+- State-scaled national totals and equal-size cross-state comparisons are
+  distinct estimands and must not be combined on one absolute-total basis.
+- The registered 5th–95th percentile ranges are conditional model intervals,
+  not prediction, confidence, or credible intervals.
 
----
-
-## What's in this repo
-
-```
-clean_release_v10/
-├── README.md                  ← detailed v10 brief (architecture, scope, history)
-├── V10_CHANGELOG.md
-├── requirements.txt
-├── footprint_model.py         ← simulation engine
-├── scenarios/                 ← canonical per-region scenario files
-├── configs/                   ← legacy fallback configs
-└── v10_streamlit_app/         ← active 4-page dashboard
-    ├── streamlit_app.py
-    ├── component_registry.py  ← bottom-up automotive-silicon power model
-    ├── core.py                ← dashboard ↔ engine bridge
-    ├── weather_module.py      ← annual weather Dirichlet (F32–F36)
-    ├── pages/
-    ├── configs/
-    └── USER GUIDE/
-```
-
-See **`clean_release_v10/README.md`** for the full v10 brief, including the
-component-recalibration rationale, dual τ = 1.5 / τ = 0.5 interpretation
-thresholds, and the v2 → v10 version history.
-
----
-
-## Scope boundary
-
-Only the **utility (operational) phase** is quantitative. Production, logistics,
-and end-of-life are conceptual_only — they appear in the One-Time Energy page
-for context but should not be treated as audited inventory.
-
-The U.S. Average region is a **synthetic CA / OH midpoint template**, not an
-official national total.
-
----
+The concise verification snapshot is stored in
+`national_atlas/release_info.json`. It records the state observed on its
+verification date and is **not** a live pipeline-status feed.
 
 ## Deployment
 
-- **Local.** `streamlit run clean_release_v10/v10_streamlit_app/streamlit_app.py`
-- **Streamlit Cloud.** Point the deployment entrypoint at
-  `clean_release_v10/v10_streamlit_app/streamlit_app.py` and install
-  `clean_release_v10/requirements.txt`.
+The existing Streamlit Community Cloud app uses:
+
+- Repository branch: `main`
+- Main file path: `v11_streamlit_app/streamlit_app.py`
+- Dependency file: `v11_streamlit_app/requirements.txt`, which includes the
+  root `requirements.txt` so both entrypoints use the same environment
+
+Because both entrypoints use the shared navigation module, local and Cloud
+launches present the same five pages and the same default page.
+
+Run the entrypoint and legacy-module-cache regression checks with:
+
+```bash
+python -m unittest v11_streamlit_app.test_navigation
+```
+
+The shared loader explicitly selects `v11_streamlit_app.core` before a
+functional page runs; a cached legacy v4 `core` cannot shadow its imports.
+Functional pages live in `views/`, not Streamlit's automatic `pages/`
+directory, so the first deep link after a cold start uses the same registry.
+The regression suite also checks that scenario-band caches change when the
+selected settings change.
+
+## Scope boundary
+
+This dashboard presents evidence-bounded scenarios and documented
+sensitivities. It is not an empirical fleet forecast or causal policy-effect
+estimate. Production, logistics, and end-of-life quantities are kept separate
+from utility-phase trajectories, and status labels should distinguish the
+verified national release from the status of the wider manuscript/pipeline
+chain.

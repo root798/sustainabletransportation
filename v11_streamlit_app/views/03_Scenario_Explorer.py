@@ -407,10 +407,9 @@ with st.sidebar:
     st.markdown("### Scenario settings")
     st.caption(
         "Adjust a setting to change the scenario. The deterministic "
-        "trajectory updates instantly; the default residual band does "
-        "not re-centre. Whenever any setting changes, the residual band "
-        "and scenario envelope rebuild automatically for the current "
-        "settings."
+        "trajectory updates instantly. Residual bands and scenario envelopes "
+        f"rebuild automatically at up to {_AUTO_RECOMPUTE_THRESHOLD} Monte "
+        "Carlo runs; at higher counts, use Recompute band."
     )
 
     # ── v6 policy-case picker (additive; sliders below remain editable) ──
@@ -557,22 +556,20 @@ st.title("Scenario Explorer")
 st.caption(
     "State-scale utility-phase projections for ATS energy demand and "
     "CO₂ emissions under selected deployment, electrification, grid, "
-    "weather, and hardware-efficiency settings."
+    "weather, and hardware-efficiency settings, displayed through 2075."
 )
 
-st.markdown(
-    "This page reports utility-phase projections only. One-time "
-    "production, logistics, and end-of-life accounting are reported "
-    "on the One-Time Energy page. The residual band shows uncertainty "
-    "around the selected scenario settings. The scenario envelope "
-    "also varies scenario settings to show wider predictive spread. "
-    "Projections are displayed through 2075."
-)
-
-st.caption(
-    "Residual uncertainty ranges are listed at the end of this page. "
-    "The figures below use the selected default or customized ranges."
-)
+with st.expander("Scope and uncertainty objects", expanded=False):
+    st.markdown(
+        "- **Scope:** utility-phase projections only. Production, logistics, "
+        "and end-of-life accounting are on the One-Time Energy page.\n"
+        "- **Residual band:** uncertainty around the selected scenario and "
+        "structural settings.\n"
+        "- **Scenario envelope:** also varies scenario settings to show the "
+        "wider predictive spread.\n"
+        "- **Ranges:** the figures use the selected default or customized "
+        "ranges; the full residual ranges are listed at the end of the page."
+    )
 
 if region == "us_average":
     st.warning(
@@ -874,19 +871,9 @@ _status_code, _status_label = _band_status()
 # ═══════════════════════════════════════════════════════════════════
 st.subheader("Figure A. ATS trajectory")
 st.caption(
-    ":bulb: **Why this chart matters.** Figure A is the central "
-    "trajectory view: under your chosen scenario, how do annual "
-    "(or cumulative) ATS energy demand and CO\u2082 emissions evolve "
-    "from 2024 to the 2075 display horizon, and how wide is the "
-    "residual uncertainty around that trajectory? Use the metric "
-    "toggle to switch between annual and cumulative views. Use the "
-    "Residual / Scenario-envelope toggle to switch between "
-    "decision-focused (scenario fixed) and reviewer-facing "
-    "(scenario uncertain) uncertainty objects."
-)
-st.caption(
-    "Bands in this version also include the annual state "
-    "weather-share draw (F32\u2013F36)."
+    "Selected-scenario energy demand and CO\u2082 emissions through 2075, "
+    "with annual or cumulative views and a residual or scenario-envelope "
+    "band. Annual state weather-share draws (F32\u2013F36) are included."
 )
 
 # ─────────────────────────────────────────────────────────────────────
@@ -1080,20 +1067,20 @@ _current_hash = settings_hash(_settings)
 # is NOT underscore-prefixed so a fresh hash produces a fresh cache
 # entry). The cache key collapse that froze the band is fixed here.
 @st.cache_data(show_spinner=False, max_entries=64)
-def _cached_residual_band(_hash_key: str, _settings_dict: dict,
+def _cached_residual_band(hash_key: str, _settings_dict: dict,
                            _live_cfg_arg, _region: str, _n: int):
     return bands_compute_residual(
-        _hash_key, _settings_dict,
+        hash_key, _settings_dict,
         live_cfg=_live_cfg_arg, region=_region, n_samples=int(_n),
         seed=2024 + abs(hash(_region)) % 10_000,
     )
 
 
 @st.cache_data(show_spinner=False, max_entries=64)
-def _cached_envelope_band(_hash_key: str, _settings_dict: dict,
+def _cached_envelope_band(hash_key: str, _settings_dict: dict,
                            _live_cfg_arg, _region: str, _n: int):
     return bands_compute_envelope(
-        _hash_key, _settings_dict,
+        hash_key, _settings_dict,
         live_cfg=_live_cfg_arg, region=_region, n_samples=int(_n),
         seed=2424 + abs(hash(_region)) % 10_000,
         envelope_level="medium",
@@ -1105,8 +1092,8 @@ def _cached_envelope_band(_hash_key: str, _settings_dict: dict,
 # the hash IS the cache key, and the underscored args are passed through
 # so the function can actually run. Calling with a NEW hash bypasses
 # the cache automatically.
-# The wrappers above swap their first positional arg if Streamlit's
-# rules differ; for safety we also pass the hash as a string kwarg.
+# Keep the participating argument as a plain string so equivalent settings
+# share a cache entry and every distinct settings hash forces recomputation.
 def _cache_key_arg(h: str) -> str:
     return str(h)
 
@@ -1152,8 +1139,8 @@ if _should_run:
     st.session_state[_active_band_key] = _band_source
     _action = ("Scenario envelope" if band_mode == "Scenario envelope"
                 else "Residual band")
-    st.success(
-        f"{_action} updated for current settings ({int(mc_runs)} "
+    st.caption(
+        f"✓ {_action} updated for current settings ({int(mc_runs)} "
         f"Monte Carlo runs)."
     )
 elif _needs_recompute and not _can_auto:
@@ -1322,15 +1309,6 @@ else:
     if peak_label.startswith("beyond 2075"):
         peak_label = f"After 2075 ({peak_year})"
 
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
-    c1.metric("Monte Carlo runs", str(sn) if sn else "—")
-    c2.metric("Band", band_mode)
-    c3.metric("Peak year", peak_label, help=peak_help)
-    # v9: shorter card label (the "(50 % peak)" qualifier moves to help).
-    c4.metric("Turning year", turning_label,
-              help=("Turning year = first year at or after the peak "
-                    "where the median trajectory has dropped to at "
-                    "most 50 % of the peak value. " + turning_help))
     def _fmt_ib(ib_obj: dict) -> str:
         # v9: compact labels so the metric card does not truncate.
         y = ib_obj.get("boundary_year")
@@ -1339,23 +1317,6 @@ else:
         if y > 2075:
             return f"After 2075 ({y})"
         return str(y)
-    c5.metric(
-        "IB (τ = 1.5)",
-        _fmt_ib(ib_15),
-        help=("Interpretation boundary under the current dashboard "
-              "convention. First year after 2027 where the band width "
-              "exceeds 150 % of the median. Beyond this year, the "
-              "band is a scenario envelope rather than a frequentist "
-              "forecast interval."),
-    )
-    c6.metric(
-        "IB (τ = 0.5)",
-        _fmt_ib(ib_05),
-        help=("Interpretation boundary under the tighter IPCC-style "
-              "50 %-of-median threshold. Reported alongside the 150 % "
-              "value so readers can see where the band first becomes "
-              "non-trivially wide."),
-    )
 
     # v5.1.6: cap display at 2075. Keep internal-simulation horizon
     # (2092) for IB / peak / turning calculations, but truncate the
@@ -1652,6 +1613,37 @@ else:
             )
         if fallback_msg:
             st.caption(fallback_msg)
+
+        # Keep the trajectory in the opening viewport; the exact diagnostics
+        # stay directly below it with their original values and definitions.
+        c1, c2, c3, c4, c5, c6 = st.columns(6)
+        c1.metric("Monte Carlo runs", str(sn) if sn else "—")
+        c2.metric("Band", band_mode)
+        c3.metric("Peak year", peak_label, help=peak_help)
+        c4.metric(
+            "Turning year",
+            turning_label,
+            help=("Turning year = first year at or after the peak where the "
+                  "median trajectory has dropped to at most 50 % of the peak "
+                  "value. " + turning_help),
+        )
+        c5.metric(
+            "IB (τ = 1.5)",
+            _fmt_ib(ib_15),
+            help=("Interpretation boundary under the current dashboard "
+                  "convention. First year after 2027 where the band width "
+                  "exceeds 150 % of the median. Beyond this year, the band is "
+                  "a scenario envelope rather than a frequentist forecast "
+                  "interval."),
+        )
+        c6.metric(
+            "IB (τ = 0.5)",
+            _fmt_ib(ib_05),
+            help=("Interpretation boundary under the tighter IPCC-style "
+                  "50 %-of-median threshold. Reported alongside the 150 % "
+                  "value so readers can see where the band first becomes "
+                  "non-trivially wide."),
+        )
     else:
         # v9: never render Figure A silently blank. If the band data
         # lacks the column triple required for the selected metric,
@@ -1671,14 +1663,17 @@ else:
             )
         )
 
-with st.expander("How to read this page", expanded=False):
+with st.expander("How to read Figure A and its bands", expanded=False):
     st.markdown(
-        "- Selected scenario settings define the deterministic "
-        "trajectory.\n"
-        "- Residual uncertainty ranges define the p05–p95 band around "
-        "that trajectory.\n"
-        "- The scenario envelope also varies scenario settings, so it "
-        "is wider than the residual band."
+        "- Selected scenario settings define the deterministic trajectory.\n"
+        "- The metric control switches between annual and cumulative energy "
+        "or CO\u2082 views.\n"
+        "- The residual p05–p95 band is decision-focused: scenario and "
+        "structural settings stay fixed.\n"
+        "- The reviewer-facing scenario envelope also varies deployment "
+        "settings (F23–F27), so it is wider than the residual band.\n"
+        "- Both objects include the annual state weather-share draw "
+        "(F32–F36)."
     )
 
 with st.expander(
@@ -1756,26 +1751,31 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════════
 # FIGURE B — Top residual-only drivers
 # ═══════════════════════════════════════════════════════════════════
-st.subheader("Figure B. Top residual-uncertainty drivers")
-st.caption(
-    "This chart shows only the residual uncertainty that remains "
-    "**after the scenario settings are fixed at the reader's chosen "
-    "target values and after the structural assumptions are held at "
-    "their selected choices**. The top-ranked parameter is not a "
-    "new empirical finding that displaces the known dominance of "
-    "the scenario settings; it is the largest residual contributor "
-    "*conditional on having already made scenario and structural "
-    "decisions*. To see the predictive uncertainty when the scenario "
-    "itself is uncertain, switch Figure A to Scenario envelope."
-)
-
 pcx = load_parameter_contribution_experiment(residual_only=True)
 if pcx is None or pcx.empty:
-    st.info(
-        "Parameter contribution experiment CSV is absent. Run "
-        "`python scripts/parameter_contribution_experiment.py` to populate."
-    )
+    with st.expander(
+        "Figure B. Residual-driver diagnostic · unavailable in this deployment",
+        expanded=False,
+    ):
+        st.caption(
+            "The precomputed parameter-contribution dataset is not packaged, "
+            "so no residual-driver ranking is shown."
+        )
+        st.markdown(
+            "This diagnostic ranks only the residual uncertainty left after "
+            "the reader's scenario targets and structural assumptions are "
+            "fixed. A top-ranked residual parameter would therefore be a "
+            "conditional result, not evidence that it displaces the known "
+            "importance of scenario settings. Use Figure A's Scenario envelope "
+            "when the scenario itself is uncertain."
+        )
 else:
+    st.subheader("Figure B. Top residual-uncertainty drivers")
+    st.caption(
+        "Ranks residual contributors after scenario targets and structural "
+        "assumptions are fixed. For uncertainty in the scenario itself, use "
+        "Figure A's Scenario envelope."
+    )
     year_choice = st.radio(
         "Year", [2030, 2050, 2075], horizontal=True, key="expv5_figb_yr"
     )
@@ -1838,17 +1838,20 @@ else:
             f"Figure B. Residual-uncertainty width over median at "
             f"{year_choice}. Each bar reports the Monte Carlo band "
             f"width divided by the median when only that single "
-            f"parameter is sampled and every other parameter is fixed. "
-            "Colour encodes layer: L1 teal (emission factors), L2 "
-            "rust (load-model). Scenario settings (CAV 2075 target "
-            "F23, STI 2075 target F24, BEV growth F25, low-carbon "
-            "electricity growth F26, hardware doubling time F27), "
-            "structural assumptions (CAV and STI level-mix templates "
-            "F18 / F19, vehicle retire year F22, fleet-growth form "
-            "F28), and measured fixed data (initial low-carbon grid "
-            "share F01, initial BEV share F02) are excluded because "
-            "they are not residual uncertainty."
+            f"parameter is sampled and every other parameter is fixed."
         )
+        with st.expander("Figure B scope and exclusions", expanded=False):
+            st.markdown(
+                "Colour encodes layer: L1 teal (emission factors), L2 "
+                "rust (load-model). Scenario settings (CAV 2075 target "
+                "F23, STI 2075 target F24, BEV growth F25, low-carbon "
+                "electricity growth F26, hardware doubling time F27), "
+                "structural assumptions (CAV and STI level-mix templates "
+                "F18 / F19, vehicle retire year F22, fleet-growth form "
+                "F28), and measured fixed data (initial low-carbon grid "
+                "share F01, initial BEV share F02) are excluded because "
+                "they are not residual uncertainty."
+            )
 
     _reg_data = pcx[pcx["region"] == region] if _have_region \
         else pcx[pcx["region"] == "california"]
@@ -1874,12 +1877,19 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════════
 # FIGURE C — Layer contribution summary (residual layers only)
 # ═══════════════════════════════════════════════════════════════════
-st.subheader("Figure C. Layer contribution summary (residual layers)")
-
 lcx = load_layer_contribution_experiment()
 if lcx is None or lcx.empty:
-    st.info("Layer contribution experiment CSV is absent.")
+    with st.expander(
+        "Figure C. Residual-layer summary · unavailable in this deployment",
+        expanded=False,
+    ):
+        st.caption(
+            "The precomputed layer-contribution dataset is not packaged, so "
+            "no L1/L2 comparison is shown. L3 remains a scenario-setting layer, "
+            "not residual uncertainty."
+        )
 else:
+    st.subheader("Figure C. Layer contribution summary (residual layers)")
     # Residual-only: keep L1 and L2 scenarios; L3 is documented as a
     # mitigation-lever layer and is shown with a clear caption only if
     # the reader wants to see it.
@@ -1994,35 +2004,36 @@ if pcx is not None and not pcx.empty:
     if bits:
         st.markdown(" ".join(bits))
 
-st.markdown(
-    "Among the five deployment scenario settings, the leverage "
-    "ranking for reducing 2050 emissions is:\n"
-    "1. Hardware-efficiency doubling time. Largest compounding effect.\n"
-    "2. BEV growth rate. Largest near-term effect for fossil-heavy grids.\n"
-    "3. Low-carbon electricity growth. Largest long-horizon effect.\n"
-    "4. CAV target. Shapes total ATS demand.\n"
-    "5. STI target. Modest direct effect; couples to CAV–STI interaction.\n\n"
-    "Adjust any setting in the sidebar; the residual band updates automatically for the current settings. "
-    "residual band in Figure A to rebuild the band conditional on "
-    "the new scenario."
+st.caption(
+    "Adjust a scenario setting in the sidebar. Bands with up to 200 Monte "
+    "Carlo runs update automatically; at higher counts, use Recompute band."
 )
-
-st.markdown("#### What remains outside the residual band")
-st.dataframe(
-    prepare_for_streamlit(pd.DataFrame([
-        {"Source": "Scenario setting positions",
-         "In band?": "No. These define the scenario."},
-        {"Source": "Structural assumptions",
-         "In band?": "No. These are discrete structural choices."},
-        {"Source": "Structural shocks",
-         "In band?": "No. Separate labelled scenarios."},
-        {"Source": "Missing life-cycle phases (manufacturing, end-of-life)",
-         "In band?": "No. Utility phase only."},
-        {"Source": "Residual L1 and L2 ranges",
-         "In band?": "Yes, automatically."},
-    ])),
-    hide_index=True, width="stretch",
-)
+with st.expander("Leverage ranking and residual-band scope", expanded=False):
+    st.markdown(
+        "Among the five deployment scenario settings, the leverage "
+        "ranking for reducing 2050 emissions is:\n"
+        "1. Hardware-efficiency doubling time. Largest compounding effect.\n"
+        "2. BEV growth rate. Largest near-term effect for fossil-heavy grids.\n"
+        "3. Low-carbon electricity growth. Largest long-horizon effect.\n"
+        "4. CAV target. Shapes total ATS demand.\n"
+        "5. STI target. Modest direct effect; couples to CAV–STI interaction."
+    )
+    st.markdown("#### What remains outside the residual band")
+    st.dataframe(
+        prepare_for_streamlit(pd.DataFrame([
+            {"Source": "Scenario setting positions",
+             "In band?": "No. These define the scenario."},
+            {"Source": "Structural assumptions",
+             "In band?": "No. These are discrete structural choices."},
+            {"Source": "Structural shocks",
+             "In band?": "No. Separate labelled scenarios."},
+            {"Source": "Missing life-cycle phases (manufacturing, end-of-life)",
+             "In band?": "No. Utility phase only."},
+            {"Source": "Residual L1 and L2 ranges",
+             "In band?": "Yes, automatically."},
+        ])),
+        hide_index=True, width="stretch",
+    )
 
 st.markdown("---")
 
@@ -2363,16 +2374,18 @@ st.markdown("---")
 # ═══════════════════════════════════════════════════════════════════
 st.subheader("Residual uncertainty ranges")
 st.markdown(
-    "Each parameter has two settings. **Default** uses the "
-    "evidence-anchored range reported in the manuscript — these are "
-    "the values that produce the default residual band. **Customized** "
-    "lets you set your own support and sigma to explore sensitivity; "
-    "selecting it flips the *All default ranges active* badge to No. "
-    "Non-residual parameters (scenario settings F23 to F27 and F29, "
-    "structural assumptions F18, F19, F22, F28, and fixed-data anchors "
-    "F01, F02) are held at their central values and do not appear "
-    "below."
+    "Use the manuscript's evidence-anchored **Default** ranges or choose "
+    "**Customized** to explore sensitivity."
 )
+with st.expander("Range behavior and excluded parameters", expanded=False):
+    st.markdown(
+        "Default ranges produce the default residual band. Customized ranges "
+        "let you set support and sigma and change the *All default ranges "
+        "active* badge to No. Non-residual parameters — scenario settings "
+        "F23 to F27 and F29, structural assumptions F18, F19, F22 and F28, "
+        "and fixed-data anchors F01 and F02 — stay at their central values "
+        "and do not appear below."
+    )
 
 bb_reset = st.button(
     "Reset all to default ranges",

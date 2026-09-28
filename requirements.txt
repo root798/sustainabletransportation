@@ -6,7 +6,7 @@
 # path" at v10_streamlit_app/streamlit_app.py — these requirements are
 # a superset and v10 will run on them unchanged.
 
-streamlit>=1.32,<2.0
+streamlit>=1.57,<2.0
 pandas>=2.1,<3.0
 numpy>=1.24,<3.0
 plotly>=5.18,<7.0

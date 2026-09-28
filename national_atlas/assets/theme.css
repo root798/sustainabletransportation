@@ -1,6 +1,6 @@
 :root {
-  --paper: #fcfcfa;
-  --paper-soft: #f4f3ef;
+  --paper: #ffffff;
+  --paper-soft: #f5f7fa;
   --ink: #151515;
   --muted: #64625d;
   --hairline: #deddd7;
@@ -20,13 +20,13 @@ html, body, [class*="css"], .stApp {
 .stApp { background: var(--paper); }
 
 h1, h2, h3, .clearats-serif {
-  font-family: var(--serif) !important;
+  font-family: var(--sans) !important;
   color: var(--ink);
   letter-spacing: -0.018em;
 }
 
-h1 { font-size: clamp(2.15rem, 3.8vw, 3.65rem) !important; line-height: 0.98 !important; }
-h2 { font-size: clamp(1.45rem, 2vw, 2rem) !important; line-height: 1.12 !important; }
+h1 { font-size: clamp(1.65rem, 2.4vw, 2.2rem) !important; line-height: 1.2 !important; padding-bottom: 0.3rem !important; }
+h2 { font-size: clamp(1.25rem, 1.6vw, 1.6rem) !important; line-height: 1.25 !important; }
 h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
 
 /* A3: the translucent 60px sticky header veiled the first 8.8px of every
@@ -35,9 +35,9 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
    and the main block starts below it. */
 [data-testid="stHeader"] { background: var(--paper, #fcfcfa); }
 [data-testid="stToolbar"] { right: 0.6rem; }
-[data-testid="stSidebar"] { background: #f6f5f1; border-right: 1px solid var(--hairline); }
+[data-testid="stSidebar"] { background: #f5f6fa; border-right: 1px solid #e6e9ed; }
 [data-testid="stSidebarNav"] span { font-family: var(--sans); }
-.block-container { max-width: 1500px; padding-top: 3.4rem; padding-bottom: 4rem; }
+.block-container { max-width: 1400px; padding-top: 2.8rem; padding-bottom: 3rem; }
 [data-testid="stHorizontalBlock"] > div,
 [data-testid="stMarkdownContainer"] { min-width: 0; }
 
@@ -65,11 +65,11 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
 
 .clearats-deck {
   color: #45433f;
-  font-family: var(--serif);
-  font-size: clamp(1.02rem, 1.25vw, 1.28rem);
+  font-family: var(--sans);
+  font-size: 1rem;
   line-height: 1.48;
   max-width: 72rem;
-  margin: 0.25rem 0 1.15rem;
+  margin: 0.1rem 0 0.4rem;
 }
 
 .clearats-status {
@@ -95,7 +95,7 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
   margin-top: 0.32rem;
 }
 
-.clearats-rule { border-top: 1px solid var(--hairline); margin: 0.9rem 0 1.1rem; }
+.clearats-rule { border-top: 1px solid #e6e9ed; margin: 0.7rem 0 0.9rem; }
 
 .clearats-eyebrow {
   color: var(--muted);
@@ -106,8 +106,8 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
 }
 
 .clearats-panel-title {
-  font-family: var(--serif);
-  font-size: 1.34rem;
+  font-family: var(--sans);
+  font-size: 1.2rem;
   font-weight: 650;
   line-height: 1.12;
   margin: 0.12rem 0 0.25rem;
@@ -140,7 +140,7 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
 }
 
 .clearats-metric-card {
-  min-height: 6.4rem;
+  min-height: 5.3rem;
   border-top: 2px solid var(--blue-dark);
   border-bottom: 1px solid var(--hairline);
   background: rgba(255,255,255,0.38);
@@ -148,7 +148,7 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
 }
 
 .clearats-metric-label { color: var(--muted); font-size: 0.75rem; font-weight: 650; line-height: 1.25; }
-.clearats-metric-value { color: var(--ink); font-family: var(--serif); font-size: 1.65rem; font-weight: 650; line-height: 1.08; margin-top: 0.3rem; }
+.clearats-metric-value { color: var(--ink); font-family: var(--sans); font-size: 1.5rem; font-weight: 650; line-height: 1.15; margin-top: 0.3rem; }
 .clearats-metric-unit { color: var(--muted); font-size: 0.75rem; line-height: 1.3; margin-top: 0.22rem; }
 
 .clearats-chip-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.55rem 0 0.85rem; }
@@ -229,7 +229,11 @@ div[data-testid="stDataFrame"]::-webkit-scrollbar-thumb {
   border-radius: 5px;
 }
 
-div[data-testid="stPlotlyChart"] { border-top: 1px solid var(--hairline); padding-top: 0.25rem; }
+div[data-testid="stPlotlyChart"] { padding-top: 0.25rem; }
+[data-testid="stExpander"] { border-color: #e4e8ee; border-radius: 6px; }
+[data-testid="stExpander"] summary { font-size: 0.9rem; }
+[data-testid="stCaptionContainer"] { line-height: 1.5; }
+[data-testid="stTabs"] [role="tablist"] { gap: 1rem; }
 div[data-testid="stVerticalBlockBorderWrapper"] { border-color: var(--hairline) !important; border-radius: 3px !important; }
 
 [data-testid="stMetric"] {
@@ -238,7 +242,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] { border-color: var(--hairline) 
   padding: 0.58rem 0.12rem 0.5rem;
 }
 [data-testid="stMetricLabel"] { color: var(--muted); font-size: 0.75rem; font-weight: 650; }
-[data-testid="stMetricValue"] { font-family: var(--serif); letter-spacing: -0.02em; }
+[data-testid="stMetricValue"] { font-family: var(--sans); letter-spacing: -0.02em; }
 
 .stButton button, .stDownloadButton button {
   border-radius: 2px;
@@ -266,6 +270,25 @@ div[data-baseweb="base-input"] > div,
 }
 
 @media (max-width: 1050px) {
+  /* A visible sidebar leaves less room than the viewport suggests. */
+  [data-testid="stHorizontalBlock"] { flex-direction: column !important; }
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+  [class*="st-key-turning_point_map"][data-testid="stElementContainer"],
+  [class*="st-key-turning_point_map"] [data-testid="stFullScreenFrame"],
+  [class*="st-key-turning_point_map"] div[data-testid="stPlotlyChart"],
+  [class*="st-key-turning_point_map"] .js-plotly-plot,
+  [class*="st-key-turning_point_map"] .plot-container,
+  [class*="st-key-turning_point_map"] .svg-container {
+    height: 380px !important;
+    min-height: 380px !important;
+  }
+  [class*="st-key-turning_point_map"][data-testid="stElementContainer"] {
+    flex: 0 0 380px !important;
+  }
   /* Keep long summary values and navigation labels intact on tablets. */
   .st-key-atlas_top_metrics [data-testid="stHorizontalBlock"],
   .st-key-atlas_navigation [data-testid="stHorizontalBlock"] {
@@ -339,7 +362,7 @@ div[data-baseweb="base-input"] > div,
 
 @media (max-width: 540px) {
   .clearats-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  h1 { font-size: 2.25rem !important; }
+  h1 { font-size: 1.75rem !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

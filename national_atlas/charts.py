@@ -495,7 +495,7 @@ def make_turning_point_map(
     # 520 px tall (colour histogram of the rendered element). A tighter
     # frame plus a lon/lat window fitted to the 50 states + DC puts the map
     # on the canvas instead of floating in it.
-    layout = _base_layout(700, margin={"l": 0, "r": 0, "t": 4, "b": 12})
+    layout = _base_layout(560, margin={"l": 0, "r": 0, "t": 4, "b": 12})
     layout.update(
         {
             "geo": _MAP_GEO | {
@@ -576,11 +576,23 @@ def _make_turning_point_year_map(
                 colorscale=_onset_colorscale(zmin, zmax),
                 showscale=True,
                 colorbar={
-                    "title": {"text": "Turning point year", "side": "right"},
+                    # Keep the title and every tick inside a phone-width canvas.
+                    # The former vertical bar put its title beyond the right edge
+                    # at 390 px even though the map itself remained responsive.
+                    "title": {
+                        "text": "Turning point year",
+                        "side": "top",
+                        "font": {"size": 11, "family": PLOT_FONT, "color": INK},
+                    },
+                    "orientation": "h",
+                    "x": 0.5,
+                    "xanchor": "center",
+                    "y": -0.03,
+                    "yanchor": "top",
                     "tickmode": "array",
                     "tickvals": ticks,
                     "ticktext": [str(year) for year in ticks],
-                    "thickness": 12,
+                    "thickness": 10,
                     "len": 0.62,
                     "outlinewidth": 0,
                     "tickfont": {"size": 11, "family": PLOT_FONT, "color": INK},
@@ -642,7 +654,7 @@ def _make_turning_point_year_map(
             name="Selected state",
         )
     )
-    layout = _base_layout(700, margin={"l": 0, "r": 0, "t": 4, "b": 12})
+    layout = _base_layout(560, margin={"l": 0, "r": 0, "t": 4, "b": 76})
     layout.update(
         {
             "geo": _MAP_GEO | {
