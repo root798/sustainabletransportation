@@ -1,6 +1,7 @@
 """CLEAR-ATS National Atlas — primary Streamlit entry point."""
 from __future__ import annotations
 
+from html import escape
 from typing import Any
 
 import numpy as np
@@ -16,7 +17,6 @@ from atlas_io import (
     METRICS,
     NOACCII_SCENARIO,
     POLICY_CENTRAL_SCENARIO,
-    EXPERT_ENTRIES_WITH_A_TURNING_POINT,
     EXPERT_ENTRIES_WITH_A_VEHICLE_RULE,
     EXPERT_FLOOR_READING_CENTRAL_NAME,
     EXPERT_NO_TURNING_POINT_COUNT_PHRASE,
@@ -55,7 +55,6 @@ from atlas_io import (
     band_metric_is_packaged,
     band_width_readout,
     band_zero_central_note,
-    EXPERT_BAND_AXES_SHORT,
     relative_pct_text,
     policy_central_annual_row,
     policy_central_band,
@@ -72,7 +71,6 @@ from charts import (
     make_national_trajectory,
     ONSET_SENTINEL_FILL,
     ONSET_SENTINEL_OUTLINE,
-    TURNING_MAP_SMALL_STATES,
     make_driver_trajectory,
     make_ranking,
     make_state_map,
@@ -361,7 +359,6 @@ roster = (
 state_name_by_code = dict(zip(roster["state"], roster["state_name"]))
 state_codes = roster["state"].tolist()
 
-st.markdown('<div class="clearats-eyebrow">Default view · national turning point</div>', unsafe_allow_html=True)
 st.markdown('<div class="clearats-panel-title">National turning-point map</div>', unsafe_allow_html=True)
 # A1/A2: the landing map is FIXED — the delivered central at each
 # state's real deployment scale, filled by the TURNING POINT itself. NO
@@ -370,22 +367,10 @@ st.markdown('<div class="clearats-panel-title">National turning-point map</div>'
 map_scenario = "expert"
 color_by = "turning_point"
 
-# The map renders before the accessible picker widget (in the detail panel),
-# so the current selection is read from session state; clicking the map or
-# changing the picker reruns the script and refreshes the outline.
+# The map and its adjacent picker share one selection with the pathways below.
+# A map click is applied before any widget is instantiated on the next run.
 selected_state = str(st.session_state.get("state_picker", "CA"))
 
-# One sentence, computed from the packaged table, so no caption can carry a
-# count the data does not have.  The universe is written out in full: never
-# one folded number, never the word the contract retires.
-_turning_split_sentence = (
-    f"{EXPERT_TURNING_POINT_COUNT_PHRASE}"
-    f" reach a turning point between {EXPERT_TURNING_POINT_RANGE[0]} and "
-    f"{EXPERT_TURNING_POINT_RANGE[1]} -- {EXPERT_ENTRIES_WITH_A_TURNING_POINT}"
-    " of the 51 entries; "
-    f"{EXPERT_NO_TURNING_POINT_COUNT_PHRASE} "
-    "have no turning point by 2075."
-)
 _WITH_A_VEHICLE_RULE_WITH_NO_TURNING_POINT = (
     EXPERT_ENTRIES_WITH_A_VEHICLE_RULE - EXPERT_WITH_A_VEHICLE_RULE_WITH_A_TURNING_POINT
 )
@@ -442,53 +427,80 @@ policy_turning_frame = policy_central_turning_map_frame(policy_central)
 market_turning_frame = market_central_turning_map_frame(market_central)
 expert_turning_frame = expert_central_turning_map_frame(expert_central)
 turning_frame = expert_turning_frame
-st.caption(
-    "The delivered central uses each entry's actual fleet and policy-conditioned "
-    f"path; it is a deterministic scenario, not a forecast. {_turning_split_sentence}"
-)
-turning_map_event = st.plotly_chart(
-    make_turning_point_map(turning_frame, color_by, selected_state, scenario=map_scenario),
-    width="stretch",
-    config=PLOT_CONFIG,
-    on_select="rerun",
-    selection_mode="points",
-    key=f"turning_point_map_{map_scenario}_{color_by}_{selected_state}",
-)
-turning_clicked = _extract_location(turning_map_event)
-if turning_clicked and turning_clicked != selected_state and turning_clicked in state_name_by_code:
-    _set_pending_state(turning_clicked)
+st.caption("Central scenario · actual fleet · 2025–2075 · not a forecast")
+with st.container(key="atlas_map_overview"):
+    map_col, map_detail_col = st.columns([2.15, 1], gap="large", vertical_alignment="top")
+    # Render the picker first so keyboard selection and map clicks update both
+    # the map outline and every downstream state view in the same rerun.
+    with map_detail_col, st.container(key="atlas_state_panel", border=True):
+        selected_state = st.selectbox(
+            "State details",
+            options=state_codes,
+            format_func=lambda code: f"{state_name_by_code[code]} · {code}",
+            key="state_picker",
+            help="Choose here or click a state on the map. Pathways below use the same selection.",
+        )
+        map_state = turning_frame.loc[turning_frame["state"] == selected_state].iloc[0]
+        map_annual = state_scaled_annual_row(state_scaled, selected_state, 2050)
+        map_onset = str(map_state["onset_label"])
+        map_co2 = float(map_annual["cav_direct_co2_kg_actual_fleet"]) / 1e6
+        st.markdown(
+            '<div class="atlas-state-facts" aria-live="polite">'
+            '<div class="atlas-state-metric">'
+            '<div class="atlas-fact-label">Turning point</div>'
+            f'<div class="atlas-fact-value">{escape(map_onset)}</div>'
+            '</div><div class="atlas-state-metric">'
+            '<div class="atlas-fact-label">Carbon emissions · 2050</div>'
+            f'<div class="atlas-fact-value">{map_co2:,.1f}'
+            '<span class="atlas-fact-unit"> kt CO₂/yr</span></div>'
+            '<div class="atlas-fact-note">Direct emissions · actual fleet<br>CAV only · STI excluded</div>'
+            '</div><dl class="atlas-state-policies">'
+            '<dt>Vehicle policy</dt>'
+            f'<dd>{escape(str(map_state["vehicle_class_label"]))}</dd>'
+            '<dt>Electricity policy</dt>'
+            f'<dd>{escape(str(map_state["grid_class_label"]))}</dd>'
+            '</dl></div>',
+            unsafe_allow_html=True,
+        )
+        if selected_state == "DC":
+            st.caption("DC is supplemental; excluded from 50-state summaries.")
+        st.caption("Central scenario. Explore this state's pathways below.")
 
-_class_column, _class_colors, _class_labels = turning_map_classes(color_by, map_scenario)
-class_key_text = " · ".join(
-    f'<span style="display:inline-block;width:0.7rem;height:0.7rem;background:{color};'
-    f'border:2px solid {TURNING_POINT_NONE_OUTLINE};'
-    'vertical-align:-0.05rem"></span> ' + _class_labels[class_key]
-    for class_key, color in _class_colors.items()
-) + (
-    ' · <span style="display:inline-block;width:0.7rem;height:0.7rem;border:2px solid #151515;'
-    'vertical-align:-0.08rem"></span> black outline = selected state'
-)
-st.markdown(f'<div class="clearats-map-key">{class_key_text}</div>', unsafe_allow_html=True)
-small_state_onsets = turning_frame.loc[
-    turning_frame["state"].isin(TURNING_MAP_SMALL_STATES)
-].sort_values("state")
+    with map_col:
+        turning_map = make_turning_point_map(
+            turning_frame, color_by, selected_state, scenario=map_scenario
+        )
+        turning_map.update_layout(height=460, margin={"l": 0, "r": 0, "t": 8, "b": 68})
+        turning_map_event = st.plotly_chart(
+            turning_map,
+            width="stretch",
+            config={**PLOT_CONFIG, "displayModeBar": False, "scrollZoom": False},
+            on_select="rerun",
+            selection_mode="points",
+            key=f"turning_point_map_{map_scenario}_{color_by}_{selected_state}",
+        )
+        turning_clicked = _extract_location(turning_map_event)
+        if turning_clicked and turning_clicked != selected_state and turning_clicked in state_name_by_code:
+            _set_pending_state(turning_clicked)
+
+        _class_column, _class_colors, _class_labels = turning_map_classes(color_by, map_scenario)
+        class_key_text = " · ".join(
+            f'<span style="display:inline-block;width:0.7rem;height:0.7rem;background:{color};'
+            f'border:2px solid {TURNING_POINT_NONE_OUTLINE};'
+            'vertical-align:-0.05rem"></span> ' + _class_labels[class_key]
+            for class_key, color in _class_colors.items()
+        ) + (
+            ' · <span style="display:inline-block;width:0.7rem;height:0.7rem;border:2px solid #151515;'
+            'vertical-align:-0.08rem"></span> selected state'
+        )
+        st.markdown(f'<div class="clearats-map-key">{class_key_text}</div>', unsafe_allow_html=True)
+        st.caption("Click a state for details, or use the state selector.")
+
 st.caption(
-    "Small eastern states and DC: "
-    + " · ".join(
-        f"{row.state} {row.onset_label}"
-        for row in small_state_onsets.itertuples(index=False)
-    )
+    f"{EXPERT_TURNING_POINT_COUNT_PHRASE}: turning points in "
+    f"{EXPERT_TURNING_POINT_RANGE[0]}–{EXPERT_TURNING_POINT_RANGE[1]}. "
+    f"{EXPERT_NO_TURNING_POINT_COUNT_PHRASE}: none by 2075."
 )
-st.caption("Hover or tap any colored state to read its exact turning point and pathway class.")
-dc_onset_label = str(
-    turning_frame.loc[turning_frame["state"] == "DC", "onset_label"].iloc[0]
-)
-if st.button(
-    f"DC inset · turning point {dc_onset_label} (supplemental)",
-    key="dc_inset_turning_map",
-    help="Accessible 44-pixel target for the supplemental District of Columbia.",
-):
-    _set_pending_state("DC")
 
 with st.expander("Turning-point definition and scenario assumptions", expanded=False):
     st.markdown(
@@ -637,16 +649,8 @@ with compare_control_b:
             horizontal=True,
             key="compare_source",
             help=(
-                "The delivered central (the default): each entry's own vehicle rule "
-                "as a floor over a published market projection, with each "
-                "entry's enacted clean-electricity target honoured as a floor at "
-                "its own statutory level. It carries the 5th-95th percentile "
-                "interval; the policy-registered path carries a load-model (L2) "
-                "sensitivity envelope instead. The market-trend "
-                "upper bound has no such object. The no Advanced Clean Cars II "
-                "comparison is compound: both the policy assumption and "
-                "estimator assignment differ from the delivered central, so "
-                "it is not a one-lever policy effect."
+                "Choose a conditional scenario, not a forecast. "
+                "Definitions and interval scope are under Comparison assumptions."
             ),
         ) or "The delivered central"
     compare_source = COMPARE_SOURCE_OPTIONS[compare_source_label]
@@ -667,13 +671,8 @@ with compare_control_b:
         }[key],
         disabled=compare_source != "expert",
         help=(
-            "State-scaled is the default and applies to the delivered central "
-            "only: the overlay shows CAV pathways at each state's actual FHWA "
-            "MV-1 2024 registered-vehicle total; STI is excluded from these lines. The "
-            "equal-size comparison gives every state one million registered "
-            "vehicles and the measured national ratio of 2,988 STI units per "
-            "million vehicles. Turning point years are read from the "
-            "state-scaled basis; the two bases agree in every entry."
+            "Actual fleet: state-sized CAV totals, without STI. Equal-size: "
+            "1 million vehicles plus 2,988 STI units per entry."
         ),
     ) or "state_scaled"
     compare_state_scaled = compare_source == "expert" and compare_scope == "state_scaled"
@@ -703,12 +702,8 @@ with compare_control_b:
         key="compare_show_bands",
         disabled=not compare_bands_allowed,
         help=(
-            "Fills each selected state's 5th-95th model percentiles. The "
-            "delivered central shows the 5th-95th percentile interval — "
-            + EXPERT_BAND_AXES_SHORT
-            + "; the policy-registered scenario shows a load-model (L2) envelope. "
-            "Neither is prediction uncertainty, a confidence interval or a "
-            "credible interval. Available for up to three states."
+            "Conditional 5th–95th model percentiles, not forecast intervals. "
+            "Available for up to three states on the equal-size scale."
         ),
     )
     if compare_states and not compare_banded_source:
@@ -717,10 +712,7 @@ with compare_control_b:
             "central and the policy-registered scenario."
         )
     elif compare_states and compare_state_scaled:
-        st.caption(
-            "This multi-state actual-fleet view omits envelopes; the selected-state "
-            "view can show them at unchanged relative width."
-        )
+        st.caption("Choose Equal-size comparison to enable envelopes here.")
     elif len(compare_states) > COMPARE_BAND_MAX_STATES:
         st.caption("Sensitivity envelopes can be shown for up to three states.")
     compare_weather = st.toggle(
@@ -813,6 +805,7 @@ if compare_states:
                     else "- **Scale:** every entry uses the same capacity and common deployment and "
                     "hardware path; switch to actual-fleet scale for state totals.\n"
                 )
+                + "- **Turning-point basis:** the actual-fleet and equal-size dates agree in all entries.\n"
                 + (
                     "- **Interval on screen:** "
                     + band_horizon_overlay_note(
@@ -948,14 +941,19 @@ with st.expander("Advanced maps (comparator bundles: uniform Low · Medium · Hi
         "The years match the landing map; here the fill encodes electricity-law class. "
         "Entries without a turning point retain their grid class and read \"none by 2075\" on hover."
     )
-    st.plotly_chart(
+    grid_map_event = st.plotly_chart(
         make_turning_point_map(
             expert_turning_frame, "grid", selected_state, scenario=map_scenario
         ),
         width="stretch",
         config=PLOT_CONFIG,
+        on_select="rerun",
+        selection_mode="points",
         key=f"turning_point_map_grid_{selected_state}",
     )
+    grid_clicked = _extract_location(grid_map_event)
+    if grid_clicked and grid_clicked != selected_state and grid_clicked in state_name_by_code:
+        _set_pending_state(grid_clicked)
     _grid_column, _grid_colors, _grid_labels = turning_map_classes("grid", map_scenario)
     st.markdown(
         '<div class="clearats-map-key">'
@@ -977,13 +975,6 @@ st.markdown('<div class="clearats-rule"></div>', unsafe_allow_html=True)
 st.markdown("## Selected state")
 detail_col, trajectory_col = st.columns([1.0, 1.58], gap="large", vertical_alignment="top")
 with detail_col:
-    selected_state = st.selectbox(
-        "Go to a state or DC",
-        options=state_codes,
-        format_func=lambda code: f"{state_name_by_code[code]} · {code}",
-        key="state_picker",
-        help="Keyboard-accessible alternative to clicking a map.",
-    )
     context = state_context(atlas, selected_state)
     supplemental = context["scope_role"] != PRIMARY_SCOPE
     state_header(
@@ -1010,15 +1001,8 @@ with detail_col:
             format_func=lambda key: SCENARIO_AXIS_LABELS[key],
             key=f"detail_scenario_{selected_state}",
             help=(
-                "The delivered central is the default: each entry's own vehicle "
-                "rule as a floor over a published market projection, and each "
-                "entry's enacted clean-electricity target honoured as a floor at "
-                "its own statutory level. The policy-registered scenario is the "
-                "enacted-policy central; the market-trend upper bound is the "
-                "observed-trend branch. The no Advanced Clean Cars II comparison "
-                "changes both policy assumptions and estimator assignment, so it "
-                "is not a one-lever effect. Low/Medium/High are uniform "
-                "comparator bundles shared by every state."
+                "Change only the selected-state pathways below. "
+                "The national map stays on the central scenario."
             ),
         ) or EXPERT_CENTRAL_SCENARIO
     expert_central_selected = detail_scenario == EXPERT_CENTRAL_SCENARIO
@@ -1061,12 +1045,8 @@ with detail_col:
         key=f"detail_show_sensitivity_envelope_{selected_state}",
         disabled=not detail_envelope_available,
         help=(
-            "Optional 5th-95th model percentiles. The delivered central shows "
-            "the 5th-95th percentile interval — "
-            + EXPERT_BAND_AXES_SHORT
-            + "; the policy-registered scenario shows a load-model (L2) "
-            "envelope. Not prediction uncertainty or a confidence/credible "
-            "interval."
+            "Conditional 5th–95th model percentiles, not a forecast or confidence interval. "
+            "See Selected-state pathway assumptions."
         ),
     )
     detail_show_envelope = bool(detail_show_envelope and detail_envelope_available)
@@ -1086,12 +1066,8 @@ with detail_col:
         key=f"detail_range_{selected_state}",
         disabled=central_selected,
         help=(
-            "Comparator bundles only. The per-state centrals have no engineering-support "
-            "range. The delivered central offers the 5th-95th percentile interval and "
-            "the policy-registered scenario a load-model (L2) sensitivity envelope. "
-            "The default three-case range conditions on the "
-            "selected scenario; the 3×3 option is a wider structural stress test, not a "
-            "probability interval."
+            "For Low/Medium/High comparators only. Three cases hold the scenario fixed; "
+            "3×3 is a wider structural stress test. Neither is a probability interval."
         ),
     )
     if expert_central_selected:
@@ -1139,9 +1115,7 @@ with detail_col:
         onset_card = (
             f"{TURNING_POINT_NAME} · delivered central",
             expert_onset_display,
-            f"conditional modeled year; policy-registered {policy_onset_display} / "
-            f"market-trend {market_onset_display}; {TURNING_POINT_NONE_TILE_NOTE}; "
-            "not the absolute peak, neutrality or payback",
+            "Conditional modeled year · see context below",
         )
     else:
         onset_card = (
@@ -1189,8 +1163,7 @@ with detail_col:
             (
                 f"{CAV_EMISSIONS_NAME} · 2050 · actual fleet",
                 f"{float(state_scaled_annual_row(state_scaled, selected_state, 2050)['cav_direct_co2_kg_actual_fleet']) / 1e6:,.1f}",
-                "kt CO₂ yr⁻¹ · delivered central at this state's actual FHWA "
-                "MV-1 2024 registered vehicles; STI counted separately",
+                "kt CO₂ yr⁻¹ · delivered central, actual fleet; STI separate",
             ),
         ),
     ]
@@ -1199,16 +1172,22 @@ with detail_col:
         ec_turning_row_display = expert_turning_frame.loc[
             expert_turning_frame["state"] == selected_state
         ].iloc[0]
-        st.markdown(
-            f"**Electrification and grid path:** {ec_turning_row_display['vehicle_class_label']} · "
-            f"{ec_turning_row_display['grid_class_label']}  \n"
-            f"**Scenario:** the published AEO2026 Alternative Transportation "
-            "case · turning point "
-            + EXPERT_CONDITIONALITY_FOOTNOTE
-            + "  \n"
-            f"**CO₂ emissions, direct, on the equal-size comparison ({detail_year}):** "
+        st.caption(
+            f"Equal-size direct CO₂ emissions · {detail_year}: "
             f"{float(annual['normalized_bundle_direct_co2_metric_tonnes']):,.0f} t CO₂ yr⁻¹",
         )
+        with st.expander("State policy and turning-point context", expanded=False):
+            st.markdown(
+                f"- **Vehicle policy:** {ec_turning_row_display['vehicle_class_label']}.\n"
+                f"- **Electricity policy:** {ec_turning_row_display['grid_class_label']}.\n"
+                "- **Scenario:** the published AEO2026 Alternative Transportation case.\n"
+                f"- **Turning point:** {EXPERT_CONDITIONALITY_FOOTNOTE}; distinct from the "
+                "absolute peak, neutrality and payback.\n"
+                f"- **Other scenarios:** policy-registered {policy_onset_display}; "
+                f"market-trend {market_onset_display}. {TURNING_POINT_NONE_TILE_NOTE}.\n"
+                "- **Actual fleet:** the state's FHWA MV-1 2024 registered vehicles; "
+                "STI is counted separately."
+            )
     elif noaccii_selected:
         st.markdown(
             "**Compound no Advanced Clean Cars II comparison (not a central or "
@@ -1245,6 +1224,17 @@ with detail_col:
             f"**Direct CO₂ emissions on the equal-size comparison ({detail_year}):** "
             f"{float(annual['normalized_bundle_direct_co2_metric_tonnes']):,.0f} t CO₂ yr⁻¹",
         )
+    if central_selected and not expert_central_selected:
+        with st.expander("Turning-point comparison and accounting basis", expanded=False):
+            st.markdown(
+                f"- **Delivered central:** {expert_onset_display}.\n"
+                f"- **Policy-registered:** {policy_onset_display}.\n"
+                f"- **Market-trend:** {market_onset_display}.\n"
+                f"- **Definition:** conditional modeled year; {TURNING_POINT_NONE_TILE_NOTE}; "
+                "not the absolute peak, neutrality or payback.\n"
+                "- **Actual-fleet tile:** delivered central at the state's FHWA MV-1 2024 "
+                "registered-vehicle total; STI is counted separately."
+            )
     st.markdown('<div class="clearats-eyebrow" style="margin-top:0.9rem">Descriptive policy screens</div>', unsafe_allow_html=True)
     policy_chip_values = _policy_chips(context)
     chips(policy_chip_values)

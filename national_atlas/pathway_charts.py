@@ -55,6 +55,12 @@ from style import HAIRLINE, INK, MUTED, PAPER
 # measured width and the drawn width the same number by construction. Page
 # chrome (headings, body, tiles) keeps Source Sans / Source Serif.
 PLOT_SANS = "Arial, Helvetica, sans-serif"
+HOVER_LABEL_STYLE = {
+    "align": "left",
+    "font": {"family": PLOT_SANS, "size": 12, "color": INK},
+    "bgcolor": "#ffffff",
+    "bordercolor": "#b9b7b0",
+}
 
 # V2-08 (2026-09-03): the horizontal legends were laid out on ONE row's worth
 # of vertical room.  Sizing each entry to its own text (entrywidth 0) stopped
@@ -359,8 +365,27 @@ def _layout(title: str, y_title: str, *, height: int = 350) -> dict[str, Any]:
             "font": {"size": 11},
             "bgcolor": "rgba(0,0,0,0)",
         },
+        "hoverlabel": HOVER_LABEL_STYLE,
         "hovermode": "x unified",
     }
+
+
+def _hover_unit_lines(unit: str) -> str:
+    """Keep a complete unit/basis readable inside a narrow hover card."""
+    actual_fleet = " · actual FHWA MV-1 2024 fleet (STI excluded)"
+    if actual_fleet in unit:
+        measure = unit.replace(actual_fleet, "")
+        return f"{measure}<br>actual FHWA MV-1 2024 fleet<br>STI excluded"
+    equal_size = " on the equal-size comparison ("
+    if equal_size in unit and unit.endswith(")"):
+        measure, basis = unit.split(equal_size, 1)
+        return f"{measure}<br>equal-size comparison<br>{basis[:-1]}"
+    if " per " in unit:
+        measure, basis = unit.split(" per ", 1)
+        return f"{measure}<br>per {basis}"
+    return "<br>".join(
+        textwrap.wrap(unit, width=38, break_long_words=False, break_on_hyphens=False)
+    )
 
 
 def _normalized_values(frame: pd.DataFrame, metric: str, scope: str) -> pd.Series:
@@ -443,7 +468,8 @@ CASE_TRIPTYCH_AXIS_TITLES = dict(CASE_AXIS_UNITS)
 
 
 def _basis_footnote(
-    fig: go.Figure, basis_key: str, frame: "pd.DataFrame | None" = None
+    fig: go.Figure, basis_key: str, frame: "pd.DataFrame | None" = None,
+    *, cav_only: bool = False,
 ) -> None:
     """State the normalization denominator once, under the panels.
 
@@ -453,6 +479,8 @@ def _basis_footnote(
     companion) and one hard-coded number would be wrong under one of them.
     """
     text = BASIS_FOOTNOTES[basis_key]
+    if basis_key == "state_scaled" and cav_only:
+        text = "Actual FHWA MV-1 2024 fleet per state.\nCAV only; STI excluded."
     # A frame that carries no site count is on the registered reference bundle
     # of the uniform comparator layer (1,000 standardized reference-site
     # equivalents, ``state_atlas_summary_v1.json``); the delivered central's
@@ -462,16 +490,32 @@ def _basis_footnote(
         units = ATLAS_REFERENCE_STI_UNITS
     if units is not None and basis_key in {"bundle", "sti"}:
         text = (
-            "Normalized basis: the equal-size comparison — every state carries "
-            f"one million registered vehicles and {units:,} STI units."
+            "Equal-size comparison (per entry):\n"
+            f"1M registered vehicles + {units:,} STI units."
             if basis_key == "bundle"
             else f"Normalized basis: {units:,} STI units."
         )
+    # Plotly annotations never wrap automatically. The old sentence was
+    # wider than a state-panel column (and a phone), so its denominator was
+    # cut off. Reserve the required bottom space without shrinking the data.
+    lines = [
+        line
+        for paragraph in text.splitlines()
+        for line in textwrap.wrap(paragraph, width=44, break_long_words=False, break_on_hyphens=False)
+    ]
+    previous_bottom = int(fig.layout.margin.b or 0)
+    bottom = max(previous_bottom, 56 + 14 * len(lines))
+    if bottom > previous_bottom:
+        fig.update_layout(
+            margin={"b": bottom},
+            height=int(fig.layout.height or 350) + bottom - previous_bottom,
+        )
     fig.add_annotation(
-        text=text,
+        text="<br>".join(lines),
         xref="paper", yref="paper",
         x=0, y=0, xanchor="left", yanchor="top", yshift=-46,
         showarrow=False,
+        align="left",
         font={"family": PLOT_SANS, "size": 10, "color": MUTED},
     )
 
@@ -536,6 +580,7 @@ def _triptych(*, height: int) -> go.Figure:
             "font": {"size": 11},
             "bgcolor": "rgba(0,0,0,0)",
         },
+        hoverlabel=HOVER_LABEL_STYLE,
         hovermode="x unified",
         hoversubplots="axis",
     )
@@ -651,9 +696,9 @@ def make_normalized_triptych(
                     showlegend=row_index == 1,
                     customdata=np.column_stack([lower, upper]),
                     hovertemplate=(
-                        f"{metric_spec.short_label} support"
-                        f"<br>lower: %{{customdata[0]:{metric_spec.hover_format}}}"
-                        f"<br>upper: %{{customdata[1]:{metric_spec.hover_format}}}"
+                        f"<b>{metric_spec.short_label}</b><br>Scenario support"
+                        f"<br>Lower: %{{customdata[0]:{metric_spec.hover_format}}}"
+                        f"<br>Upper: %{{customdata[1]:{metric_spec.hover_format}}}"
                         "<extra></extra>"
                     ),
                 ),
@@ -677,9 +722,10 @@ def make_normalized_triptych(
                     legendgroup=f"scenario-{scenario}",
                     showlegend=row_index == 1,
                     hovertemplate=(
-                        f"{metric_spec.short_label} · {scenario.title()}: "
-                        f"%{{y:{metric_spec.hover_format}}} "
-                        f"{normalized_metric_unit(metric, scope)}<extra></extra>"
+                        f"<b>{metric_spec.short_label}</b><br>{scenario.title()}: "
+                        f"%{{y:{metric_spec.hover_format}}}"
+                        f"<br>{_hover_unit_lines(normalized_metric_unit(metric, scope))}"
+                        "<extra></extra>"
                     ),
                 ),
                 row=row_index,
@@ -706,7 +752,7 @@ def make_normalized_triptych(
                     legendgroup="national-median",
                     showlegend=row_index == 1,
                     hovertemplate=(
-                        f"{metric_spec.short_label} · 50-state-only median: "
+                        f"<b>{metric_spec.short_label}</b><br>50-state median: "
                         f"%{{y:{metric_spec.hover_format}}}<extra></extra>"
                     ),
                 ),
@@ -936,14 +982,14 @@ def make_policy_central_triptych(
                     showlegend=row_index == 1,
                     customdata=np.column_stack([lower, upper]),
                     hovertemplate=(
-                        f"{metric_spec.short_label} "
+                        f"<b>{metric_spec.short_label}</b><br>"
                         + (
-                            "5th-95th percentile interval"
+                            "5th–95th percentile interval"
                             if ceiling_prior_mode
-                            else "load-model sensitivity envelope"
+                            else "Load-model sensitivity envelope"
                         )
-                        + f"<br>5th model percentile: %{{customdata[0]:{metric_spec.hover_format}}}"
-                        f"<br>95th model percentile: %{{customdata[1]:{metric_spec.hover_format}}}"
+                        + f"<br>p05: %{{customdata[0]:{metric_spec.hover_format}}}"
+                        f"<br>p95: %{{customdata[1]:{metric_spec.hover_format}}}"
                         "<extra></extra>"
                     ),
                 ),
@@ -974,7 +1020,8 @@ def make_policy_central_triptych(
                         legendgroup=f"comparator-{scenario}",
                         showlegend=row_index == 1,
                         hovertemplate=(
-                            f"{metric_spec.short_label} · {scenario.title()} comparator: "
+                            f"<b>{metric_spec.short_label}</b><br>"
+                            f"{scenario.title()} comparator: "
                             f"%{{y:{metric_spec.hover_format}}}<extra></extra>"
                         ),
                     ),
@@ -1002,7 +1049,7 @@ def make_policy_central_triptych(
                     legendgroup="pc-weather",
                     showlegend=row_index == 1,
                     hovertemplate=(
-                        f"{metric_spec.short_label} · weather-adjusted: "
+                        f"<b>{metric_spec.short_label}</b><br>Weather-adjusted: "
                         f"%{{y:{metric_spec.hover_format}}}<extra></extra>"
                     ),
                 ),
@@ -1022,9 +1069,9 @@ def make_policy_central_triptych(
                 legendgroup="pc-central",
                 showlegend=row_index == 1,
                 hovertemplate=(
-                    f"{metric_spec.short_label} · {central_label}: "
-                    f"%{{y:{metric_spec.hover_format}}} "
-                    f"{normalized_metric_unit(metric, scope, _sti_units_in(source))}"
+                    f"<b>{metric_spec.short_label}</b><br>{central_label}"
+                    f"<br>%{{y:{metric_spec.hover_format}}}"
+                    f"<br>{_hover_unit_lines(normalized_metric_unit(metric, scope, _sti_units_in(source)))}"
                     "<extra></extra>"
                 ),
             ),
@@ -1053,7 +1100,8 @@ def make_policy_central_triptych(
                     legendgroup="national-median",
                     showlegend=row_index == 1,
                     hovertemplate=(
-                        f"{metric_spec.short_label} · 50-state-only {central_label.lower()} median: "
+                        f"<b>{metric_spec.short_label}</b><br>{central_label}"
+                        "<br>50-state median: "
                         f"%{{y:{metric_spec.hover_format}}}<extra></extra>"
                     ),
                 ),
@@ -1244,7 +1292,8 @@ def make_v22_exploratory_triptych(
                     showlegend=row_index == 1,
                     customdata=np.column_stack([lower, median, upper]),
                     hovertemplate=(
-                        f"{metric_spec.short_label} · conditional parameter band"
+                        f"<b>{metric_spec.short_label}</b>"
+                        "<br>Conditional parameter band"
                         f"<br>p05: %{{customdata[0]:{metric_spec.hover_format}}}"
                         f"<br>p50: %{{customdata[1]:{metric_spec.hover_format}}}"
                         f"<br>p95: %{{customdata[2]:{metric_spec.hover_format}}}"
@@ -1269,9 +1318,9 @@ def make_v22_exploratory_triptych(
                 legendgroup="v22-frozen-reference",
                 showlegend=row_index == 1,
                 hovertemplate=(
-                    f"{metric_spec.short_label} · frozen delivered central: "
-                    f"%{{y:{metric_spec.hover_format}}} "
-                    f"{normalized_metric_unit(metric, 'bundle', _sti_units_in(frozen))}"
+                    f"<b>{metric_spec.short_label}</b><br>Frozen delivered central"
+                    f"<br>%{{y:{metric_spec.hover_format}}}"
+                    f"<br>{_hover_unit_lines(normalized_metric_unit(metric, 'bundle', _sti_units_in(frozen)))}"
                     "<extra></extra>"
                 ),
             ),
@@ -1288,9 +1337,9 @@ def make_v22_exploratory_triptych(
                 legendgroup="v22-live-scenario",
                 showlegend=row_index == 1,
                 hovertemplate=(
-                    f"{metric_spec.short_label} · exploratory: "
-                    f"%{{y:{metric_spec.hover_format}}} "
-                    f"{normalized_metric_unit(metric, 'bundle', _sti_units_in(frozen))}"
+                    f"<b>{metric_spec.short_label}</b><br>Exploratory scenario"
+                    f"<br>%{{y:{metric_spec.hover_format}}}"
+                    f"<br>{_hover_unit_lines(normalized_metric_unit(metric, 'bundle', _sti_units_in(frozen)))}"
                     "<extra></extra>"
                 ),
             ),
@@ -1538,11 +1587,12 @@ def make_state_comparison(
         for index, state in enumerate(roster):
             rgb = _hex_to_rgb_string(COMPARE_STATE_COLORS[index])
             band = policy_central_band(pc, state, metric)
-            band_name = (
-                f"{state} 5th-95th percentile interval"
+            band_detail = (
+                "5th-95th percentile interval"
                 if band_has_ceiling_prior(band)
-                else f"{state} load-model sensitivity envelope"
+                else "load-model sensitivity envelope"
             )
+            band_name = f"{state} {band_detail}"
             lower = band["lower"] / scale
             upper = band["upper"] / scale
             fig.add_trace(
@@ -1569,9 +1619,9 @@ def make_state_comparison(
                     showlegend=False,
                     customdata=np.column_stack([lower, upper]),
                     hovertemplate=(
-                        band_name
-                        + f"<br>5th model percentile: %{{customdata[0]:{metric_spec.hover_format}}}"
-                        f"<br>95th model percentile: %{{customdata[1]:{metric_spec.hover_format}}}"
+                        f"<b>{state}</b><br>{band_detail}"
+                        + f"<br>p05: %{{customdata[0]:{metric_spec.hover_format}}}"
+                        f"<br>p95: %{{customdata[1]:{metric_spec.hover_format}}}"
                         "<extra></extra>"
                     ),
                 )
@@ -1616,7 +1666,9 @@ def make_state_comparison(
                 name=line_label,
                 legendgroup=f"compare-{state}",
                 hovertemplate=(
-                    f"{line_label}: %{{y:{metric_spec.hover_format}}} {hover_unit}"
+                    f"<b>{line_label}</b><br>{metric_spec.short_label}: "
+                    f"%{{y:{metric_spec.hover_format}}}"
+                    f"<br>{_hover_unit_lines(hover_unit)}"
                     "<extra></extra>"
                 ),
             )
@@ -1659,7 +1711,7 @@ def make_state_comparison(
         for offset, dot_index in zip(offsets, group):
             state, color, symbol, onset, onset_value = onset_dots[dot_index]
             jitter_note = (
-                "<br>(dot nudged sideways only so coincident onsets stay visible)"
+                "<br><span style='color:#64625d'>Marker offset for visibility</span>"
                 if len(group) > 1
                 else ""
             )
@@ -1681,9 +1733,8 @@ def make_state_comparison(
                     showlegend=False,
                     legendgroup=f"compare-{state}",
                     hovertemplate=(
-                        f"{state} turning point: {onset}"
-                        "<br>modeled year, "
-                        f"not neutrality or payback{jitter_note}<extra></extra>"
+                        f"<b>{state}</b><br>Turning point: {onset}"
+                        f"{jitter_note}<extra></extra>"
                     ),
                 )
             )
@@ -1715,7 +1766,10 @@ def make_state_comparison(
     }
     layout["legend"] = {**layout["legend"], "y": 1.02, "yanchor": "bottom"}
     fig.update_layout(**layout)
-    _basis_footnote(fig, "state_scaled" if state_scaled_scope else "bundle")
+    _basis_footnote(
+        fig, "state_scaled" if state_scaled_scope else "bundle", pc.get("annual"),
+        cav_only=state_scaled_scope,
+    )
     fig.update_xaxes(range=[2024.5, 2076.5], tick0=2030, dtick=10)
     fig.update_layout(
         uirevision=(
@@ -1853,14 +1907,9 @@ def make_case_triptych(
                     legendgroup=f"scenario-{scenario}",
                     showlegend=row_index == 1,
                     hovertemplate=(
-                        f"{metric_spec.short_label} · {scenario.title()}: "
+                        f"<b>{metric_spec.short_label}</b><br>{scenario.title()}: "
                         f"%{{y:{metric_spec.hover_format}}} {metric_spec.unit}"
-                        + (
-                            "<br>Operational direct boundary; not lifecycle neutrality"
-                            if metric == "emissions"
-                            else ""
-                        )
-                        + "<extra></extra>"
+                        "<extra></extra>"
                     ),
                 ),
                 row=row_index,
@@ -1886,7 +1935,8 @@ def make_case_triptych(
                     legendgroup="ratio-p50",
                     showlegend=True,
                     hovertemplate=(
-                        "Paired-draw p50 intensity · legacy audit series: %{y:.3f}"
+                        "<b>Paired-draw p50 intensity</b>"
+                        "<br>Legacy audit: %{y:.3f}"
                         "<extra></extra>"
                     ),
                 ),
@@ -1995,8 +2045,10 @@ def make_normalized_pathway(data: Mapping[str, Any], state: str, metric: str,
                 opacity=1.0 if emphasized else SCENARIO_OPACITY[scenario],
                 name=f"{scenario.title()} deterministic",
                 hovertemplate=(
-                    f"{scenario.title()}: %{{y:{metric_spec.hover_format}}} "
-                    f"{normalized_metric_unit(metric, scope)}<extra></extra>"
+                    f"<b>{scenario.title()}</b><br>"
+                    f"%{{y:{metric_spec.hover_format}}}"
+                    f"<br>{_hover_unit_lines(normalized_metric_unit(metric, scope))}"
+                    "<extra></extra>"
                 ),
             )
         )
@@ -2081,8 +2133,9 @@ def make_case_pathway(bundle: Mapping[str, Any], state: str, metric: str,
                 opacity=1.0 if emphasized else SCENARIO_OPACITY[scenario],
                 name=f"{scenario.title()} deterministic",
                 hovertemplate=(
-                    f"{scenario.title()}: %{{y:{metric_spec.hover_format}}} "
-                    f"{metric_spec.unit}<extra></extra>"
+                    f"<b>{scenario.title()}</b><br>"
+                    f"%{{y:{metric_spec.hover_format}}} {metric_spec.unit}"
+                    "<extra></extra>"
                 ),
             )
         )
@@ -2399,6 +2452,7 @@ def make_state_scaled_triptych(
             "font": {"size": 11},
             "bgcolor": "rgba(0,0,0,0)",
         },
+        hoverlabel=HOVER_LABEL_STYLE,
         hovermode="x unified",
         hoversubplots="axis",
     )
@@ -2457,9 +2511,10 @@ def make_state_scaled_triptych(
                 legendgroup="ss-band", showlegend=row_index == 1,
                 customdata=np.column_stack([lower, upper]),
                 hovertemplate=(
-                    f"{name} 5th-95th percentile interval"
-                    "<br>5th model percentile: %{customdata[0]:,.1f}"
-                    "<br>95th model percentile: %{customdata[1]:,.1f}<extra></extra>"
+                    f"<b>{name.replace(' · ', '<br>')}</b>"
+                    "<br>5th–95th percentile interval"
+                    "<br>p05: %{customdata[0]:,.1f}"
+                    "<br>p95: %{customdata[1]:,.1f}<extra></extra>"
                 ),
             ),
             row=row_index, col=1,
@@ -2471,7 +2526,8 @@ def make_state_scaled_triptych(
                 name="State-scaled central",
                 legendgroup="ss-central", showlegend=row_index == 1,
                 hovertemplate=(
-                    f"{name}: %{{y:,.1f}} {unit}<extra></extra>"
+                    f"<b>{name.replace(' · ', '<br>')}</b>"
+                    f"<br>%{{y:,.1f}} {unit}<extra></extra>"
                 ),
             ),
             row=row_index, col=1,
@@ -2499,8 +2555,9 @@ def make_state_scaled_triptych(
             legendgroup="ss-sti-range", showlegend=True,
             customdata=np.column_stack([sti_low, sti_high]),
             hovertemplate=(
-                "STI electricity · site-count range<br>low: %{customdata[0]:,.2f}"
-                "<br>high: %{customdata[1]:,.2f}<extra></extra>"
+                "<b>STI electricity</b><br>Site-count range"
+                "<br>Low: %{customdata[0]:,.2f}"
+                "<br>High: %{customdata[1]:,.2f}<extra></extra>"
             ),
         ),
         row=3, col=1,
@@ -2512,7 +2569,8 @@ def make_state_scaled_triptych(
             name="STI central",
             legendgroup="ss-sti-central", showlegend=True,
             hovertemplate=(
-                "STI electricity · modeled central: %{y:,.2f} GWh yr⁻¹<extra></extra>"
+                "<b>STI electricity</b><br>Modeled central"
+                "<br>%{y:,.2f} GWh yr⁻¹<extra></extra>"
             ),
         ),
         row=3, col=1,

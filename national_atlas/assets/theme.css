@@ -178,6 +178,38 @@ h3 { font-size: 1.18rem !important; line-height: 1.2 !important; }
   margin: 0.35rem 0 0.7rem;
 }
 
+/* The map's details stay readable beside it instead of covering geography
+   in a hover balloon. This is a normal document panel, never an overlay. */
+.st-key-atlas_state_panel {
+  background: #f7f9fc;
+  border: 1px solid #dce4ed !important;
+  border-radius: 12px !important;
+  padding: 1.1rem !important;
+}
+.atlas-state-facts { overflow-wrap: anywhere; }
+.atlas-state-metric { padding: 0.65rem 0 1rem; }
+.atlas-state-metric + .atlas-state-metric { border-top: 1px solid #dce4ed; }
+.atlas-fact-label, .atlas-state-policies dt {
+  color: #526275;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.atlas-fact-value {
+  color: #153e5b;
+  font-size: 1.8rem;
+  font-weight: 650;
+  line-height: 1.25;
+  margin-top: 0.25rem;
+}
+.atlas-fact-unit { font-size: 0.875rem; font-weight: 500; white-space: nowrap; }
+.atlas-fact-note { color: #526275; font-size: 0.75rem; line-height: 1.45; margin-top: 0.3rem; }
+.atlas-state-policies { border-top: 1px solid #dce4ed; margin: 0; padding-top: 1rem; }
+.atlas-state-policies dd { margin: 0.2rem 0 0.85rem; font-size: 0.875rem; line-height: 1.45; }
+.atlas-state-policies dd:last-child { margin-bottom: 0; }
+.st-key-atlas_state_panel [data-testid="stCaptionContainer"] { font-size: 0.75rem; }
+.st-key-atlas_map_overview path.choroplethlocation { cursor: pointer; }
+
 .clearats-flow {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -277,6 +309,7 @@ div[data-baseweb="base-input"] > div,
     width: 100% !important;
     min-width: 100% !important;
   }
+  .st-key-atlas_map_overview [data-testid="stHorizontalBlock"] { gap: 0.9rem !important; }
   [class*="st-key-turning_point_map"][data-testid="stElementContainer"],
   [class*="st-key-turning_point_map"] [data-testid="stFullScreenFrame"],
   [class*="st-key-turning_point_map"] div[data-testid="stPlotlyChart"],

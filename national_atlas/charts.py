@@ -1,6 +1,7 @@
 """Plotly figures for the CLEAR-ATS national dashboard."""
 from __future__ import annotations
 
+import textwrap
 from typing import Any, Mapping
 
 import numpy as np
@@ -79,6 +80,7 @@ def _base_layout(height: int, *, margin: dict[str, int] | None = None) -> dict[s
         "font": {"family": PLOT_FONT, "size": 12, "color": INK},
         "margin": margin or {"l": 58, "r": 18, "t": 30, "b": 54},
         "hoverlabel": {
+            "align": "left",
             "font": {"family": PLOT_FONT, "size": 12, "color": INK},
             "bgcolor": "#ffffff",
             "bordercolor": "#b9b7b0",
@@ -122,6 +124,20 @@ def _axis(title: str, *, percent: bool = False) -> dict[str, Any]:
     if percent:
         axis["ticksuffix"] = "%"
     return axis
+
+
+def _hover_unit_lines(unit: str) -> str:
+    """Wrap long basis-qualified units without changing their meaning."""
+    equal_size = " on the equal-size comparison ("
+    if equal_size in unit and unit.endswith(")"):
+        measure, basis = unit.split(equal_size, 1)
+        return f"{measure}<br>equal-size comparison<br>{basis[:-1]}"
+    if " per " in unit:
+        measure, basis = unit.split(" per ", 1)
+        return f"{measure}<br>per {basis}"
+    return "<br>".join(
+        textwrap.wrap(unit, width=38, break_long_words=False, break_on_hyphens=False)
+    )
 
 
 def _primary_domain(frame: pd.DataFrame, spec: MetricSpec) -> tuple[float, float]:
@@ -271,9 +287,10 @@ def make_state_map(frame: pd.DataFrame, metric_key: str, selected_state: str) ->
             customdata=custom,
             hovertemplate=(
                 "<b>%{customdata[0]}</b><br>"
-                + spec.label
-                + ": %{customdata[1]}<br><span style='color:#64625d'>%{customdata[3]}</span>"
-                + "<br><span style='color:#64625d'>%{customdata[2]}</span><extra></extra>"
+                + spec.compact_label
+                + ": %{customdata[1]}"
+                + "<br><span style='color:#64625d'>Click to select</span>"
+                + "<extra></extra>"
             ),
             name=spec.label,
         )
@@ -290,7 +307,7 @@ def make_state_map(frame: pd.DataFrame, metric_key: str, selected_state: str) ->
                 "line": {"color": PAPER, "width": 0.7},
             },
             text=["California · registered case available", "Ohio · registered case available"],
-            hovertemplate="%{text}<br>Map fill remains normalized<extra></extra>",
+            hovertemplate="<b>%{text}</b><extra></extra>",
             showlegend=False,
             name="Registered case available",
         )
@@ -309,7 +326,11 @@ def make_state_map(frame: pd.DataFrame, metric_key: str, selected_state: str) ->
                 showscale=False,
                 marker={"line": {"color": ONSET_SENTINEL_OUTLINE, "width": 1.6}},
                 customdata=np.column_stack([censored["state_name"], censored["display_value"]]),
-                hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]}<extra></extra>",
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b><br>%{customdata[1]}"
+                    "<br><span style='color:#64625d'>Click to select</span>"
+                    "<extra></extra>"
+                ),
                 name="No turning point by 2075",
             )
         )
@@ -358,7 +379,7 @@ def make_state_map(frame: pd.DataFrame, metric_key: str, selected_state: str) ->
 
 
 # Small eastern jurisdictions whose centroid labels would collide; they are
-# listed in a key line under the map instead (hover still carries everything).
+# listed in a key line under the map and resolved in the fixed state panel.
 TURNING_MAP_SMALL_STATES = ("CT", "DC", "DE", "MA", "MD", "NH", "NJ", "RI", "VT")
 
 
@@ -417,34 +438,6 @@ def make_turning_point_map(
     else:
         onset_labels = frame["onset_year"].astype(int).astype(str)
     frame = frame.assign(_onset_label=onset_labels)
-    if scenario == "market":
-        class_prefix = ("Vehicle path", "Grid path")
-        # D2: the retired gloss printed the symbol form and then explained
-        # it.  The label now says what it means, so there is nothing to gloss.
-        disclaimer = (
-            "market-trend deterministic scenario; a state with no turning "
-            "point by 2075 carries no year; not the absolute peak, "
-            "neutrality or payback"
-        )
-    elif scenario == "expert":
-        class_prefix = ("Vehicle policy", "Clean electricity policy")
-        # Same defect as in _make_turning_point_year_map: this hover carried
-        # "stated policy" about a case that is a policy-vintage bound and
-        # "ceiling" about a vehicle rule that is a FLOOR, and a hovertemplate
-        # is not a string the rendered sweep can read.
-        disclaimer = (
-            "deterministic scenario on the statutory-targets-honoured reading "
-            "of the clean-electricity floor; the turning point is conditional "
-            "on the entry's own vehicle policy applied as a floor over a "
-            "published market projection, and is not the absolute peak, "
-            "neutrality or payback"
-        )
-    else:
-        class_prefix = ("Vehicle policy", "Grid policy")
-        disclaimer = (
-            "policy-conditioned deterministic scenario; not the absolute peak, "
-            "neutrality or payback"
-        )
     fig = go.Figure()
     for class_key, color in class_colors.items():
         piece = frame.loc[frame[class_column] == class_key]
@@ -470,9 +463,8 @@ def make_turning_point_map(
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
                     "<br>Turning point: %{customdata[1]}"
-                    f"<br>{class_prefix[0]}: %{{customdata[2]}}"
-                    f"<br>{class_prefix[1]}: %{{customdata[3]}}"
-                    f"<br><span style='color:#64625d'>{disclaimer}</span><extra></extra>"
+                    "<br><span style='color:#64625d'>Click to select</span>"
+                    "<extra></extra>"
                 ),
                 name=class_labels[class_key],
             )
@@ -532,19 +524,6 @@ def _make_turning_point_year_map(
     """
     turns = frame.loc[frame["has_turning_point"]]
     none_by = frame.loc[~frame["has_turning_point"]]
-    # THE HOVER IS A READER-FACING SURFACE.  What stood here was a v2.2 string
-    # that carried two forms the contract forbids as PAIRS -- "stated policy"
-    # about a case that is a policy-vintage bound, and "ceiling" about a
-    # vehicle rule that is a FLOOR -- and it survived because a hovertemplate
-    # is not a rendered string the sweep can read.  It is replaced with what
-    # the delivered central actually is.
-    disclaimer = (
-        "deterministic scenario at each entry's real deployment scale on the "
-        "statutory-targets-honoured reading of the clean-electricity floor; "
-        "the turning point is conditional on the entry's own vehicle policy "
-        "applied as a floor over a published market projection, and is not the "
-        "absolute peak, neutrality or payback"
-    )
     fig = go.Figure()
     if len(turns):
         years = turns["onset_year"].astype(float)
@@ -609,9 +588,8 @@ def _make_turning_point_year_map(
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
                     "<br>Turning point: %{customdata[1]}"
-                    "<br>Vehicle pathway: %{customdata[2]}"
-                    "<br>Grid policy: %{customdata[3]}"
-                    f"<br><span style='color:#64625d'>{disclaimer}</span><extra></extra>"
+                    "<br><span style='color:#64625d'>Click to select</span>"
+                    "<extra></extra>"
                 ),
                 name="Turning point year",
             )
@@ -635,9 +613,8 @@ def _make_turning_point_year_map(
                 hovertemplate=(
                     "<b>%{customdata[0]}</b>"
                     f"<br>Turning point: {TURNING_POINT_NONE_TOKEN}"
-                    "<br>Vehicle pathway: %{customdata[1]}"
-                    "<br>Grid policy: %{customdata[2]}"
-                    f"<br><span style='color:#64625d'>{disclaimer}</span><extra></extra>"
+                    "<br><span style='color:#64625d'>Click to select</span>"
+                    "<extra></extra>"
                 ),
                 name=TURNING_POINT_NONE_LABEL,
             )
@@ -725,9 +702,9 @@ def make_ranking(frame: pd.DataFrame, metric_key: str, selected_state: str) -> g
             hovertemplate=(
                 "<b>%{customdata[1]} (%{customdata[0]})</b><br>"
                 "50-state order: %{customdata[3]} of 50<br>"
-                + spec.label
+                + spec.compact_label
                 + ": %{customdata[2]}<br>"
-                + spec.unit
+                + _hover_unit_lines(spec.unit)
                 + "<extra></extra>"
             ),
             name=spec.label,
@@ -982,7 +959,10 @@ def make_national_trajectory(
             mode="lines",
             line={"color": MANUSCRIPT_DEEP_TEAL, "width": 2.4},
             name="The delivered central",
-            hovertemplate="%{x}: %{y:,.3f}<extra>The delivered central</extra>",
+            hovertemplate=(
+                "<b>Delivered central</b><br>Year: %{x}"
+                "<br>Value: %{y:,.3f}<extra></extra>"
+            ),
         )
     )
     for line_key, (label, color, dash) in NATIONAL_DEPLOYMENT_LINES.items():
@@ -993,6 +973,7 @@ def make_national_trajectory(
         ].sort_values("year")
         if piece.empty:
             continue
+        hover_label = label.removesuffix(" (named line)")
         figure.add_trace(
             go.Scatter(
                 x=piece["year"],
@@ -1000,7 +981,10 @@ def make_national_trajectory(
                 mode="lines",
                 line={"color": color, "width": 1.6, "dash": dash},
                 name=label,
-                hovertemplate="%{x}: %{y:,.3f}<extra>" + label + "</extra>",
+                hovertemplate=(
+                    f"<b>{hover_label}</b><br>Named line"
+                    "<br>Year: %{x}<br>Value: %{y:,.3f}<extra></extra>"
+                ),
             )
         )
     layout = _base_layout(360)
