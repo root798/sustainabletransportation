@@ -1289,14 +1289,13 @@ POLICY_CENTRAL_BAND_METHOD = "EXACT_PER_STATE_REGISTERED_L2_PROPAGATION"
 
 # Panel metric -> interval metric id in the frozen band tables.
 #
-# TWO MAPS, BECAUSE THE TWO BUNDLES SPELL THE INTENSITY METRIC DIFFERENTLY.
-# The policy-central band calls it ``intensity_kg_per_kwh_eq``; the delivered
-# v3.3 interval calls it ``grid_intensity_kg_per_kwh``.  With one map the
-# expert bundle's carbon-intensity interval was invisible -- the panel reported
-# "no interval packaged" while the interval was on disk, which is a silent
-# false statement about what the build delivers rather than a crash.  The
-# resolver below reads the id off the FRAME, so neither bundle has to know the
-# other's spelling.
+# The policy-central band carries the same paired direct-CO2 / carrier-energy
+# ratio drawn in the pathway panel.  The delivered v3.3 interval instead
+# carries ``grid_intensity_kg_per_kwh``: the carbon content of the state's
+# electricity.  That is a different estimand from the bundle ratio and must
+# never be placed around the pathway panel's carbon-intensity line.  The grid
+# interval remains packaged for audit and for a future grid-specific surface;
+# it is deliberately absent from the expert panel mapping below.
 POLICY_CENTRAL_BAND_METRICS = {
     "energy": "energy_kwh_eq",
     "emissions": "direct_co2_kg",
@@ -1305,7 +1304,6 @@ POLICY_CENTRAL_BAND_METRICS = {
 EXPERT_BAND_METRICS_BY_PANEL = {
     "energy": "energy_kwh_eq",
     "emissions": "direct_co2_kg",
-    "carbon_intensity": "grid_intensity_kg_per_kwh",
 }
 
 
@@ -1477,10 +1475,12 @@ def band_metric_is_packaged(data: Mapping[str, Any], metric: str) -> bool:
     a panel drawn WITHOUT a fill and labelled as such, never a fabricated one
     and never a crash.
 
-    AT v3.3 THE EXPERT INTERVAL CARRIES ALL THREE PANELS.  The v3.1c one
-    carried two, and the answer here is read off the FRAME rather than from a
-    single spelling of the metric id, because the two packaged bundles do not
-    spell the intensity metric the same way.
+    The v3.3 expert product contains a third interval for GRID carbon
+    intensity, but the third pathway panel is the paired bundle ratio.  Those
+    estimands are not interchangeable, so the expert pathway display exposes
+    only the matching energy and direct-CO2 intervals.  The answer is read off
+    the frame and the registered panel mapping rather than inferred from a
+    similar-looking unit.
     """
     band = data.get("band_exact")
     if band is None:

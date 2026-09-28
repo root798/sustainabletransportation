@@ -8,7 +8,7 @@ if str(_REPO_DIR) not in sys.path:
 
 from dashboard_runtime import prepare_ui_release
 
-prepare_ui_release("2026.09.28.5")
+prepare_ui_release("2026.09.28.6")
 from dashboard_navigation import main
 
 main()

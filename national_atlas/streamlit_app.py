@@ -1066,7 +1066,8 @@ with detail_col:
         disabled=not detail_envelope_available,
         help=(
             "Conditional 5th–95th model percentiles, not a forecast or confidence interval. "
-            "See Selected-state pathway assumptions."
+            "For the delivered central, matched intervals are available for energy and "
+            "direct CO₂ only; the carbon-intensity ratio is shown without a ribbon."
         ),
     )
     detail_show_envelope = bool(detail_show_envelope and detail_envelope_available)
@@ -1323,11 +1324,13 @@ with trajectory_col:
     pathway_details: list[str] = []
     if expert_central_selected:
         pathway_caption = (
-            f"{state_name_by_code[selected_state]} · Delivered-central carbon and energy "
-            "pathways; turning-point markers are conditional on the selected policy path."
+            f"{state_name_by_code[selected_state]} · Delivered-central carbon and energy pathways."
         )
         if detail_show_envelope:
-            pathway_caption += " Shading is the conditional 5th–95th percentile interval from 2,000 draws, not a forecast."
+            pathway_caption += (
+                " Shading: matched 5th–95th intervals (2,000 draws) for energy and "
+                "direct CO₂ only; not a forecast."
+            )
         pathway_details.extend(
             [
                 "**Source:** each entry's vehicle rule is a floor over the published market "
@@ -1497,10 +1500,9 @@ with context_col:
         band_lines = []
         for metric, label in METRIC_DISPLAY_NAMES.items():
             if not band_metric_is_packaged(expert_central, metric):
-                # No interval is packaged for this panel, so none is quoted.
-                # At v3.1c that is carbon intensity: the band carries energy
-                # consumption and direct CO₂ emissions only.
-                band_lines.append(f"{label} — no interval packaged")
+                # The delivered build's third interval is GRID intensity, not
+                # this panel's paired bundle direct-CO2 / energy ratio.
+                band_lines.append(f"{label} — no matched interval")
                 continue
             band_frame = policy_central_band(expert_central, selected_state, metric)
             width_fraction = band_width_readout(band_frame, metric, int(detail_year))
@@ -1520,9 +1522,9 @@ with context_col:
                 expert_central, selected_state, _band_horizon
             )
             st.markdown(
-                "- **Definition:** conditional 5th–95th percentiles on the equal-size "
-                "comparison, using 2,000 draws; not prediction uncertainty or a "
-                "confidence/credible interval.\n"
+                "- **Definition:** conditional 5th–95th percentiles for equal-size "
+                "energy and direct CO₂, using 2,000 draws; not prediction uncertainty "
+                "or a confidence/credible interval.\n"
                 f"- **Across entries:** {band_halfwidth_phrase()}.\n"
                 f"- **Zero-central rule:** {band_zero_central_note()} If a denominator "
                 "approaches zero, use the absolute 5th, 50th and 95th percentiles.\n"

@@ -31,7 +31,7 @@ class UIReleaseTests(unittest.TestCase):
 
     def test_entrypoints_and_visible_release_agree(self):
         for path in ("streamlit_app.py", "v11_streamlit_app/streamlit_app.py", "dashboard_navigation.py"):
-            self.assertIn("2026.09.28.5", (runtime.ROOT / path).read_text())
+            self.assertIn("2026.09.28.6", (runtime.ROOT / path).read_text())
 
 
 if __name__ == "__main__":

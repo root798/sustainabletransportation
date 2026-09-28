@@ -24,6 +24,7 @@ for directory in (ATLAS_DIR, ROOT / "src", ROOT):
         sys.path.insert(0, value)
 
 from atlas_io import (  # noqa: E402
+    band_metric_is_packaged,
     expert_central_turning_map_frame,
     load_expert_central,
     load_market_central,
@@ -31,10 +32,14 @@ from atlas_io import (  # noqa: E402
     load_state_scaled,
     market_central_turning_map_frame,
     policy_central_turning_map_frame,
+    policy_central_band,
     state_scaled_annual_row,
 )
 from charts import make_turning_point_map  # noqa: E402
-from pathway_charts import make_state_comparison  # noqa: E402
+from pathway_charts import (  # noqa: E402
+    make_policy_central_triptych,
+    make_state_comparison,
+)
 
 
 def plot_key(plot) -> str:
@@ -43,6 +48,85 @@ def plot_key(plot) -> str:
 
 
 class AtlasLandingUITests(unittest.TestCase):
+    def test_delivered_bands_match_the_lines_they_surround(self):
+        """A grid-intensity interval must not surround a bundle-ratio line."""
+        expert = load_expert_central()
+        annual = expert["annual"].sort_values(["state", "year"]).reset_index(drop=True)
+
+        expected_columns = {
+            "energy": "normalized_bundle_carrier_input_kwh_eq",
+            "emissions": "normalized_bundle_direct_co2_kg",
+        }
+        for metric, column in expected_columns.items():
+            with self.subTest(metric=metric):
+                self.assertTrue(band_metric_is_packaged(expert, metric))
+                assembled = pd.concat(
+                    [policy_central_band(expert, state, metric) for state in sorted(annual["state"].unique())],
+                    ignore_index=True,
+                ).sort_values(["state", "year"]).reset_index(drop=True)
+                self.assertEqual(len(assembled), 51 * 51)
+                pd.testing.assert_series_equal(
+                    assembled["central"], annual[column], check_names=False,
+                    check_exact=True,
+                )
+
+        # The third packaged expert metric is state-generation grid intensity,
+        # not the displayed direct-CO2 / total-carrier-energy ratio.
+        self.assertFalse(band_metric_is_packaged(expert, "carbon_intensity"))
+        bundle_ratio = (
+            annual["normalized_bundle_direct_co2_kg"]
+            / annual["normalized_bundle_carrier_input_kwh_eq"]
+        )
+        grid_band = expert["band_exact"].loc[
+            expert["band_exact"]["metric"] == "grid_intensity_kg_per_kwh"
+        ].sort_values(["state", "year"]).reset_index(drop=True)
+        self.assertFalse(
+            pd.Series(grid_band["central"].to_numpy()).equals(
+                pd.Series(bundle_ratio.to_numpy())
+            )
+        )
+
+        # The older policy-registered product really does contain a matched
+        # paired-ratio interval, so this guard must not suppress valid ribbons.
+        self.assertTrue(
+            band_metric_is_packaged(load_policy_central(), "carbon_intensity")
+        )
+
+    def test_delivered_triptych_draws_no_unmatched_intensity_ribbon(self):
+        expert = load_expert_central()
+        figure = make_policy_central_triptych(
+            expert,
+            {"annual": pd.DataFrame()},
+            "MT",
+            "bundle",
+            2050,
+            horizon=2050,
+            show_sensitivity_envelope=True,
+            show_national_median=False,
+        )
+        fill_axes = {
+            trace.yaxis for trace in figure.data if trace.fill == "tonexty"
+        }
+        self.assertEqual(fill_axes, {"y", "y2"})
+
+        intensity_lines = [
+            trace for trace in figure.data
+            if trace.yaxis == "y3" and trace.mode == "lines"
+        ]
+        self.assertEqual(len(intensity_lines), 1)
+        mt = expert["annual"].loc[
+            (expert["annual"]["state"] == "MT")
+            & (expert["annual"]["year"] <= 2050)
+        ].sort_values("year")
+        expected = (
+            mt["normalized_bundle_direct_co2_kg"]
+            / mt["normalized_bundle_carrier_input_kwh_eq"]
+        )
+        pd.testing.assert_series_equal(
+            pd.Series(intensity_lines[0].y), expected.reset_index(drop=True),
+            check_names=False,
+        )
+
     def test_plotly_container_does_not_add_height_outside_the_figure(self):
         theme = (ATLAS_DIR / "assets" / "theme.css").read_text(encoding="utf-8")
         self.assertIn('div[data-testid="stPlotlyChart"] { padding-top: 0; }', theme)

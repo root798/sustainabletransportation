@@ -893,10 +893,10 @@ def make_policy_central_triptych(
     band_frames: dict[str, pd.DataFrame] = {}
     ceiling_prior_mode = False
     if draw_band:
-        # A bundle's band need not carry every panel.  At v3.1c the expert
-        # band carries energy consumption and direct CO2 emissions and no
-        # carbon-intensity interval exists, so that panel draws its central
-        # line with no fill rather than a fabricated one.
+        # A bundle's band need not carry every panel.  The expert product's
+        # third interval is GRID intensity, whereas this panel is the paired
+        # bundle direct-CO2 / energy ratio.  It therefore draws no fill here:
+        # a similar unit is not permission to mix two estimands.
         band_frames = {
             metric: policy_central_band(pc, state, metric)
             for metric in PATHWAY_METRICS
@@ -1573,8 +1573,9 @@ def make_state_comparison(
         and not state_scaled_scope
         and "band_exact" in pc
         # The overlay draws ONE panel metric, so it asks for that one metric
-        # rather than for the whole roster: at v3.1c the expert band has no
-        # carbon-intensity interval and that panel simply carries no fill.
+        # rather than for the whole roster.  In particular, an expert GRID-
+        # intensity interval is not a bundle carbon-intensity interval, so
+        # that panel simply carries no fill.
         and band_metric_is_packaged(pc, metric)
     )
     band_alpha = COMPARE_BAND_ALPHA_DENSE if len(roster) > 2 else COMPARE_BAND_ALPHA
