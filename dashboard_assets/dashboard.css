@@ -51,6 +51,66 @@
   min-height: 44px;
 }
 [class*="st-key-page_nav_"] [data-testid="stPageLink"] p { font-size: 0.85rem; color: #255779; }
+.clearats-home-context {
+  margin: 1rem 0 2rem;
+  padding: 1.4rem 1.5rem 1.55rem;
+  border: 1px solid #dce5ed;
+  border-top: 4px solid #225c7a;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #f8fbfd 0%, #ffffff 72%);
+  box-shadow: 0 10px 28px rgba(25, 61, 82, 0.07);
+}
+.clearats-home-context-heading {
+  margin-bottom: 1.05rem;
+}
+.clearats-home-context-heading span {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #587083;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.clearats-home-context-heading h2 {
+  margin: 0;
+  color: #173f57;
+  font-size: 1.45rem;
+  letter-spacing: -0.015em;
+}
+.clearats-home-context-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+}
+.clearats-home-context-card {
+  min-width: 0;
+  padding-right: 1.6rem;
+}
+.clearats-home-context-card + .clearats-home-context-card {
+  padding-right: 0;
+  padding-left: 1.6rem;
+  border-left: 1px solid #dce5ed;
+}
+.clearats-home-context-number {
+  color: #2c6d91;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+.clearats-home-context-card h3 {
+  margin: 0.2rem 0 0.55rem;
+  color: #1d2f3b;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.clearats-home-context-card p {
+  margin: 0;
+  color: #394c5a;
+  font-size: 0.94rem;
+  line-height: 1.68;
+  text-wrap: pretty;
+}
 [class*="st-key-home_card_"] {
   border: 1px solid #dfe6ee !important;
   border-radius: 10px !important;
@@ -111,6 +171,23 @@
     flex: 1 1 100% !important;
   }
   [class*="st-key-page_intro_"] [data-testid="stCaptionContainer"] { font-size: 0.92rem; }
+  .clearats-home-context {
+    margin: 0.8rem 0 1.5rem;
+    padding: 1rem 1rem 1.1rem;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(25, 61, 82, 0.06);
+  }
+  .clearats-home-context-heading h2 { font-size: 1.3rem; }
+  .clearats-home-context-grid { grid-template-columns: minmax(0, 1fr); }
+  .clearats-home-context-card { padding-right: 0; }
+  .clearats-home-context-card + .clearats-home-context-card {
+    margin-top: 1.15rem;
+    padding-top: 1.15rem;
+    padding-left: 0;
+    border-top: 1px solid #dce5ed;
+    border-left: 0;
+  }
+  .clearats-home-context-card p { font-size: 0.92rem; line-height: 1.62; }
   [class*="st-key-home_card_"] { min-height: 0; padding: 0.8rem 0.9rem !important; }
   [class*="st-key-manuscript_figure_"] [data-testid="stHorizontalBlock"] { flex-direction: column !important; gap: 0.4rem; }
   [class*="st-key-manuscript_figure_"] [data-testid="stColumn"] { width: 100% !important; flex: 1 1 100% !important; }

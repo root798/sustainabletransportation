@@ -1,10 +1,16 @@
 """Manuscript-backed overview and entry points; no model work runs here."""
 import streamlit as st
 
-from dashboard_ui import manuscript_figure, page_card, page_intro
+from dashboard_ui import (
+    home_research_context,
+    manuscript_figure,
+    page_card,
+    page_intro,
+)
 
 
 page_intro("home")
+home_research_context()
 st.markdown("### The CLEAR-ATS framework")
 manuscript_figure("framework")
 st.caption(

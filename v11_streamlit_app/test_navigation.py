@@ -18,7 +18,7 @@ import numpy as np
 from streamlit.testing.v1 import AppTest
 
 import dashboard_navigation as navigation
-from dashboard_ui import PAGE_INFO
+from dashboard_ui import HOME_INTRO_PARAGRAPHS, PAGE_INFO
 
 
 PAGE_ORDER = (
@@ -101,6 +101,26 @@ class NavigationTests(unittest.TestCase):
         rendered = "\n".join(element.value for element in app.markdown)
         self.assertIn("data:image/svg+xml;base64,", rendered)
         self.assertNotIn("is-enlarged", rendered)
+
+    def test_home_places_the_first_two_introduction_paragraphs_before_the_framework(self):
+        app = AppTest.from_file(
+            str(navigation.ROOT / "streamlit_app.py"), default_timeout=90
+        ).run()
+        self.assertEqual([error.message for error in app.exception], [])
+        rendered = "\n".join(str(element.value) for element in app.markdown)
+        first = HOME_INTRO_PARAGRAPHS[0]
+        second = HOME_INTRO_PARAGRAPHS[1]
+        self.assertIn(first, rendered)
+        self.assertIn(second, rendered)
+        self.assertLess(rendered.index(first), rendered.index(second))
+        self.assertLess(rendered.index(second), rendered.index("The CLEAR-ATS framework"))
+        self.assertNotIn("supercite", " ".join(HOME_INTRO_PARAGRAPHS))
+
+        css = (navigation.ROOT / "dashboard_assets/dashboard.css").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)", css)
+        self.assertIn(".clearats-home-context-grid { grid-template-columns: minmax(0, 1fr); }", css)
 
     def test_home_cards_link_to_every_registered_destination(self):
         app = AppTest.from_file(

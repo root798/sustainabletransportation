@@ -43,6 +43,42 @@ PAGE_INFO = {
     },
 }
 
+HOME_INTRO_PARAGRAPHS = (
+    (
+        "How much additional energy will traffic autonomy require, and how can its energy "
+        "and carbon burdens be reduced? At an automated urban intersection, cameras and "
+        "LiDAR scan the street, vehicles and roadside units exchange information, and "
+        "algorithms track road users and anticipate their movements. Each autonomous journey "
+        "relies on this combination of sensing, communication and real-time computing. "
+        "Together, Connected Autonomous Vehicles (CAVs) and Smart Transportation Intersections "
+        "(STIs) form Automated Traffic Systems (ATS), connecting mobile and roadside equipment "
+        "with distributed edge–cloud platforms. As deployment spreads across urban transport "
+        "networks, cities must account for the energy required to manufacture, operate and "
+        "replace this digital infrastructure. Decisions about what equipment to deploy, where "
+        "to install it and how long to keep it in service can shape energy demand for years, "
+        "while regional electricity supplies determine the emissions associated with powering "
+        "it. These decisions raise three further questions: Which subsystem dominates its "
+        "life-cycle energy burden? How strongly do regional electricity mixes shape its carbon "
+        "footprint? And how can it scale with minimal additional emissions?"
+    ),
+    (
+        "Existing research has yet to fully connect autonomy hardware, computing workloads, "
+        "and deployment across vehicles and infrastructure. Life Cycle Assessment (LCA) "
+        "captures environmental impacts across production, transportation, operation, and "
+        "end-of-life. Vehicle-focused assessments have examined the additional burdens of "
+        "sensing and computing equipment, while computing-focused studies have highlighted the "
+        "potential emissions associated with large autonomous fleets. Yet translating these "
+        "insights into deployment decisions requires linking component inventories and "
+        "operational computing demand with traffic conditions, equipment lifetimes, and "
+        "regional energy pathways. Operational demand is particularly difficult to characterize "
+        "because perception and prediction workloads execute on heterogeneous platforms, with "
+        "energy requirements that depend on model architecture, inference frequency, and "
+        "operating conditions. An integrated assessment is needed to establish how these "
+        "demands accumulate across CAVs and STI units and how their relative importance changes "
+        "as deployment expands."
+    ),
+)
+
 
 def inject_ui() -> None:
     st.html(f"<style>{(ASSETS / 'dashboard.css').read_text(encoding='utf-8')}</style>")
@@ -77,6 +113,33 @@ def page_intro(key: str) -> None:
                         destination,
                         icon=":material/home:" if destination == "home" else ":material/arrow_forward:",
                     )
+
+
+def home_research_context() -> None:
+    """Present the manuscript Introduction's first two paragraphs on Home."""
+    cards = (
+        ("01", "The sustainability question", HOME_INTRO_PARAGRAPHS[0]),
+        ("02", "The assessment gap", HOME_INTRO_PARAGRAPHS[1]),
+    )
+    articles = "".join(
+        '<article class="clearats-home-context-card">'
+        f'<div class="clearats-home-context-number" aria-hidden="true">{number}</div>'
+        f'<h3>{escape(title)}</h3>'
+        f'<p>{escape(paragraph)}</p>'
+        "</article>"
+        for number, title, paragraph in cards
+    )
+    st.markdown(
+        '<section class="clearats-home-context" '
+        'aria-labelledby="clearats-home-context-title">'
+        '<div class="clearats-home-context-heading">'
+        '<span>Research context</span>'
+        '<h2 id="clearats-home-context-title">Why CLEAR-ATS</h2>'
+        "</div>"
+        f'<div class="clearats-home-context-grid">{articles}</div>'
+        "</section>",
+        unsafe_allow_html=True,
+    )
 
 
 @st.cache_data(show_spinner=False)
